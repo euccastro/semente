@@ -1,21 +1,38 @@
+* {margin: 0px; padding: 0px;}
+
 body {font-size: 100%;
       font-family: Ubuntu, Sans-serif;}
 
-.vermelho {color: red;
-           font-size: 87.5%;
-           transition: color 0.5s ease-in-out 0s;}
-
-.vermelho:hover { color: white; }
 
 a:link {text-decoration: none;}
 
-nav a {padding: 0.25em 0.5em 0.25em 0.5em;
-       font-weight: bold;
-       color: white;}
+.navitem {flex-grow: 1;
+          font-size: 110%;
+          padding: 0.5em 0.5em;
+          text-align: center;}
 
-nav a:link {color: white;}
-nav a:visited {color: white;}
-nav a:hover {background-color: #9eab05;
-             color: white;}
-nav a:active {background-color: white;
-              color: #9eab05;}
+.ondetou {background-color: white;
+          color: #009ca3;
+          font-weight: bold;}
+
+a.navitem:link {color: white;}
+a.navitem:visited {color: white;}
+a.navitem:hover {background-color: #9eab05;
+                 color: white;}
+a.navitem:active {background-color: white;
+                  color: #009ca3;}
+
+a.social {text-align: center;
+          border-radius: 4px;
+          margin: 6px 2px;
+          padding: 3px;}
+
+a.social:active {background-color: #009ca3;}
+
+svg.socialsvg {width: 30px;
+               height: 30px;
+               text-align: center;}
+
+a svg:hover path.socialpath {fill: #9eab05;}
+
+a svg:active path.socialpath {fill: white;}
