@@ -8,7 +8,7 @@ a:link {text-decoration: none;}
 
 .navitem {flex-grow: 1;
           font-size: 110%;
-          padding: 0.5em 0.5em;
+          padding: 1em 1em;
           text-align: center;}
 
 .ondetou {background-color: white;
@@ -36,3 +36,10 @@ svg.socialsvg {width: 30px;
 a svg:hover path.socialpath {fill: #9eab05;}
 
 a svg:active path.socialpath {fill: white;}
+
+footer {display: flex;
+        flex-direction: row-reverse;
+        padding: 0.7rem 5% 0rem 15%;
+        background-color: #9eab05;}
+footer img {background-color: #9eab05;
+            height: 3.5rem;}

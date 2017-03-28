@@ -54,7 +54,7 @@
                [:a.navitem {:href "#hist"} "História"]
                [:a.navitem {:href "#rec"} "Recursos"]
                ;[:div.ondetou "Recursos"]
-               [:a.navitem {:href "#loja"} "Loja"]
+               [:a.navitem {:href "#loja"} "Loja Online"]
                [:a.navitem {:href "#cont"} "Contato"]
                [:a.navitem {:href "#assoc"} "Associa-te"]]
               [:div {:style {:display :flex
@@ -79,7 +79,8 @@
               [:article "Artigo1"]
               [:article "Artigo2"]
               [:aside "Porsierto..."]]
-             [:footer "Pé"]
+             [:footer
+              [:img {:src "img/ramalho.svg"}]]
              [:div#app_container "Wonderful things would happen here if you had Javascript enabled..."]]]
            [:script {:type "text/javascript" :src "js/main.js"}]
            [:script {:type "text/javascript"} "semente.core.main();"]])})
