@@ -1,10 +1,11 @@
-* {margin: 0px; padding: 0px;}
+/* * {margin: 0px; padding: 0px;} */
 
 body {font-size: 100%;
       font-family: Ubuntu, Sans-serif;}
 
 
-a:link {text-decoration: none;}
+a:link {text-decoration: none;
+        color: #009ca3;}
 
 .navitem {flex-grow: 1;
           font-size: 110%;
@@ -37,9 +38,11 @@ a svg:hover path.socialpath {fill: #9eab05;}
 
 a svg:active path.socialpath {fill: white;}
 
-footer {display: flex;
-        flex-direction: row-reverse;
-        padding: 0.7rem 5% 0rem 15%;
-        background-color: #9eab05;}
+footer div.barra {display: flex;
+                  flex-direction: row-reverse;
+                  padding: 0.7rem 5% 0rem 15%;
+                  background-color: #9eab05;}
 footer img {background-color: #9eab05;
             height: 3.5rem;}
+
+.quemsomosimg {padding: 0.7em 1.2em 2em 1.2em;}

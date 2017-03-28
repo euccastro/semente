@@ -7,7 +7,8 @@
             [semente.sente :as sente]
             [semente.util :as util]
             [ring.middleware.defaults :refer (wrap-defaults site-defaults)]
-            [rum.core :as rum]))
+            [rum.core :as rum]
+            [clojure.java.io :as io]))
 
 (def azul-semente "#009ca3")
 (def verde-semente "#9eab05")
@@ -57,12 +58,20 @@
                [:a.navitem {:href "#loja"} "Loja Online"]
                [:a.navitem {:href "#cont"} "Contato"]
                [:a.navitem {:href "#assoc"} "Associa-te"]]
-              [:div {:style {:display :flex
-                             :flex-wrap :wrap
-                             :justify-content :space-between}}
-               [:div]
+              ]
+             [:main {:style {:display :flex}}
+              [:div {:style {:flex-grow 4
+                             :padding-left "5%"
+                             :padding-bottom "1rem"
+                             :padding-top 0
+                             :font-size "90%"
+                             :max-width 640}}
+               [:h1 "Quem somos"]
+               [:div { :dangerouslySetInnerHTML {:__html (slurp (io/resource "quem-somos.html"))}}]]
+              [:aside {:style {:flex-grow 1}}
                [:div {:style {:display :flex
-                              :flex-wrap :wrap}}
+                              :flex-wrap :wrap
+                              :justify-content :flex-end}}
                 [:a.social {:href "#twitter"}
                  [:svg.socialsvg {:viewBox "0 0 24 24"}
                   [:path.socialpath {:fill azul-semente
@@ -70,20 +79,27 @@
                 [:a.social {:href "#facebook"}
                  [:svg.socialsvg {:viewBox "0 0 24 24"}
                   [:path.socialpath {:fill azul-semente
-                          :d facebook-path}]]]
+                                     :d facebook-path}]]]
                 [:a.social {:href "#youtube"}
                  [:svg.socialsvg {:viewBox "0 0 24 24"}
                   [:path.socialpath {:fill azul-semente
-                          :d youtube-path}]]]]]]
-             [:main "Conteúdo"
-              [:article "Artigo1"]
-              [:article "Artigo2"]
-              [:aside "Porsierto..."]]
-             [:footer
-              [:img {:src "img/ramalho.svg"}]]
+                                     :d youtube-path}]]]]]]
+             [:footer {:style {:clear :both}}
+              [:div.barra
+               [:img {:src "img/ramalho.svg"}]]
+              [:div {:style {:font-size "small"
+                             :font-weight "light"
+                             :color verde-semente
+                             :padding-top "1rem"
+                             :padding-bottom "1rem"
+                             :display :flex
+                             :justify-content :center}}
+               [:div "Hosting por " [:a {:href "https://www.dinahosting.com"
+                                         :style {:color azul-semente}}
+                                     "Dinahosting"]]]]
              [:div#app_container "Wonderful things would happen here if you had Javascript enabled..."]]]
            [:script {:type "text/javascript" :src "js/main.js"}]
-           [:script {:type "text/javascript"} "semente.core.main();"]])})
+           [:script {:type "text/javascript"} "semente.core.main() ;"]])})
 
 (defroutes handler
   (GET "/" req (root req))

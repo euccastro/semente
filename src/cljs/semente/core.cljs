@@ -9,7 +9,7 @@
 (enable-console-print!)
 
 (rum/defc hello [x]
-  [:div "Hello, " [:span.vermelho x] "!"])
+  [:span " "])
 
 (defn ^:export main []
   (println "Hello!")
