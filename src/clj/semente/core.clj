@@ -54,7 +54,9 @@
                [:a.navitem {:href "#hist"} "História"]
                [:a.navitem {:href "#rec"} "Recursos"]
                ;[:div.ondetou "Recursos"]
-               [:a.navitem {:href "#loja"} "Loja"]]
+               [:a.navitem {:href "#loja"} "Loja"]
+               [:a.navitem {:href "#cont"} "Contato"]
+               [:a.navitem {:href "#assoc"} "Associa-te"]]
               [:div {:style {:display :flex
                              :flex-wrap :wrap
                              :justify-content :space-between}}
