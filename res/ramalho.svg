@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="38.179359mm"
+   height="21.475531mm"
+   viewBox="0 0 135.28119 76.0944"
+   id="svg5275"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="ramalho.svg">
+  <defs
+     id="defs5277" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="74.0692"
+     inkscape:cy="-73.381375"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="2880"
+     inkscape:window-height="1770"
+     inkscape:window-x="0"
+     inkscape:window-y="30"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5280">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-300.9308,-382.88643)">
+    <path
+       style="clip-rule:evenodd;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision"
+       d="m 366.2433,458.98083 c -6.3671,-33.991 -52.5077,-32.3099 -65.3125,-7.5626 13.1364,-58.6429 53.4196,-19.0934 53.875,-18.6877 0.025,-1.4117 -9.6828,-35.0179 16.3438,-49.8441 -14.0496,17.4409 -13.7726,36.1494 -9.0001,47.9066 9.2436,-20.882 56.926,-34.9896 74.0625,11.4689 -31.0311,-21.4011 -58.4021,-17.111 -67,-4.7188 -4.0027,5.7693 -0.056,12.0716 2.5313,21.4377 z"
+       id="rect3832-7"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/marcos/g/pedepagina.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"
+       sodipodi:nodetypes="ccccccccc" />
+  </g>
+</svg>
