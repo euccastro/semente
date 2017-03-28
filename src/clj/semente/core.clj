@@ -4,6 +4,7 @@
   (:gen-class)
   (:require [compojure.core :refer (defroutes GET POST)]
             [compojure.route :refer (files not-found resources)]
+            [org.httpkit.server :as http-kit]
             [semente.sente :as sente]
             [semente.util :as util]
             [ring.middleware.defaults :refer (wrap-defaults site-defaults)]
@@ -28,7 +29,7 @@
    :body (rum/render-html
           [:html
            [:head [:title "Escola de Ensino Galego Semente"]
-            ;;[:link {:rel :stylesheet :href "https://fonts.googleapis.com/css?family=Ubuntu"}]
+            [:link {:rel :stylesheet :href "https://fonts.googleapis.com/css?family=Ubuntu"}]
             [:link {:rel :stylesheet :href "css/semente.css"}]]
            [:body {:style {:display :flex
                            :padding "1em"
@@ -36,6 +37,7 @@
                            :align-items :center}}
             [:div {:style {:flex "1 1 960px"
                            :width "100%"
+                           ;:min-width "550px"
                            :max-width "960px"}}
              [:header {:style  {:display :flex
                                 :justify-content :center
@@ -59,31 +61,44 @@
                [:a.navitem {:href "#cont"} "Contato"]
                [:a.navitem {:href "#assoc"} "Associa-te"]]
               ]
-             [:main {:style {:display :flex}}
-              [:div {:style {:flex-grow 4
+             [:main {:style {:display :flex
+                             ;:flex-wrap :wrap
+                             :justify-content :space-between}}
+              [:div {:style {:flex-grow 5
                              :padding-left "5%"
+                             :padding-right "5%"
                              :padding-bottom "1rem"
-                             :padding-top 0
-                             :font-size "90%"
-                             :max-width 640}}
+                             :padding-top "1rem"
+                             :font-size "90%"}}
                [:h1 "Quem somos"]
                [:div { :dangerouslySetInnerHTML {:__html (slurp (io/resource "quem-somos.html"))}}]]
-              [:aside {:style {:flex-grow 1}}
+              [:aside {:style {:flex-grow 1
+                               :display :flex
+                               :flex-direction :column
+                               :align-items :center}}
                [:div {:style {:display :flex
+                              :width "85%"
+                              :padding "1em 1em 0em 0em"
                               :flex-wrap :wrap
                               :justify-content :flex-end}}
                 [:a.social {:href "#twitter"}
                  [:svg.socialsvg {:viewBox "0 0 24 24"}
-                  [:path.socialpath {:fill azul-semente
+                  [:path.socialpath {:fill verde-semente
                                      :d twitter-path}]]]
                 [:a.social {:href "#facebook"}
                  [:svg.socialsvg {:viewBox "0 0 24 24"}
-                  [:path.socialpath {:fill azul-semente
+                  [:path.socialpath {:fill verde-semente
                                      :d facebook-path}]]]
                 [:a.social {:href "#youtube"}
                  [:svg.socialsvg {:viewBox "0 0 24 24"}
-                  [:path.socialpath {:fill azul-semente
-                                     :d youtube-path}]]]]]]
+                  [:path.socialpath {:fill verde-semente
+                                     :d youtube-path}]]]]
+               [:div [:img {:src "img/sementinhas.svg"
+                            :style {:width "10rem"
+                                    :padding "1.5rem 1rem 0.5rem 0rem"}}]]
+               [:div [:img {:src "img/babas.svg"
+                            :style {:width "10rem"
+                                    :padding "0.5rem 0.5rem 0rem 0.5rem"}}]]]]
              [:footer {:style {:clear :both}}
               [:div.barra
                [:img {:src "img/ramalho.svg"}]]
@@ -117,4 +132,5 @@
   (sente/start-router!))
 
 (defn -main []
-  (sente/start-router!))
+  (sente/start-router!)
+  (http-kit/run-server app {:port 8080}))

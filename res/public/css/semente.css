@@ -1,4 +1,4 @@
-/* * {margin: 0px; padding: 0px;} */
+/** {margin: 0px; padding: 0px;} */
 
 body {font-size: 100%;
       font-family: Ubuntu, Sans-serif;}
@@ -34,7 +34,7 @@ svg.socialsvg {width: 30px;
                height: 30px;
                text-align: center;}
 
-a svg:hover path.socialpath {fill: #9eab05;}
+a svg:hover path.socialpath {fill: #009ca3;}
 
 a svg:active path.socialpath {fill: white;}
 
@@ -46,3 +46,5 @@ footer img {background-color: #9eab05;
             height: 3.5rem;}
 
 .quemsomosimg {padding: 0.7em 1.2em 2em 1.2em;}
+
+h1 {color: #9eab05;}
