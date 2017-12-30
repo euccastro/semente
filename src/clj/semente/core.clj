@@ -81,7 +81,7 @@
                                          :position :relative}}
                  [:input {:type :search
                           :style {:border :none
-                                  :padding "2px 24px 2px 8px"
+                                  :padding "4px 24px 4px 10px"
                                   :border-radius 100
                                   :font-size "80%"
                                   :font-family "Ubuntu, sans-serif"

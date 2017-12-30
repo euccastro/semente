@@ -81,8 +81,10 @@ footer img {background-color: #e2e2e2;
 
 .quemsomosimg {padding: 0.7em 1.2em 2em 1.2em;}
 
-input {background-color: #e2e2e2;}
+input {background-color: #e2e2e2;
+       transition: box-shadow 0.2s ease-in-out;}
 
+input:hover {box-shadow: inset 0 0 0 1px #0091a2;}
 input:focus {box-shadow: inset 0 0 0 1px #a39b00;}
 
 h1 {color: #a39b00;
