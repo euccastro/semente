@@ -1,50 +1,84 @@
-/** {margin: 0px; padding: 0px;} */
+@font-face {
+    font-family: 'dejavu_serif';
+    src: url('../font/dejavuserif-webfont.woff2') format('woff2'),
+         url('../font/dejavuserif-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'dejavu_serif';
+    src: url('../font/dejavuserif-bolditalic-webfont.woff2') format('woff2'),
+    url('../font/dejavuserif-bolditalic-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'dejavu_serif';
+    src: url('../font/dejavuserif-italic-webfont.woff2') format('woff2'),
+    url('../font/dejavuserif-italic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'dejavu_serif';
+    src: url('../font/dejavuserif-bold-webfont.woff2') format('woff2'),
+    url('../font/dejavuserif-bold-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+
+}
 
 body {font-size: 100%;
-      font-family: Ubuntu, Sans-serif;}
-
+      font-family: dejavu_serif, serif;}
 
 a:link {text-decoration: none;
-        color: #009ca3;}
+        color: #0091a2;}
 
 .navitem {flex-grow: 1;
-          font-size: 110%;
-          padding: 1em 1em;
+          font-size: 80%;
+          padding: 0.5em 0.5em;
           text-align: center;}
 
 .ondetou {background-color: white;
-          color: #009ca3;
+          color: #0091a2;
           font-weight: bold;}
 
-a.navitem:link {color: white;}
-a.navitem:visited {color: white;}
-a.navitem:hover {background-color: #9eab05;
+a.navitem:link {color: #0091a2;}
+a.navitem:visited {color: #0091a2;}
+a.navitem:hover {background-color: #0091a2;
                  color: white;}
 a.navitem:active {background-color: white;
-                  color: #009ca3;}
+                  color: #0091a2;}
 
 a.social {text-align: center;
           border-radius: 4px;
           margin: 6px 2px;
           padding: 3px;}
 
-a.social:active {background-color: #009ca3;}
+a.social:active {background-color: #0091a2;}
 
 svg.socialsvg {width: 30px;
                height: 30px;
                text-align: center;}
 
-a svg:hover path.socialpath {fill: #009ca3;}
+a svg:hover path.socialpath {fill: #a39b00;}
 
 a svg:active path.socialpath {fill: white;}
 
 footer div.barra {display: flex;
                   flex-direction: row-reverse;
                   padding: 0.7rem 5% 0rem 15%;
-                  background-color: #9eab05;}
-footer img {background-color: #9eab05;
+                  background-color: #a39b00;}
+footer img {background-color: #a39b00;
             height: 3.5rem;}
 
 .quemsomosimg {padding: 0.7em 1.2em 2em 1.2em;}
 
-h1 {color: #9eab05;}
+h1 {color: #a39b00;
+    font-family: Ubuntu, sans-serif;}

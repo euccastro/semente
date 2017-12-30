@@ -3,7 +3,8 @@
 *** meter num grid
 **** fazer um elemento centrado que contenha todo
 ***** o elemento interior tem um borde negro de 
-cfeeef
+*** centralizar/unificar css
+**** mesmo nos logos?
 ** estrutura
 *** logo máis pequeno, arriba e à esquerda
 *** possível elemento sobre a barra para anúncios

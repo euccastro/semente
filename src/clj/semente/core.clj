@@ -13,8 +13,16 @@
 
 (def cor-fondo-nacional "#cfeeef")
 (def cor-borde-exterior "#676868")
-(def azul-semente "#009ca3")
-(def verde-semente "#9eab05")
+
+(def azul-semente-paulo "#009ca3")
+(def azul-semente-fernando "#0091a2")
+(def azul-semente azul-semente-fernando)
+
+(def verde-semente-paulo "#9eab05")
+(def verde-semente-fernando "#a39b00")
+(def verde-semente verde-semente-fernando)
+
+(def gris-nav "#e2e2e2")
 
 (def facebook-path
   "M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z")
@@ -49,26 +57,44 @@
                            :border-width "1px"
                            :border-color cor-borde-exterior}}
              [:header {:style  {:display :flex
-                                :justify-content :center
+                                :padding "10px 40px"
+                                :justify-content :left
                                 :align-items :flex-end}}
               [:img {:src "img/logo-nacional.svg"
-                     :style {:max-width "100%"
-                             :max-height "100%"}}]]
+                     :style {:width "340px"
+                             :height "120px"}}]
+              [:div {:style {:display :flex
+                             :width "85%"
+                             :padding "1em 1em 0em 0em"
+                             :flex-wrap :wrap
+                             :justify-content :flex-end}}
+               [:a.social {:href "#twitter"}
+                [:svg.socialsvg {:viewBox "0 0 24 24"}
+                 [:path.socialpath {:fill azul-semente
+                                    :d twitter-path}]]]
+               [:a.social {:href "#facebook"}
+                [:svg.socialsvg {:viewBox "0 0 24 24"}
+                 [:path.socialpath {:fill azul-semente
+                                    :d facebook-path}]]]
+               [:a.social {:href "#youtube"}
+                [:svg.socialsvg {:viewBox "0 0 24 24"}
+                 [:path.socialpath {:fill azul-semente
+                                    :d youtube-path}]]]]]
              [:nav
-              [:div {:style {:color :white
-                             :background-color azul-semente
+              [:div {:style {:color azul-semente
+                             :background-color gris-nav
                              :display :flex
                              :justify-content :space-around
                              :align-items :stretch
                              :flex-wrap :wrap}}
-               [:div.navitem.ondetou "Quem Somos"]
-               [:a.navitem {:href "#ppios"} "Princípios"]
-               [:a.navitem {:href "#hist"} "História"]
-               [:a.navitem {:href "#rec"} "Recursos"]
+               [:div.navitem.ondetou "quem Somos"]
+               [:a.navitem {:href "#ppios"} "princípios"]
+               [:a.navitem {:href "#hist"} "história"]
+               [:a.navitem {:href "#rec"} "recursos"]
                ;[:div.ondetou "Recursos"]
-               [:a.navitem {:href "#loja"} "Loja Online"]
-               [:a.navitem {:href "#cont"} "Contato"]
-               [:a.navitem {:href "#assoc"} "Associa-te"]]
+               [:a.navitem {:href "#loja"} "loja online"]
+               [:a.navitem {:href "#cont"} "contato"]
+               [:a.navitem {:href "#assoc"} "associa-te"]]
               ]
              [:main {:style {:display :flex
                              ;:flex-wrap :wrap
@@ -85,23 +111,6 @@
                                :display :flex
                                :flex-direction :column
                                :align-items :center}}
-               [:div {:style {:display :flex
-                              :width "85%"
-                              :padding "1em 1em 0em 0em"
-                              :flex-wrap :wrap
-                              :justify-content :flex-end}}
-                [:a.social {:href "#twitter"}
-                 [:svg.socialsvg {:viewBox "0 0 24 24"}
-                  [:path.socialpath {:fill verde-semente
-                                     :d twitter-path}]]]
-                [:a.social {:href "#facebook"}
-                 [:svg.socialsvg {:viewBox "0 0 24 24"}
-                  [:path.socialpath {:fill verde-semente
-                                     :d facebook-path}]]]
-                [:a.social {:href "#youtube"}
-                 [:svg.socialsvg {:viewBox "0 0 24 24"}
-                  [:path.socialpath {:fill verde-semente
-                                     :d youtube-path}]]]]
                [:div [:img {:src "img/sementinhas.svg"
                             :style {:width "10rem"
                                     :padding "1.5rem 1rem 0.5rem 0rem"}}]]
