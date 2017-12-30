@@ -94,8 +94,7 @@
                ;[:div.ondetou "Recursos"]
                [:a.navitem {:href "#loja"} "loja online"]
                [:a.navitem {:href "#cont"} "contato"]
-               [:a.navitem {:href "#assoc"} "associa-te"]]
-              ]
+               [:a.navitem {:href "#assoc"} "assócia-te"]]]
              [:main {:style {:display :flex
                              ;:flex-wrap :wrap
                              :justify-content :space-between}}
@@ -106,17 +105,7 @@
                              :padding-top "1rem"
                              :font-size "90%"}}
                [:h1 "Quem somos"]
-               [:div { :dangerouslySetInnerHTML {:__html (slurp (io/resource "quem-somos.html"))}}]]
-              [:aside {:style {:flex-grow 1
-                               :display :flex
-                               :flex-direction :column
-                               :align-items :center}}
-               [:div [:img {:src "img/sementinhas.svg"
-                            :style {:width "10rem"
-                                    :padding "1.5rem 1rem 0.5rem 0rem"}}]]
-               [:div [:img {:src "img/babas.svg"
-                            :style {:width "10rem"
-                                    :padding "0.5rem 0.5rem 0rem 0.5rem"}}]]]]
+               [:div { :dangerouslySetInnerHTML {:__html (slurp (io/resource "quem-somos.html"))}}]]]
              [:footer {:style {:clear :both}}
               [:div.barra
                [:img {:src "img/ramalho.svg"}]]
