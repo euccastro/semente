@@ -81,12 +81,11 @@
                                          :position :relative}}
                  [:input {:type :search
                           :style {:border :none
-                                  :padding "2px 16px 2px 8px"
+                                  :padding "2px 24px 2px 8px"
                                   :border-radius 100
-                                  :font-size "90%"
+                                  :font-size "80%"
                                   :font-family "Ubuntu, sans-serif"
                                   :color azul-semente
-                                  :background-color gris-nav
                                   :width "100%"
                                   :outline :none
                                   :appearance :none
