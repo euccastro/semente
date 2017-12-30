@@ -73,10 +73,10 @@ a svg:active path.socialpath {fill: white;}
 
 footer div.barra {display: flex;
                   flex-direction: row-reverse;
-                  padding: 0.7rem 5% 0rem 15%;
-                  background-color: #a39b00;}
-footer img {background-color: #a39b00;
-            height: 3.5rem;}
+                  padding: 0.5rem 5% 0rem 5%;
+                  background-color: #e2e2e2;}
+footer img {background-color: #e2e2e2;
+            height: 2.5rem;}
 
 .quemsomosimg {padding: 0.7em 1.2em 2em 1.2em;}
 
