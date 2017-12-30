@@ -61,11 +61,11 @@
                                 :justify-content :left
                                 :align-items :flex-end}}
               [:img {:src "img/logo-nacional.svg"
-                     :style {:width "340px"
-                             :height "120px"}}]
+                     :style {:width "300px"
+                             :height "100px"}}]
               [:div {:style {:display :flex
-                             :width "85%"
-                             :padding "1em 1em 0em 0em"
+                             :width "70%"
+                             :padding "0em 0em 0em 0em"
                              :flex-wrap :wrap
                              :justify-content :flex-end}}
                [:a.social {:href "#twitter"}
