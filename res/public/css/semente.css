@@ -54,22 +54,23 @@ a.navitem:visited {color: #0091a2;}
 a.navitem:hover {background-color: #0091a2;
                  color: white;}
 a.navitem:active {background-color: white;
-                  color: #0091a2;}
+                  color: #a39b00;}
 
 a.social {text-align: center;
           border-radius: 4px;
           margin: 4px 2px;
           padding: 3px;}
 
-a.social:active {background-color: #0091a2;}
+a.social:hover {background-color: #0091a2;}
+a.social:active {background-color: white;}
 
 svg.socialsvg {width: 24px;
                height: 24px;
                text-align: center;}
 
-a svg:hover path.socialpath {fill: #a39b00;}
+a svg:hover path.socialpath {fill: white;}
 
-a svg:active path.socialpath {fill: white;}
+a svg:active path.socialpath {fill: #a39b00;}
 
 footer div.barra {display: flex;
                   flex-direction: row-reverse;
