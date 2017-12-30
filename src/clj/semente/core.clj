@@ -11,6 +11,8 @@
             [rum.core :as rum]
             [clojure.java.io :as io]))
 
+(def cor-fondo-nacional "#cfeeef")
+(def cor-borde-exterior "#676868")
 (def azul-semente "#009ca3")
 (def verde-semente "#9eab05")
 
@@ -32,13 +34,20 @@
             [:link {:rel :stylesheet :href "https://fonts.googleapis.com/css?family=Ubuntu"}]
             [:link {:rel :stylesheet :href "css/semente.css"}]]
            [:body {:style {:display :flex
-                           :padding "1em"
+                           :padding 0
+                           :margin 0
                            :flex-direction :column
-                           :align-items :center}}
+                           :align-items :center
+                           :background-color cor-fondo-nacional}}
             [:div {:style {:flex "1 1 960px"
                            :width "100%"
+                           :margin 0
                            ;:min-width "550px"
-                           :max-width "960px"}}
+                           :max-width "960px"
+                           :background-color :white
+                           :border-style "solid"
+                           :border-width "1px"
+                           :border-color cor-borde-exterior}}
              [:header {:style  {:display :flex
                                 :justify-content :center
                                 :align-items :flex-end}}

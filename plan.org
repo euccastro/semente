@@ -1,0 +1,44 @@
+* Novo web
+** tasks
+*** meter num grid
+**** fazer um elemento centrado que contenha todo
+***** o elemento interior tem um borde negro de 
+cfeeef
+** estrutura
+*** logo máis pequeno, arriba e à esquerda
+*** possível elemento sobre a barra para anúncios
+**** como decidimos quando está ativado?
+***** fazer algumha funçom no site de gestom para isso
+Selecciona qual é o texto e onde liga.
+*** ligaçons às secçons
+**** quem somos / princípios / história / contato
+Página estática. Editável por gente?
+**** recursos?
+Suponho que será página estática tamém.
+**** associa-te?
+*** cores?
+**** com gimp extraer os valores do doc de fernando
+*** fontes?
+**** manter Ubuntu enquanto nom tenha confirmaçom da nova
+Acho que el dizia que nom estava em webfonts, mais está (assegurar-me desde
+outro SO).
+** elementos a acrescentar
+*** jeito de meter arquivos
+**** markdown
+***** guardar como markdown, ou como html?
+****** o segundo permite layouts máis específicos
+****** o primeiro fai máis fácil editar
+**** meter datomic já, para guardá-los!
+** mudanças estruturais
+*** elemento opcional por riba/baixo do cabeçalho
+*** que fontes temos?
+*** como flowam as movidas?
+** outras mudanças
+*** cljss
+*** CSS grid
+*** reagent?
+Se me quero passar a Posh ou re-frame é importante. Mais nom permite rendering
+server-side?
+
+Tamém podo experimentar com ir fazendo eu algo parecido a re-frame. Talvez com
+subscripçons específicas a datomic?
