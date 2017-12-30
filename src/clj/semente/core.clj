@@ -24,6 +24,8 @@
 
 (def gris-nav "#e2e2e2")
 
+(def search-icon-path "M15.553 31.106c8.59 0 15.553-6.963 15.553-15.553S24.143 0 15.553 0 0 6.963 0 15.553s6.963 15.553 15.553 15.553zm0-3.888c6.443 0 11.665-5.222 11.665-11.665 0-6.442-5.222-11.665-11.665-11.665-6.442 0-11.665 5.223-11.665 11.665 0 6.443 5.223 11.665 11.665 11.665zM27.76 31.06c-.78-.78-.778-2.05.004-2.833l.463-.463c.783-.783 2.057-.78 2.834-.003l8.168 8.17c.782.78.78 2.05-.003 2.832l-.463.463c-.783.783-2.057.78-2.833.003l-8.17-8.167z")
+
 (def facebook-path
   "M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z")
 
@@ -68,6 +70,47 @@
                              :padding "0em 0em 0em 0em"
                              :flex-wrap :wrap
                              :justify-content :flex-end}}
+               [:form {:style {:display :flex
+                               :flex-direction :row
+                               :align-items :center
+                               :margin-bottom 0
+                               :margin-right 10}
+                       :onsubmit "return false;"}
+                [:div.searchbox {:style {:vertical-align :middle
+                                         :width 200
+                                         :position :relative}}
+                 [:input {:type :search
+                          :style {:border :none
+                                  :padding "2px 16px 2px 8px"
+                                  :border-radius 100
+                                  :font-size "90%"
+                                  :font-family "Ubuntu, sans-serif"
+                                  :color azul-semente
+                                  :background-color gris-nav
+                                  :width "100%"
+                                  :outline :none
+                                  :appearance :none
+                                  :-webkit-appearance :none
+                                  :-moz-appearance :none}}]
+                 [:button {:type :submit
+                           :style {:position :absolute
+                                   :left 173
+                                   :width 24
+                                   :height 18
+                                   :z-index 1
+                                   :border :none
+                                   :outline :none
+                                   :appearance :none
+                                   :-webkit-appearance :none
+                                   :-moz-appearance :none
+                                   :background :none}}
+                  [:svg {:viewBox "0 0 40 40"
+                         :style {:margin "2px 0px 0px 0px"}
+                         :width 14
+                         :height 14}
+                   [:path {:fill azul-semente
+                           :fill-rule :evenodd
+                           :d search-icon-path}]]]]]
                [:a.social {:href "#twitter"}
                 [:svg.socialsvg {:viewBox "0 0 24 24"}
                  [:path.socialpath {:fill azul-semente
@@ -87,7 +130,7 @@
                              :justify-content :space-around
                              :align-items :stretch
                              :flex-wrap :wrap}}
-               [:div.navitem.ondetou "quem Somos"]
+               [:div.navitem.ondetou "quem somos"]
                [:a.navitem {:href "#ppios"} "princípios"]
                [:a.navitem {:href "#hist"} "história"]
                [:a.navitem {:href "#rec"} "recursos"]
