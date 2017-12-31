@@ -1,5 +1,5 @@
 (set-env!
- :source-paths #{"src/clj" "src/cljs"}
+ :source-paths #{"src/clj" "src/cljs" "src/cljc"}
  :resource-paths #{"res"}
  :dependencies '[[adzerk/boot-cljs "1.7.228-1" :scope "test"]
                  [adzerk/boot-cljs-repl "0.3.0" :scope "test"]
@@ -57,7 +57,7 @@
      (garden :styles-var 'semente.styles/base
              :pretty-print true
              :output-to "public/css/garden.css")
-     (reload :on-jsload 'semente.core/main
+     (reload :on-jsload 'semente.core/devmain
              ;; XXX: make this configurable
              :open-file "emacsclient -n +%s:%s %s")
      (cljs-repl)

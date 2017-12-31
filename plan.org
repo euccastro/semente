@@ -1,5 +1,8 @@
 * Novo web
 ** tasks
+*** extraer markup a outro ns .cljc
+**** em development, importá-lo desde cljs para live reloading
+**** em production, serví-lo desde clj
 *** centralizar/unificar css
 **** development vs production
 ***** development
