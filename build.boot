@@ -3,6 +3,9 @@
  :resource-paths #{"res"}
  :dependencies '[[adzerk/boot-cljs "1.7.228-1" :scope "test"]
                  [adzerk/boot-cljs-repl "0.3.0" :scope "test"]
+                 ;; We don't use 1.3.2-1 because of
+                 ;; https://github.com/martinklepsch/boot-garden/issues/25
+                 [org.martinklepsch/boot-garden "1.3.2-0"]
                  [adzerk/boot-reload "0.4.8" :scope "test"]
                  [pandeiro/boot-http "0.7.3" :scope "test"]
                  [crisptrutski/boot-cljs-test "0.2.2-SNAPSHOT" :scope "test"]
@@ -18,6 +21,7 @@
                  [datascript "0.15.2"]
                  [com.datomic/datomic-free "0.9.5544" :exclusions [com.google.guava/guava]]
                  [environ "1.0.3"]
+                 [garden "1.3.3"]
                  [http-kit "2.1.19"]  ;; same as used by boot-http
                  [com.cemerick/piggieback "0.2.1" :scope "test"]
                  [ring/ring-defaults "0.1.5"]
@@ -30,6 +34,7 @@
 (require
   '[adzerk.boot-cljs      :refer [cljs]]
   '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl]]
+  '[org.martinklepsch.boot-garden :refer [garden]]
   '[adzerk.boot-reload    :refer [reload]]
   '[environ.boot :refer [environ]]
   '[crisptrutski.boot-cljs-test  :refer [test-cljs]]
@@ -49,6 +54,9 @@
             :reload true)
      (watch)
      (speak)
+     (garden :styles-var 'semente.styles/base
+             :pretty-print true
+             :output-to "public/css/garden.css")
      (reload :on-jsload 'semente.core/main
              ;; XXX: make this configurable
              :open-file "emacsclient -n +%s:%s %s")

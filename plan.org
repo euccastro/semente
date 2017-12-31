@@ -1,6 +1,21 @@
 * Novo web
 ** tasks
 *** centralizar/unificar css
+**** development vs production
+***** development
+Aqui quero feedback rápido. Quero poder manter umha janela aberta em todo
+momento e ver as mudanças sem hit refresh.
+
+Factor out movidas a .cljc? e carregar desde diferentes partes. Markup podo
+lê-lo com rum, sem problema. CSS podo injectá-lo directamente ou salvá-lo a um
+.css. Qual fazer pode depender de
+
+- Support de boot para watch certain files and output garden
+- Capacidade de switchear injeçom entre development e runtime
+
+Se a opçom de boot estiver disponível, seguramente seja máis fácil.
+
+***** production
 **** mesmo nos logos?
 ***** tentar
 *** meter num grid
