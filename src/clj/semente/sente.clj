@@ -31,7 +31,9 @@
 (defonce router_ (atom nil))
 (defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
 (defn start-router! []
+  (println "starting sente router")
   (stop-router!)
   (reset! router_
           (sente/start-server-chsk-router!
-           ch-chsk wrapped-client-msg-handler)))
+           ch-chsk wrapped-client-msg-handler))
+  (println "started!"))

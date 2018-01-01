@@ -1,13 +1,13 @@
 (set-env!
  :source-paths #{"src/clj" "src/cljs" "src/cljc"}
  :resource-paths #{"res"}
- :dependencies '[[adzerk/boot-cljs "1.7.228-1" :scope "test"]
-                 [adzerk/boot-cljs-repl "0.3.0" :scope "test"]
+ :dependencies '[[adzerk/boot-cljs "2.1.4" :scope "test"]
+                 [adzerk/boot-cljs-repl "0.3.3" :scope "test"]
                  ;; We don't use 1.3.2-1 because of
                  ;; https://github.com/martinklepsch/boot-garden/issues/25
                  [org.martinklepsch/boot-garden "1.3.2-0"]
-                 [adzerk/boot-reload "0.4.8" :scope "test"]
-                 [pandeiro/boot-http "0.7.3" :scope "test"]
+                 [adzerk/boot-reload "0.5.2" :scope "test"]
+                 [pandeiro/boot-http "0.8.3" :scope "test"]
                  [crisptrutski/boot-cljs-test "0.2.2-SNAPSHOT" :scope "test"]
                  [boot-environ "1.0.3"]
                  [clj-time "0.13.0"]
@@ -15,9 +15,9 @@
                  ;; in their website.
                  [com.andrewmcveigh/cljs-time "0.5.0-alpha2"]
                  [org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.36"]
+                 [org.clojure/clojurescript "1.9.946"]
                  [compojure "1.4.0"]
-                 [org.clojure/core.async "0.2.374"]
+                 [org.clojure/core.async "0.3.465"]
                  [datascript "0.15.2"]
                  [com.datomic/datomic-free "0.9.5544" :exclusions [com.google.guava/guava]]
                  [environ "1.0.3"]
@@ -26,7 +26,7 @@
                  [com.cemerick/piggieback "0.2.1" :scope "test"]
                  [ring/ring-defaults "0.1.5"]
                  [rum "0.10.8"]
-                 [com.taoensso/sente "1.11.0"]
+                 [com.taoensso/sente "1.12.0"]
                  [com.taoensso/timbre "4.7.2"]
                  [org.clojure/tools.nrepl "0.2.12" :scope "test"]
                  [weasel "0.7.0" :scope "test"]])

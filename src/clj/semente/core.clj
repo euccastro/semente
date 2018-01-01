@@ -5,12 +5,15 @@
   (:require [compojure.core :refer (defroutes GET POST)]
             [compojure.route :refer (files not-found resources)]
             [org.httpkit.server :as http-kit]
-            [semente.nacional :refer (nacional)]
             [semente.sente :as sente]
             [semente.util :as util]
             [ring.middleware.defaults :refer (wrap-defaults site-defaults)]
             [rum.core :as rum]
             [clojure.java.io :as io]))
+
+(if util/in-development?
+  (defn nacional [_] nil)
+  (require '[semente.nacional :refer (nacional)]))
 
 (defmethod sente/client-msg-handler :semente/quem-somos
   [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]

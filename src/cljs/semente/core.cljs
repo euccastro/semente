@@ -1,7 +1,7 @@
 (ns semente.core
   (:require-macros
-   [cljs.core.async.macros :as asyncm :refer (go go-loop)])
-  (:require [cljs.core.async :as async :refer (<! >! put! chan)]
+   [cljs.core.async.macros :as asyncm :refer (go)])
+  (:require [cljs.core.async :as async :refer (<! close!)]
             [semente.sente :as sente]
             [semente.nacional :refer (nacional)]
             [rum.core :as rum]
@@ -20,15 +20,17 @@
 
 (defn ^:export devmain []
   (println "Hello from devmain!")
-  (sente/start-once!)
-  (sente/send!
-   [:semente/quem-somos nil]
-   30000
-   (fn [ret]
-     (if-not (cb-success? ret)
-       (rum/mount (hello (pr-str ret))
-                  (js/document.getElementById "app_container"))
-       (do
-         (println "OOOOOO")
+  (go
+    (enable-console-print!)
+    (println "start-router returned" (sente/start-router!))
+    (println "fetch returned" (<! sente/init-chan))
+    (close! sente/init-chan)
+    (sente/send!
+     [:semente/quem-somos nil]
+     30000
+     (fn [ret]
+       (if-not (cb-success? ret)
+         (rum/mount (hello (pr-str ret))
+                    (js/document.getElementById "app_container"))
          (rum/mount (nacional (:body ret))
                     (js/document.getElementById "app_container")))))))
