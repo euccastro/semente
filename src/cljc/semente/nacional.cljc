@@ -58,7 +58,7 @@
                       :align-items :center
                       :margin-bottom 0
                       :margin-right 10}
-              :on-submit #(false)}
+              :on-submit (fn [& _] false)}
        [:div.searchbox {:style {:vertical-align :middle
                                 :width 200
                                 :position :relative}}
