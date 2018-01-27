@@ -1,7 +1,19 @@
 * Novo web
+** arquitetura
+*** qual é a relaçom entre styles e semente.nacional?
+Bom, nacional nom pode depender de styles porque é .cljc e a outra é .clj.
+Fai sentido que styles dependa de nacional?  Tampouco.
+Logo deveria haver um módulo de cljc com styles tamém.
+Como os chamo?  style vs garden-styles? style-constants?
+Porque preciso cores etc em nacional anyway?
+
+Mover constantes a style-constants.
+
+Mover estilos a styles.clj.
 ** tasks
 *** extraer markup a outro ns .cljc
 **** em development, importá-lo desde cljs para live reloading
+***** por enquanto, preocupar-me só com development
 **** em production, serví-lo desde clj
 *** centralizar/unificar css
 **** development vs production
@@ -23,9 +35,7 @@ Se a opçom de boot estiver disponível, seguramente seja máis fácil.
 ***** tentar
 *** meter num grid
 **** fazer um elemento centrado que contenha todo
-***** o elemento interior tem um borde negro de 
 ** estrutura
-*** logo máis pequeno, arriba e à esquerda
 *** possível elemento sobre a barra para anúncios
 **** como decidimos quando está ativado?
 ***** fazer algumha funçom no site de gestom para isso
@@ -54,7 +64,6 @@ outro SO).
 *** que fontes temos?
 *** como flowam as movidas?
 ** outras mudanças
-*** cljss
 *** CSS grid
 *** reagent?
 Se me quero passar a Posh ou re-frame é importante. Mais nom permite rendering
@@ -62,3 +71,25 @@ server-side?
 
 Tamém podo experimentar com ir fazendo eu algo parecido a re-frame. Talvez com
 subscripçons específicas a datomic?
+** começar já coa lógica?
+Os dados vam, é claro, em datomic.  O conteúdo estático das secçons vai em
+Markdown ou html directamente em git.  Como assigno classes a movidas markdown?
+Em markdown tenho full html, assi que podo assignar class e id.  Mais quero?
+Provavelmente nom, provavelmente markdown seja melhor só para cousas que nom
+precisem um tratamento especial de CSS.
+
+Ou procurar um editor de markdown pola web?
+
+https://github.com/benhowell/reagent-quill seems to be the ticket.
+
+*** schema para dados
+**** secçons
+***** módulos com código específico
+***** vam em .cljc ou html ou quil -- nada de markdown, sorry.
+***** gardados em git
+**** conteúdos
+***** gardados em datomic
+***** markdown
+** issues
+*** x quando entro texto na caixa de procura
+**** eliminá-lo ou estilá-lo?
