@@ -30,8 +30,8 @@
           [:html
            [:head [:title "Escola de Ensino Galego Semente"]
             [:link {:rel :stylesheet :href "https://fonts.googleapis.com/css?family=Ubuntu"}]
-            [:link {:rel :stylesheet :href "css/garden.css"}]
-            [:link {:rel :stylesheet :href "css/semente.css"}]]
+            [:link {:rel :stylesheet :href "css/semente.css"}]
+            [:link {:rel :stylesheet :href "css/garden.css"}]]
            [:body
             (when-not util/in-development?
               (nacional (slurp (io/resource "quem-somos.html"))))

@@ -4,7 +4,71 @@
             [semente.style-constants :as style]))
 
 (def base
+
   [
+
+   [:body
+    {:font-size "100%"
+     :font-family "dejavu_serif, serif"}]
+
+   [:h1 {:color style/verde-semente
+         :font-family "Ubuntu, sans-serif"}]
+
+   [:a:link
+    {:text-decoration "none"
+     :color style/azul-semente}]
+
+   [:.navitem
+    {:flex-grow 1
+     :font-size "80%"
+     :padding "0.5em 0.5em"
+     :text-align "center"}]
+
+   [:a.navitem
+    [:&:link
+     {:color style/azul-semente}]
+    [:&:visited
+     {:color style/azul-semente}]
+    [:&:hover
+     {:color "white"
+      :background-color style/azul-semente}]
+    [:&:active
+     {:color style/verde-semente
+      :background-color "white"}]]
+
+   [:a.social {:text-align "center"
+               :border-radius "4px"
+               :margin "ipx 2px"
+               :padding "3px"}
+    [:&:hover {:background-color style/azul-semente}]
+    [:&:active {:background-color "white"}]]
+
+   [:svg.socialsvg
+    {:width "24px"
+     :height "24px"
+     :text-align "center"}]
+
+   [:a [:svg:hover [:path.socialpath {:fill "white"}]]]
+
+   [:a [:svg:active [:path.socialpath {:fill style/verde-semente}]]]
+
+   [:footer
+    [:div.barra
+     {:display "flex"
+      :flex-direction "row-reverse"
+      :padding "0.5rem 5% 0rem 5%"
+      :background-color style/gris-nav}]
+    [:img
+     {:background-color style/gris-nav
+      :height "2.5rem"}]]
+
+   [:.quemsomosimg
+    {:padding "0.7em 1.2em 2em 1.2em"}]
+
+   [:.ondetou
+    {:background-color "white"
+     :color style/azul-semente
+     :font-weight "bold"}]
 
    [:#fondo
     {:display :flex
@@ -56,7 +120,7 @@
 
    [:#caixa-procura-input
     {:border :none
-     :background-color "#e2e2e2"
+     :background-color style/gris-nav
      :transition "box-shadow 0.2s ease-in-out"
      :padding "4px 24px 4px 10px"
      :border-radius "100px"
@@ -67,7 +131,9 @@
      :outline :none
      :appearance :none
      :-webkit-appearance :none
-     :-moz-appearance :none}]
+     :-moz-appearance :none}
+    [:&:hover {:box-shadow (str "inset 0 0 0 1px " style/azul-semente)}]
+    [:&:focus {:box-shadow (str "inset 0 0 0 1px " style/verde-semente)}]]
 
    [:#botom-procura
     {:position :absolute
