@@ -1,15 +1,8 @@
 * Novo web
 ** arquitetura
-*** qual é a relaçom entre styles e semente.nacional?
-Bom, nacional nom pode depender de styles porque é .cljc e a outra é .clj.
-Fai sentido que styles dependa de nacional?  Tampouco.
-Logo deveria haver um módulo de cljc com styles tamém.
-Como os chamo?  style vs garden-styles? style-constants?
-Porque preciso cores etc em nacional anyway?
-
-Mover constantes a style-constants.
-
-Mover estilos a styles.clj.
+*** um endpoint para cada secçom
+Nom quero um SPA.
+**** refactorando elementos comuns a comum.cljc
 ** tasks
 *** extraer markup a outro ns .cljc
 **** em development, importá-lo desde cljs para live reloading

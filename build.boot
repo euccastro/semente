@@ -47,7 +47,7 @@
      (test-cljs)))
 
 (deftask dev []
-  (comp (environ :env {:in-development "indeed"})
+  (comp (environ :env {:in-development "nah"})
      (serve :handler 'semente.core/app
             :resource-root "target"
             :httpkit true
