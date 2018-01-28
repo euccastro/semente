@@ -1,5 +1,8 @@
 * Novo web
 ** arquitetura
+Passar de diferenciar com umha variável de entorno dev vs prod.  Ter modo dev,
+que chama endpoint /dev, e desabilitá-lo se estamos em produçom. Ou ter toggle
+específico para isto.
 *** um endpoint para cada secçom
 Nom quero um SPA.
 **** refactorando elementos comuns a comum.cljc
