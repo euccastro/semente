@@ -1,4 +1,7 @@
 * Novo web
+** representaçom de texto/ediçom
+html para current version -- noHistory
+guardar edits em quill delta format
 ** arquitetura
 Passar de diferenciar com umha variável de entorno dev vs prod.  Ter modo dev,
 que chama endpoint /dev, e desabilitá-lo se estamos em produçom. Ou ter toggle
