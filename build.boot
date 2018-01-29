@@ -11,6 +11,7 @@
                  [crisptrutski/boot-cljs-test "0.2.2-SNAPSHOT" :scope "test"]
                  [boot-environ "1.0.3"]
                  [clj-time "0.13.0"]
+                 [cljsjs/quill "1.2.5-4"]
                  ;; using the alpha because that's the version of the API docs
                  ;; in their website.
                  [com.andrewmcveigh/cljs-time "0.5.0-alpha2"]

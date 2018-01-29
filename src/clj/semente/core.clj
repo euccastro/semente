@@ -39,10 +39,26 @@
                  (if util/in-development? "devmain" "main")
                  "();")]])})
 
+(defn quill-test []
+  {:status 200
+   :headers {"content-type" "text/html"}
+   :body (rum/render-html
+          [:html
+           [:head [:title "Provando..."]
+            [:link {:rel :stylesheet :href "https://fonts.googleapis.com/css?family=Ubuntu"}]
+            [:link {:rel :stylesheet :href "https://cdn.quilljs.com/1.2.5/quill.snow.css"}]
+            [:link {:rel :stylesheet :href "/css/semente.css"}]
+            [:link {:rel :stylesheet :href "/css/garden.css"}]]
+           [:body
+            [:div#app_container "Wonderful things would happen here if you had Javascript enabled..."]]
+           [:script {:type "text/javascript" :src "/js/main.js"}]
+           [:script {:type "text/javascript"} "semente.core.quillmain();"]])})
+
 (defroutes handler
   (GET "/" [] (pagina (quem-somos (slurp (io/resource "quem-somos.html")))))
   (GET "/nacional/quem-somos" [] (pagina (quem-somos (slurp (io/resource "quem-somos.html")))))
   (GET "/nacional/principios" [] (pagina (principios)))
+  (GET "/quill" [] (quill-test))
   ;; sente
   (GET  "/chsk" req sente/ring-ajax-get-or-ws-handshake)
   (POST "/chsk" req sente/ring-ajax-post)

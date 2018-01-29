@@ -2,6 +2,7 @@
   (:require-macros
    [cljs.core.async.macros :as asyncm :refer (go)])
   (:require [cljs.core.async :as async :refer (<! close!)]
+            [cljsjs.quill]
             [clojure.string :as str]
             [semente.sente :as sente]
             [semente.nacional :as nacional]
@@ -36,3 +37,17 @@
                     (js/document.getElementById "app_container"))
          (rum/mount (nacional/quem-somos (:body ret))
                     (js/document.getElementById "app_container")))))))
+
+(def quill-config
+  {"theme" "snow"
+   "modules"
+   {"toolbar"
+    [["bold" "italic" { "size" ["small" false "grande" "huge"]}]
+     ["link" "image"]
+     ["clean"]]}})
+
+(defn ^:export quillmain []
+  (enable-console-print!)
+  (println "now I would show quill!")
+  ;; quil.root.innerHTML tem o raw HTML
+  (def quill (js/Quill. "#app_container" (clj->js quill-config))))
