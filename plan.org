@@ -1,4 +1,19 @@
 * Novo web
+** friend
+*** coordinaçom com Sente?
+Quem di que queira usar Sente at all?  Quem di que precise coordinar com friend?
+One thing at a time.
+
+Se vou usar ajax at all, vou usar sente?  Seguramente si.
+
+Vou usar ajax at all? Nom tenho ningum use case in mind, mais parece um pouco
+temerário fechar-me essa porta.
+
+Mais estou realmente fechando-me essa porta?  Porque nom poderia furrular com
+Sente igual?
+**** roles
+***** admin-nacional
+***** admin-(compos|lugo|vigo|trasancos)
 ** representaçom de texto/ediçom
 html para current version -- noHistory
 guardar edits em quill delta format
