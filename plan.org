@@ -1,4 +1,9 @@
 * Novo web
+** Not authorized pages
+*** Melhorar o feedback e experiência nestas
+** CSRF
+*** refrescar-me em movidas de ring + compojure
+*** possivelmente deixar de usar compojure se me toca moito o caralho
 ** friend
 *** coordinaçom com Sente?
 Quem di que queira usar Sente at all?  Quem di que precise coordinar com friend?
