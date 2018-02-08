@@ -12,6 +12,7 @@
             [semente.nacional :refer (quem-somos principios)]
             [semente.sente :as sente]
             [semente.util :as util]
+            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer (wrap-defaults site-defaults api-defaults)]
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.params :refer [wrap-params]]
@@ -69,6 +70,12 @@
            [:script {:type "text/javascript" :src "/js/main.js"}]
            [:script {:type "text/javascript"} "semente.core.quillmain();"]])})
 
+(defn anti-forgery-field []
+  [:input {:id "__anti-forgery-token"
+           :name "__anti-forgery-token"
+           :type "hidden"
+           :value (force *anti-forgery-token*)}])
+
 (defn login [_]
   {:status 200
    :headers {"content-type" "text/html"}
@@ -77,6 +84,7 @@
            [:head [:title "Quem es?"]]
            [:body
             [:form {:method "POST" :action "/login"}
+             (anti-forgery-field)
              [:input {:name "username" :type :text}]
              [:input {:name "password" :type :password}]
              [:input {:name "submit" :type "submit" :value "Manda!"}]]]])})
@@ -107,9 +115,7 @@
   (-> handler
       (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn users)
                             :workflows [(workflows/interactive-form)]})
-      (wrap-keyword-params)
-      (wrap-params)
-      (wrap-session)))
+      (wrap-defaults site-defaults)))
 
 (if util/in-development?
   (sente/start-router!))
