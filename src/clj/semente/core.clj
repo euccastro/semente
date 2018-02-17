@@ -6,6 +6,7 @@
             [cemerick.friend
              (workflows :as workflows)
              (credentials :as creds)]
+            [clojure.pprint :refer (pprint)]
             [compojure.core :as compojure :refer (defroutes ANY GET POST)]
             [compojure.route :refer (files not-found resources)]
             [org.httpkit.server :as http-kit]
@@ -19,7 +20,8 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [rum.core :as rum]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.string :as str]))
 
 (defmethod sente/client-msg-handler :semente/quem-somos
   [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
@@ -90,7 +92,7 @@
              [:input {:name "password" :type :password}]
              [:input {:name "submit" :type "submit" :value "Manda!"}]]]])})
 
-(defn login-failure [_]
+(defn login-failure [x]
   {:status 200
    :headers {"content-type" "text/html"}
    :body (rum/render-html
@@ -98,17 +100,32 @@
            [:head [:title "Nom chas quero"]]
            [:body
             [:h1 "Nom chas quero nom chas quero"]
-            [:div "Que me podem fazer male"]]])})
+            [:div "Que me podem fazer male"]
+            [:pre (with-out-str (pprint x))]]])})
 
-(defn missing-role-handler [_]
-  {:status 200
+(defn missing-role-handler [x]
+  {:status 403
    :headers {"content-type" "text/html"}
    :body (rum/render-html
           [:html
-           [:head [:title "Nom chas quero"]]
+           [:head [:title "Nom autorizada"]]
            [:body
-            [:h1 "si si si"]
-            [:div "pero nom ti"]]])})
+            [:h1 "Nom autorizada"]
+            (let [f (:cemerick.friend/authorization-failure x)
+                  role (-> f :cemerick.friend/required-roles first name)
+                  user (-> f
+                           :cemerick.friend/identity
+                           :current)
+                  user-roles (-> f
+                                 :cemerick.friend/identity
+                                 :authentications
+                                 (get user)
+                                 :roles)
+                  roles-str (str/join ", " (map name user-roles))]
+              [:div
+               "Esta página requer o rol " [:strong [:code role]]
+               " e a utente " [:strong [:code user]]
+               " só tem " (if (= (count user-roles) 1) "rol " "roles ") [:strong [:code roles-str]] "."])]])})
 
 (defn secreto [req]
   {:status 200
