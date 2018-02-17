@@ -1,19 +1,80 @@
 * Novo web
-** Not authorized pages
-Bastante resolto; falta um pouco ver o que hai no mapping.
-*** Melhorar o feedback e experiência nestas
-**** reler friend docs
-**** review friend sources um pouco para ver com certeza semantics e configuration points
- Partindo do que estiver usando eu (macros etc).
-***** friend/authenticate
-***** workflows/interactive-form
-****** login-failure-handler keyword arg
-****** redirect-on-auth? keyword arg
-***** friend/authorize
-****** realmente precisamos isto ou podemos empregar o ring wrapper?
-** CSRF
-*** refrescar-me em movidas de ring + compojure
-*** possivelmente deixar de usar compojure se me toca moito o caralho
+** seguinte task
+*** /quill ganha um botom "aplicar" ou "salvar"
+*** Quando clicamos "aplicar" ou "salvar", salvamos o texto para mostrar como Quem Somos
+**** quando clicamos, chamamos um endpoint do servidor
+***** ajax ou sente?
+****** já temos sente pronto, nom?
+Si, mais hai que mirar ligaçom com Friend.
+**** portanto, sacamos o texto de Quem Somos de datomic
+*** O formatting de /quill é o dumha página de nacional
+**** fonte deja vu, com Ubuntu para headers, etc.
+*** /quill é inicializado ao conteudo de Quem Somos
+**** que obtemos do web
+***** co default "(texto nom encontrado)"
+** images
+*** detectamos re de image codificada como base64
+*** extraemos a image e calculamos o sha
+*** se nom temos já esse sha guardado, guardamo-lo no servidor (ou na DB?)
+**** tem que ser na DB; nom podemos perder dados
+*** mudamos o tag para apontar ao sha
+*** no servidor sabemos servir esses shas directamente de datomic (com cache)
+** como editar "páginas gerais"
+É quill potente abondo? Se nom, outra opçom pode ser dar a opçom de editar raw HTML.
+
+Podo provar com quill; sempre estamos a tempo!
+
+Empregar quill para começar, mais pre-estilá-lo como corresponde a páginas da
+Semente e limitar formatos etc.
+** estrutura
+*** comum
+**** possível elemento sobre a barra para anúncios
+***** como decidimos quando está ativado?
+****** fazer algumha funçom no site de gestom para isso
+ Selecciona qual é o texto e onde liga.
+**** ligaçons às secçons
+***** quem somos / princípios / história / contato
+ Página estática. Editável por gente?
+*** nacional
+**** banner
+**** novas da associaçom nacional
+**** página principal
+Feita a mam, a partir de:
+***** texto a destacar (possibly nil)
+***** image a destacar (sempre algumha)
+***** novas nacional (um par delas)
+***** novas de comarcas (interleaved)
+***** Ligaçom máis... (pega 9 novas novas e acrescenta-as)
+**** quem somos
+Página geral
+**** princípios
+Página geral
+**** história
+Página geral
+**** recursos
+Página geral
+**** contato
+     Página geral
+**** associa-te
+Formuĺário: feito a mam
+*** em cada comarca hai
+**** principal
+Feita a mam, a partir dos últimos Novas e Dia a Dia
+**** quem somos
+**** o centro
+Página geral
+**** dia a dia
+Crónicas do que se passa nas aulas.
+**** novas
+Som novas do centro e a associaçom: eventos. etc.
+**** cursos e acampamentos
+É parte de "novas" ou outra secçom?
+**** contato
+Dados de contato do centro e de nacional.  Página geral.
+**** associa-te
+Leva à mesma secçom em nacional, ou temos associa-te ainda para cada centro?
+**** nacional
+Simplesmente leva a semente.gal.
 ** friend
 *** coordinaçom com Sente?
 Quem di que queira usar Sente at all?  Quem di que precise coordinar com friend?
@@ -26,80 +87,23 @@ temerário fechar-me essa porta.
 
 Mais estou realmente fechando-me essa porta?  Porque nom poderia furrular com
 Sente igual?
-**** roles
-***** admin-nacional
-***** admin-(compos|lugo|vigo|trasancos)
+*** roles
+**** admin 
+***** cria utentes, dá e tira roles de admin-* e editora-*
+**** admin-nacional
+***** pode criar utentes, dar/tirar rol de admin-nacional editora-nacional
+**** admin-(compos|lugo|vigo|trasancos)
+***** pode criar utentes, dar/tirar rol de (admin|editora)-(compos|lugo|vigo|trasancos)
+**** editora-nacional
+**** editora-(compos|lugo|trasancos|vigo)
 ** representaçom de texto/ediçom
 html para current version -- noHistory
 guardar edits em quill delta format
-** arquitetura
-Passar de diferenciar com umha variável de entorno dev vs prod.  Ter modo dev,
-que chama endpoint /dev, e desabilitá-lo se estamos em produçom. Ou ter toggle
-específico para isto.
-*** um endpoint para cada secçom
-Nom quero um SPA.
-**** refactorando elementos comuns a comum.cljc
-** tasks
-*** extraer markup a outro ns .cljc
-**** em development, importá-lo desde cljs para live reloading
-***** por enquanto, preocupar-me só com development
-**** em production, serví-lo desde clj
-*** centralizar/unificar css
-**** development vs production
-***** development
-Aqui quero feedback rápido. Quero poder manter umha janela aberta em todo
-momento e ver as mudanças sem hit refresh.
-
-Factor out movidas a .cljc? e carregar desde diferentes partes. Markup podo
-lê-lo com rum, sem problema. CSS podo injectá-lo directamente ou salvá-lo a um
-.css. Qual fazer pode depender de
-
-- Support de boot para watch certain files and output garden
-- Capacidade de switchear injeçom entre development e runtime
-
-Se a opçom de boot estiver disponível, seguramente seja máis fácil.
-
-***** production
-**** mesmo nos logos?
-***** tentar
-*** meter num grid
-**** fazer um elemento centrado que contenha todo
-** estrutura
-*** possível elemento sobre a barra para anúncios
-**** como decidimos quando está ativado?
-***** fazer algumha funçom no site de gestom para isso
-Selecciona qual é o texto e onde liga.
-*** ligaçons às secçons
-**** quem somos / princípios / história / contato
-Página estática. Editável por gente?
-**** recursos?
-Suponho que será página estática tamém.
-**** associa-te?
-*** cores?
-**** com gimp extraer os valores do doc de fernando
-*** fontes?
-**** manter Ubuntu enquanto nom tenha confirmaçom da nova
-Acho que el dizia que nom estava em webfonts, mais está (assegurar-me desde
-outro SO).
-** elementos a acrescentar
-*** jeito de meter arquivos
-**** markdown
-***** guardar como markdown, ou como html?
-****** o segundo permite layouts máis específicos
-****** o primeiro fai máis fácil editar
-**** meter datomic já, para guardá-los!
+ou guardar todo em html?
 ** mudanças estruturais
 *** elemento opcional por riba/baixo do cabeçalho
-*** que fontes temos?
 *** como flowam as movidas?
-** outras mudanças
-*** CSS grid
-*** reagent?
-Se me quero passar a Posh ou re-frame é importante. Mais nom permite rendering
-server-side?
-
-Tamém podo experimentar com ir fazendo eu algo parecido a re-frame. Talvez com
-subscripçons específicas a datomic?
+**** comprovar navegadores estreitos, mobile
 ** começar já coa lógica?
 Os dados vam, é claro, em datomic.  O conteúdo estático das secçons vai em
 Markdown ou html directamente em git.  Como assigno classes a movidas markdown?
@@ -119,6 +123,8 @@ https://github.com/benhowell/reagent-quill seems to be the ticket.
 **** conteúdos
 ***** gardados em datomic
 ***** markdown
+** procurar em página
+Brute force search of all current text?
 ** issues
 *** x quando entro texto na caixa de procura
-**** eliminá-lo ou estilá-lo?
+Ver de eliminá-lo

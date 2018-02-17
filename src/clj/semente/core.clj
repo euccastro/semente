@@ -38,6 +38,13 @@
                     :password (creds/hash-bcrypt "user_password")
                     :roles #{::user}}})
 
+(defmethod sente/client-msg-handler :semente/anova!
+  [{:keys [ring-req ?data ?reply-fn]}]
+  (println "got sumthing!")
+  (println ?data)
+  (when ?reply-fn
+    (?reply-fn {:blah :ok})))
+
 (defn pagina [req conteudos]
   {:status 200
    :headers {"content-type" "text/html"}
@@ -59,6 +66,7 @@
                  "();")]])})
 
 (defn quill-test []
+  (println "RETURNING QUILL")
   {:status 200
    :headers {"content-type" "text/html"}
    :body (rum/render-html
@@ -69,7 +77,8 @@
             [:link {:rel :stylesheet :href "/css/semente.css"}]
             [:link {:rel :stylesheet :href "/css/garden.css"}]]
            [:body
-            [:div#app_container "Wonderful things would happen here if you had Javascript enabled..."]]
+            [:div#app_container "Wonderful things would happen here if you had Javascript enabled..."]
+            [:button#apply_button {:type :button :hidden true} "Clica-me!"]]
            [:script {:type "text/javascript" :src "/js/main.js"}]
            [:script {:type "text/javascript"} "semente.core.quillmain();"]])})
 
@@ -167,7 +176,8 @@
                                          :login-failure-handler login-failure)]})
       (wrap-defaults site-defaults)))
 
-(if util/in-development?
+
+(when util/in-development?
   (sente/start-router!))
 
 (defn -main []

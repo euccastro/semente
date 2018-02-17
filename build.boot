@@ -49,7 +49,7 @@
      (test-cljs)))
 
 (deftask dev []
-  (comp (environ :env {:in-development "nah"})
+  (comp (environ :env {:in-development "indeed"})
      (serve :handler 'semente.core/app
             :resource-root "target"
             :httpkit true
@@ -59,8 +59,7 @@
      (garden :styles-var 'semente.styles/base
              :pretty-print true
              :output-to "public/css/garden.css")
-     (reload :on-jsload 'semente.core/devmain
-             ;; XXX: make this configurable
+     (reload ;; XXX: make this configurable
              :open-file "emacsclient -n +%s:%s %s")
      (cljs-repl)
      (cljs :source-map true :optimizations :none)

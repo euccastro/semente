@@ -48,6 +48,24 @@
 
 (defn ^:export quillmain []
   (enable-console-print!)
-  (println "now I would show quill!")
   ;; quil.root.innerHTML tem o raw HTML
-  (def quill (js/Quill. "#app_container" (clj->js quill-config))))
+  (def quill (js/Quill. "#app_container" (clj->js quill-config)))
+  (go
+    (sente/start-router!)
+    (println "init-chan returned" (<! sente/init-chan))
+    (close! sente/init-chan)
+    (let [button (js/document.getElementById "apply_button")]
+      (set! (.-hidden button) false)
+      (set! (.-onclick button)
+            (fn [_]
+              (let [text quill.root.innerHTML]
+                (println text)
+                (go
+                  (sente/send!
+                   [:semente/anova! text]
+                   10000
+                   (fn [ret]
+                     (if-not (cb-success? ret)
+                       (println "OOOOOH, erro" (pr-str ret))
+                       (println "SIIIII" (pr-str ret))))))))))))
+  
