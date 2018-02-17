@@ -6,12 +6,13 @@
             [cemerick.friend
              (workflows :as workflows)
              (credentials :as creds)]
-            [compojure.core :refer (defroutes ANY GET POST)]
+            [compojure.core :as compojure :refer (defroutes ANY GET POST)]
             [compojure.route :refer (files not-found resources)]
             [org.httpkit.server :as http-kit]
             [semente.nacional :refer (quem-somos principios)]
             [semente.sente :as sente]
             [semente.util :as util]
+            [ring.util.response]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer (wrap-defaults site-defaults api-defaults)]
             [ring.middleware.session :refer [wrap-session]]
@@ -89,14 +90,37 @@
              [:input {:name "password" :type :password}]
              [:input {:name "submit" :type "submit" :value "Manda!"}]]]])})
 
+(defn login-failure [_]
+  {:status 200
+   :headers {"content-type" "text/html"}
+   :body (rum/render-html
+          [:html
+           [:head [:title "Nom chas quero"]]
+           [:body
+            [:h1 "Nom chas quero nom chas quero"]
+            [:div "Que me podem fazer male"]]])})
+
+(defn missing-role-handler [_]
+  {:status 200
+   :headers {"content-type" "text/html"}
+   :body (rum/render-html
+          [:html
+           [:head [:title "Nom chas quero"]]
+           [:body
+            [:h1 "si si si"]
+            [:div "pero nom ti"]]])})
+
 (defn secreto [req]
   {:status 200
    :headers {"content-type" "text/html"}
    :body (rum/render-html
-          [:html [:body "olá!"]])})
+          [:html [:body "a palavra secreta é elefante!"]])})
 
+(defroutes secretas
+  (GET "/a-palavra-secreta" req (secreto req)))
 
 (defroutes handler
+  (compojure/context "/secreto" req (friend/wrap-authorize secretas #{::user}))
   (GET "/" req (pagina req (quem-somos (slurp (io/resource "quem-somos.html")))))
   (GET "/login" [] login)
   (GET "/secret" req (friend/authorize #{::admin} (secreto req)))
@@ -109,12 +133,21 @@
   (POST "/chsk" req sente/ring-ajax-post)
   (resources (if util/in-development? "/public" "/"))
   (files "/")
+  (friend/logout (ANY "/logout" req (ring.util.response/redirect "/")))
   (not-found "Not found"))
+
+(defn echo-resp [h]
+  (fn [req]
+    (let [resp (h req)]
+      (clojure.pprint/pprint resp)
+      resp)))
 
 (def app
   (-> handler
       (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn users)
-                            :workflows [(workflows/interactive-form)]})
+                            :unauthorized-handler missing-role-handler
+                            :workflows [(workflows/interactive-form
+                                         :login-failure-handler login-failure)]})
       (wrap-defaults site-defaults)))
 
 (if util/in-development?

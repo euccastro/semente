@@ -9,6 +9,7 @@
 ****** login-failure-handler keyword arg
 ****** redirect-on-auth? keyword arg
 ***** friend/authorize
+****** realmente precisamos isto ou podemos empregar o ring wrapper?
 ** CSRF
 *** refrescar-me em movidas de ring + compojure
 *** possivelmente deixar de usar compojure se me toca moito o caralho
