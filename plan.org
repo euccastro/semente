@@ -1,12 +1,18 @@
 * Novo web
 ** seguinte task
-*** /quill ganha um botom "aplicar" ou "salvar"
-*** Quando clicamos "aplicar" ou "salvar", salvamos o texto para mostrar como Quem Somos
-**** quando clicamos, chamamos um endpoint do servidor
-***** ajax ou sente?
-****** já temos sente pronto, nom?
-Si, mais hai que mirar ligaçom com Friend.
-**** portanto, sacamos o texto de Quem Somos de datomic
+*** Quando clicamos "aplicar" ou "salvar", salvamos o texto
+**** que schema?
+***** temos first-class representation de comarcas
+****** e despois :comarca/quem-somos?
+Co texto?  Ou algo máis?
+Ou first-class representation de secçons?  Mais entom como ligamos umha com outra?
+Nom: a first class representation da secçom é o keyword :semente.comarca/quem-somos
+**** onde guardamos o schema?
+Fai-nos falta um schema e um data-0 etc.
+**** como lhe passamos ao app os credenciais para anovar datomic etc?
+Mirar onde os tenho.  Passá-los em env vars, é claro.
+Ver documentaçom sobre isso
+*** Sacamos o texto de Quem Somos de datomic
 *** O formatting de /quill é o dumha página de nacional
 **** fonte deja vu, com Ubuntu para headers, etc.
 *** /quill é inicializado ao conteudo de Quem Somos
