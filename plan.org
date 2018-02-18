@@ -1,4 +1,16 @@
 * Novo web
+** como fago cos textos?
+*** tenho um document store
+**** guarda blobs keyed by filename (hash, actually)
+**** S3 em production
+**** in-mem em development?
+*** tenho umha base de dados
+Liga hashes de blobs a arquivos.
+**** Datomic Cloud em production
+**** In-mem em development
+     Pode realmente ser in-mem?  Sempre que se poida fazer datomic.client com ela está bem.
+*** Procura?  Indexing?
+No servidor web tenho todo cacheado em memória.
 ** seguinte task
 *** Quando clicamos "aplicar" ou "salvar", salvamos o texto
 **** que schema?
