@@ -2,6 +2,50 @@
 ** como guardo documentos, se hai limite 4k em datomic strings?
 *** subo a S3, content-addressed, e guardo o hash?
 *** os sub-recursos tenhem a ligaçom directa a S3.
+** implementar mock/real document store
+*** um :store-fn e :fetch-fn para publico e outro para privado?
+((-> x :public :store-fn) k v)
+*** como fago polymorphism entre mock e real?
+**** que interfaz tem?
+***** :store-fn (k v) -> nil
+Devolve umha funçom á qual podemos passar um elemento, guarda-o, e devolve-nos o
+hash com o qual recuperar o original.  Val-nos este interfaz?  Nom.  O chamante
+tem que poder ver se já temos o elemento, e nom guardá-lo nesse caso?  Ou fai
+isto a store?  O que importa, realmente?  Quero poder-lhe perguntar a datomic se
+temos já um elemento guardado com esse hash.
+***** :fetch-fn (k) -> v
+Devolve umha funçom à qual lhe podemos passar um hash e devolve-nos o elemento
+guardado com ele, ou nil se nom existir.
+**** opçom: simplesmente é um map
+((:store storage) "blahblehblih") -> hash
+((:fetch storage) hash) -> original contents
+***** pros
+****** simple
+****** low-tech
+***** cons
+****** ruidoso. importa-me?
+Nom moito.
+****** pode que nom idiomático? importa-me?
+Nom moito.
+****** Nom apreendo a usar protocolos e reify/etc.
+Melafunga.
+****** Menos expressivo e type-checked?
+Melafunga.
+*** mock: atom of dict ou algo
+Provar que furrula com isto.
+*** real: S3 (mirar como importar etc.)
+** como fago cos textos?
+*** tenho um document store
+**** guarda blobs keyed by filename (hash, actually)
+**** S3 em production
+**** in-mem em development?
+*** tenho umha base de dados
+Liga hashes de blobs a arquivos.
+**** Datomic Cloud em production
+**** In-mem em development
+     Pode realmente ser in-mem?  Sempre que se poida fazer datomic.client com ela está bem.
+*** Procura?  Indexing?
+No servidor web tenho todo cacheado em memória.
 ** seguinte task
 *** Quando clicamos "aplicar" ou "salvar", salvamos o texto
 **** que schema?

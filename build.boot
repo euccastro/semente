@@ -1,8 +1,10 @@
 (set-env!
  :source-paths #{"src/clj" "src/cljs" "src/cljc"}
  :resource-paths #{"res"}
- :dependencies '[[adzerk/boot-cljs "2.1.4" :scope "test"]
+ :dependencies '[[org.apache.httpcomponents/httpclient "4.5.5"]
+                 [adzerk/boot-cljs "2.1.4" :scope "test"]
                  [adzerk/boot-cljs-repl "0.3.3" :scope "test"]
+                 [amazonica "0.3.119"]
                  ;; We don't use 1.3.2-1 because of
                  ;; https://github.com/martinklepsch/boot-garden/issues/25
                  [org.martinklepsch/boot-garden "1.3.2-0"]
@@ -16,6 +18,7 @@
                  ;; using the alpha because that's the version of the API docs
                  ;; in their website.
                  [com.andrewmcveigh/cljs-time "0.5.0-alpha2"]
+                 [digest "1.4.6"]
                  [org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.946"]
                  [compojure "1.4.0"]
