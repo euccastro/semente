@@ -1,4 +1,7 @@
 * Novo web
+** como guardo documentos, se hai limite 4k em datomic strings?
+*** subo a S3, content-addressed, e guardo o hash?
+*** os sub-recursos tenhem a ligaçom directa a S3.
 ** seguinte task
 *** Quando clicamos "aplicar" ou "salvar", salvamos o texto
 **** que schema?
