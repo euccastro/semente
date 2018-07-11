@@ -1,0 +1,218 @@
+body {
+  font-size: 100%;
+  font-family: dejavu_serif, serif;
+}
+
+h1 {
+  color: #a39b00;
+  font-family: Ubuntu, sans-serif;
+}
+
+a:link {
+  text-decoration: none;
+  color: #0091a2;
+}
+
+.navitem {
+  flex-grow: 1;
+  font-size: 80%;
+  padding: 0.5em 0.5em;
+  text-align: center;
+}
+
+a.navitem:link {
+  color: #0091a2;
+}
+
+a.navitem:visited {
+  color: #0091a2;
+}
+
+a.navitem:hover {
+  color: white;
+  background-color: #0091a2;
+}
+
+a.navitem:active {
+  color: #a39b00;
+  background-color: white;
+}
+
+a.social {
+  text-align: center;
+  border-radius: 4px;
+  margin: ipx 2px;
+  padding: 3px;
+}
+
+a.social:hover {
+  background-color: #0091a2;
+}
+
+a.social:active {
+  background-color: white;
+}
+
+svg.socialsvg {
+  width: 24px;
+  height: 24px;
+  text-align: center;
+}
+
+a svg:hover path.socialpath {
+  fill: white;
+}
+
+a svg:active path.socialpath {
+  fill: #a39b00;
+}
+
+footer div.barra {
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 0.5rem 5% 0rem 5%;
+  background-color: #e2e2e2;
+}
+
+footer img {
+  background-color: #e2e2e2;
+  height: 2.5rem;
+}
+
+.quemsomosimg {
+  padding: 0.7em 1.2em 2em 1.2em;
+}
+
+.ondetou {
+  background-color: white;
+  color: #0091a2;
+  font-weight: bold;
+}
+
+#fondo {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  flex-direction: column;
+  align-items: center;
+  background-color: #cfeeef;
+}
+
+#caixa-central {
+  flex: 1 1 960px;
+  width: 100%;
+  margin: 0;
+  max-width: 960px;
+  background-color: white;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #676868;
+}
+
+header {
+  display: flex;
+  padding: 10px 40px;
+  justify-content: left;
+  align-items: flex-end;
+}
+
+#logo-semente {
+  width: 300px;
+  height: 100px;
+}
+
+#pai-iconos-e-procura {
+  display: flex;
+  width: 70%;
+  padding: 0em 0em 0em 0em;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+#caixa-procura-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0;
+  margin-right: 10;
+}
+
+#caixa-procura-div {
+  vertical-align: middle;
+  width: 200;
+  position: relative;
+}
+
+#caixa-procura-input {
+  appearance: none;
+  width: 100%;
+  font-family: Ubuntu, sans-serif;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  padding: 4px 24px 4px 10px;
+  outline: none;
+  font-size: 80%;
+  background-color: #e2e2e2;
+  border-radius: 100px;
+  transition: box-shadow 0.2s ease-in-out;
+  color: #0091a2;
+}
+
+#caixa-procura-input:hover {
+  box-shadow: inset 0 0 0 1px #0091a2;
+}
+
+#caixa-procura-input:focus {
+  box-shadow: inset 0 0 0 1px #a39b00;
+}
+
+#botom-procura {
+  appearance: none;
+  width: 24;
+  height: 18;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  position: absolute;
+  z-index: 1;
+  background: none;
+  left: 173;
+}
+
+#icono-procura {
+  margin: 2px 0px 0px 0px;
+}
+
+#fondo-navegacom {
+  color: #0091a2;
+  background-color: #e2e2e2;
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+#paddings-corpo {
+  flex-grow: 5;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+  font-size: 90%;
+}
+
+#contedor-texto-pe {
+  font-size: small;
+  font-weight: light;
+  color: #a39b00;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+a {
+  color: #0091a2;
+}

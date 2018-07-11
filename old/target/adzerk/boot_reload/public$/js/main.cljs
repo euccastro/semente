@@ -1,0 +1,2 @@
+(ns adzerk.boot-reload.public$.js.main (:require [adzerk.boot-reload.client :as client] semente.core))
+(client/connect "ws://localhost:35846" {:ws-host nil, :asset-host nil, :on-jsload (fn* [] (semente.core/devmain))})
