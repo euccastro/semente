@@ -1,0 +1,16 @@
+{:allow [;; transaction functions
+
+         ;; query functions
+
+         ;; lambda handlers
+
+         ;; web applications
+         semente.core/webroot
+         ]
+
+ :lambdas {:webroot
+           {:fn semente.core/webroot
+            :integration :api-gateway/proxy
+            :description "Ponto de entrada da web"}}
+
+ :app-name "deitomique"}

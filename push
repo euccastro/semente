@@ -1,0 +1,3 @@
+#!/bin/bash
+
+clojure -A:dev -m datomic.ion.dev '{:op :push}'
