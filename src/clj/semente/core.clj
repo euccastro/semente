@@ -6,10 +6,14 @@
    [clojure.pprint :as pp]
    [datomic.client.api :as d]
    [datomic.ion.lambda.api-gateway :as apigw]
-   [cemerick.friend :as friend]
-   [cemerick.friend.workflows :as wflows]
-   [cemerick.friend.credentials :as creds]
-   [ring.middleware.defaults :refer (wrap-defaults site-defaults)]))
+   ;; [cemerick.friend :as friend]
+   ;; [cemerick.friend.workflows :as wflows]
+   ;; [cemerick.friend.credentials :as creds]
+   [ring.middleware.keyword-params :refer (wrap-keyword-params)]
+   [ring.middleware.params :refer (wrap-params)]
+   [ring.middleware.session :refer (wrap-session)]
+   [ring.middleware.session.cookie :refer (cookie-store)]
+   [clojure.string :as str]))
 
 (def get-conn
   (memoize #(d/connect
@@ -21,26 +25,88 @@
                         :proxy-port 8182})
              {:db-name "semente"})))
 
-(def users {"root" {:username "root"
-                    :password (creds/hash-bcrypt "admin_password")
-                    :roles #{::admin}}
-            "jane" {:username "jane"
-                    :password (creds/hash-bcrypt "user_password")
-                    :roles #{::user}}})
+(comment
+  (def users {"root" {:username "root"
+                      :password (creds/hash-bcrypt "admin_password")
+                      :roles #{::admin}}
+              "jane" {:username "jane"
+                      :password (creds/hash-bcrypt "user_password")
+                      :roles #{::user}}}))
 
 (defn ring-handler
-  [{:keys [headers body uri]}]
-  (friend/authorize #{::admin}
-                    {:status 200
-                     :headers {"Content-Type" "text/plain"}
-                     :body (str "Olá " uri "!")}
-                    "Admin page"))
+  [{:keys [headers body uri params session]}]
+  (let [count (get session :counter 0)]
+    {:status 200
+     :headers {"Content-Type" "text/plain"}
+     :body (str "Olá " count "!")
+     :session (assoc session :counter (inc count))}))
+
+
+(defn extract-nonletters [s]
+  (filter (fn [[_ c]] (= (str/lower-case c) (str/upper-case c)))
+          (map-indexed vector s)))
+
+(defn reinsert-chars* [accum src last-i pairs]
+  (if (empty? pairs)
+    (concat accum src)
+    (let [[i c] (first pairs)
+          [before after] (split-at (- i last-i) src)]
+      (recur (concat accum before [c])
+             after
+             i
+             (rest pairs)))))
+
+(defn reinsert-chars [s pairs]
+  (reinsert-chars* '() s 0 pairs))
+
+(defn warp-letters-case [n s]
+  (when (<= (Math/pow 2 (count s)) n)
+    ;; XXX try adding spaces?
+    (throw (RuntimeException. "Not enough characters!")))
+  (map-indexed
+   (fn [i c]
+     ((if (= 0 (bit-and n (bit-shift-left 1 i)))
+        str/lower-case
+        str/upper-case)
+      c))
+   s))
+
+(defn warp-case [n s]
+  (let [nonletters (extract-nonletters s)
+        letters (remove (into #{} (map second nonletters)) s)
+        warped-letters (warp-letters-case n letters)]
+    (apply str (reinsert-chars warped-letters nonletters))))
+
+(defn expand-header [xf]
+  (fn
+    ([] (xf))
+    ([result] (xf result))
+    ([result [k v :as input]]
+     (if (string? v)
+       (xf result input)
+       (reduce xf result (map-indexed (fn [i s] [(warp-case i k) s]) v))))))
+
+(defn expand-headers
+  [handler]
+  (fn [req]
+    (update (handler req) :headers #(into {} expand-header %))))
 
 (def ring-app
   (-> ring-handler
-      (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn users)
-                            :workflows [(wflows/interactive-form)]})
-      (wrap-defaults site-defaults)))
+      (wrap-session {:store (cookie-store {:key "a 16-byte secret"})})
+      expand-headers
+      wrap-keyword-params
+      wrap-params))
+
+(comment
+  (def ring-app
+    (-> ring-handler
+        (wrap-defaults site-defaults)))
+  (def ring-app
+    (-> ring-handler
+        (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn users)
+                              :workflows [(wflows/interactive-form)]})
+        (wrap-defaults site-defaults))))
 
 (def webroot (apigw/ionize ring-app))
 
@@ -51,4 +117,6 @@
              :scheme :http
              :request-method :get
              :headers {}
-             :remote-addr "8.1.2.3"}))
+             :remote-addr "8.1.2.3"})
+
+  )
