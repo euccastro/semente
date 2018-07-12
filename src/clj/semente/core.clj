@@ -33,13 +33,21 @@
                       :password (creds/hash-bcrypt "user_password")
                       :roles #{::user}}}))
 
+
+(def log (atom []))
+
 (defn ring-handler
   [{:keys [headers body uri params session]}]
-  (let [count (get session :counter 0)]
-    {:status 200
-     :headers {"Content-Type" "text/plain"}
-     :body (str "Olá " count "!")
-     :session (assoc session :counter (inc count))}))
+  (if (= uri "/favicon.ico")
+    {:status 404
+     :body "Not found!"}
+    (do
+      (swap! log conj uri)
+      (let [count (get session :counter 0)]
+        {:status 200
+         :headers {"Content-Type" "text/plain"}
+         :body (str "Olá " count "-" (pr-str @log) "!")
+         :session (assoc session :counter (inc count))}))))
 
 
 (defn extract-nonletters [s]
@@ -56,7 +64,8 @@
              (+ i 1)
              (rest pairs)))))
 
-(defn reinsert-chars [s pairs]
+
+(defn reinsert-chars [pairs s]
   (reinsert-chars* '() s 0 pairs))
 
 (defn warp-letters-case [n s]
@@ -71,16 +80,6 @@
       c))
    s))
 
-(defn warp-case [n s]
-  (let [nonletters (extract-nonletters s)
-        letters (remove (into #{} (map second nonletters)) s)
-        warped-letters (warp-letters-case n letters)]
-    (apply str (reinsert-chars warped-letters nonletters))))
-
-(comment
-  (extract-nonletters "abcd-efgh-ijkl-mnop-qrst-uvwx")
-  (warp-case 1 "abcd-efgh-ijkl-mnop-qrst-uvwx"))
-
 (defn expand-header [xf]
   (fn
     ([] (xf))
@@ -88,7 +87,14 @@
     ([result [k v :as input]]
      (if (string? v)
        (xf result input)
-       (reduce xf result (map-indexed (fn [i s] [(warp-case i k) s]) v))))))
+       (let [nonletters (extract-nonletters k)
+             letters (remove (into #{} (map second nonletters)) k)
+             warp-case (fn [n]
+                         (->> letters
+                              (warp-letters-case n)
+                              (reinsert-chars nonletters)
+                              (apply str)))]
+         (reduce xf result (map-indexed (fn [i s] [(warp-case i) s]) v)))))))
 
 (defn expand-headers
   [handler]
@@ -98,9 +104,9 @@
 (def ring-app
   (-> ring-handler
       (wrap-session {:store (cookie-store {:key "a 16-byte secret"})})
-      expand-headers
       wrap-keyword-params
-      wrap-params))
+      wrap-params
+      expand-headers))
 
 (comment
   (def ring-app
