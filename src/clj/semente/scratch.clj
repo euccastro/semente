@@ -102,3 +102,11 @@
          [?u :user/name ?n]]
        (d/db conn)))
 *1
+
+{:server-port 8080
+ :server-name "127.0.0.1"
+ :uri "semente.gal/prova"
+ :scheme :http
+ :request-method :get
+ :headers {}
+ :remote-addr "8.1.2.3"}
