@@ -13,7 +13,8 @@
    [ring.middleware.params :refer (wrap-params)]
    [ring.middleware.session :refer (wrap-session)]
    [ring.middleware.session.cookie :refer (cookie-store)]
-   [clojure.string :as str]))
+   [clojure.string :as str]
+   [net.icbink.expand-headers.core :refer (wrap-expand-headers)]))
 
 (def get-conn
   (memoize #(d/connect
@@ -33,7 +34,6 @@
                       :password (creds/hash-bcrypt "user_password")
                       :roles #{::user}}}))
 
-
 (def log (atom []))
 
 (defn ring-handler
@@ -45,68 +45,17 @@
       (swap! log conj uri)
       (let [count (get session :counter 0)]
         {:status 200
-         :headers {"Content-Type" "text/plain"}
+         :headers {"Content-Type" "text/plain"
+                   "p-ro-va-heaDers" ["a" "b" "c" "d" "e"]}
          :body (str "Olá " count "-" (pr-str @log) "!")
          :session (assoc session :counter (inc count))}))))
-
-
-(defn extract-nonletters [s]
-  (filter (fn [[_ c]] (= (str/lower-case c) (str/upper-case c)))
-          (map-indexed vector s)))
-
-(defn reinsert-chars* [accum src i0 pairs]
-  (if (empty? pairs)
-    (concat accum src)
-    (let [[i c] (first pairs)
-          [before after] (split-at (- i i0) src)]
-      (recur (concat accum before [c])
-             after
-             (+ i 1)
-             (rest pairs)))))
-
-
-(defn reinsert-chars [pairs s]
-  (reinsert-chars* '() s 0 pairs))
-
-(defn warp-letters-case [n s]
-  (when (<= (Math/pow 2 (count s)) n)
-    ;; XXX try adding spaces?
-    (throw (RuntimeException. "Not enough characters!")))
-  (map-indexed
-   (fn [i c]
-     ((if (= 0 (bit-and n (bit-shift-left 1 i)))
-        str/lower-case
-        str/upper-case)
-      c))
-   s))
-
-(defn expand-header [xf]
-  (fn
-    ([] (xf))
-    ([result] (xf result))
-    ([result [k v :as input]]
-     (if (string? v)
-       (xf result input)
-       (let [nonletters (extract-nonletters k)
-             letters (remove (into #{} (map second nonletters)) k)
-             warp-case (fn [n]
-                         (->> letters
-                              (warp-letters-case n)
-                              (reinsert-chars nonletters)
-                              (apply str)))]
-         (reduce xf result (map-indexed (fn [i s] [(warp-case i) s]) v)))))))
-
-(defn expand-headers
-  [handler]
-  (fn [req]
-    (update (handler req) :headers #(into {} expand-header %))))
 
 (def ring-app
   (-> ring-handler
       (wrap-session {:store (cookie-store {:key "a 16-byte secret"})})
       wrap-keyword-params
       wrap-params
-      expand-headers))
+      wrap-expand-headers))
 
 (comment
   (def ring-app
