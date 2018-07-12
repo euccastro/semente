@@ -46,14 +46,14 @@
   (filter (fn [[_ c]] (= (str/lower-case c) (str/upper-case c)))
           (map-indexed vector s)))
 
-(defn reinsert-chars* [accum src last-i pairs]
+(defn reinsert-chars* [accum src i0 pairs]
   (if (empty? pairs)
     (concat accum src)
     (let [[i c] (first pairs)
-          [before after] (split-at (- i last-i) src)]
+          [before after] (split-at (- i i0) src)]
       (recur (concat accum before [c])
              after
-             i
+             (+ i 1)
              (rest pairs)))))
 
 (defn reinsert-chars [s pairs]
@@ -76,6 +76,10 @@
         letters (remove (into #{} (map second nonletters)) s)
         warped-letters (warp-letters-case n letters)]
     (apply str (reinsert-chars warped-letters nonletters))))
+
+(comment
+  (extract-nonletters "abcd-efgh-ijkl-mnop-qrst-uvwx")
+  (warp-case 1 "abcd-efgh-ijkl-mnop-qrst-uvwx"))
 
 (defn expand-header [xf]
   (fn
