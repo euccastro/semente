@@ -6,7 +6,7 @@
    [clojure.pprint :as pp]
    [datomic.client.api :as d]
    [datomic.ion.lambda.api-gateway :as apigw]
-   ;; [cemerick.friend :as friend]
+   [cemerick.friend :as friend]
    ;; [cemerick.friend.workflows :as wflows]
    ;; [cemerick.friend.credentials :as creds]
    [ring.middleware.keyword-params :refer (wrap-keyword-params)]
@@ -50,11 +50,19 @@
          :body (str "Olá " count "-" (pr-str @log) "!")
          :session (assoc session :counter (inc count))}))))
 
+(defn dup [xs]
+  (conj xs (first xs)))
+
+(defn wrap-add-cookie [handler]
+  (fn [req]
+    (update-in (handler req) [:headers "Set-Cookie"] dup)))
+
 (def ring-app
   (-> ring-handler
       (wrap-session {:store (cookie-store {:key "a 16-byte secret"})})
       wrap-keyword-params
       wrap-params
+      wrap-add-cookie
       wrap-expand-headers))
 
 (comment
@@ -70,12 +78,15 @@
 (def webroot (apigw/ionize ring-app))
 
 (comment
-  (ring-app {:server-port 8088
-             :server-name "127.0.0.1"
-             :uri "http://semente.gal/ola"
-             :scheme :http
-             :request-method :get
-             :headers {}
-             :remote-addr "8.1.2.3"})
+  (clojure.pprint/pprint
+   (ring-app {:server-port 8088
+              :server-name "127.0.0.1"
+              :uri "http://semente.gal/ola"
+              :scheme :http
+              :request-method :get
+              :headers {}
+              :remote-addr "8.1.2.3"})
+
+   )
 
   )

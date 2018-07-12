@@ -52,7 +52,8 @@ def run():
             pprint(ef.loads(e.output))
             continue
         print status_out
-        if status_out == '{:deploy-status "SUCCEEDED", :code-deploy-status "SUCCEEDED"}\n':
+        if ef.loads(status_out) == {ef.Keyword('deploy-status'): "SUCCEEDED",
+                                    ef.Keyword('code-deploy-status'): "SUCCEEDED"}:
             break
 
     print "testing..."

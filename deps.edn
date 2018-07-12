@@ -1,12 +1,15 @@
 {:paths ["src/clj" "resources"]
- :deps {com.datomic/ion {:mvn/version "0.9.7"}
+ :deps {com.datomic/ion {:mvn/version "0.9.16"}
         org.clojure/data.json {:mvn/version "0.2.6"}
         org.clojure/clojure {:mvn/version "1.9.0"}
         ring/ring-defaults {:mvn/version "0.3.2"}
+        slingshot {:mvn/version "0.12.2"}
+        org.clojure/data.priority-map {:mvn/version "0.0.7"}
+        org.clojure/core.cache {:mvn/version "0.6.5"}
+        com.cemerick/friend {:mvn/version "0.2.3"}
         net.icbink/expand-headers {:git/url "https://github.com/euccastro/expand-headers.git"
                                    :sha "b2b0364422d71b8f233148942618b7b16da38ecf"}}
  :mvn/repos {"datomic-cloud" {:url "s3://datomic-releases-1fc2183a/maven/releases"}}
  :aliases
  {:dev {:extra-deps {com.datomic/client-cloud {:mvn/version "0.8.54"}
-                     com.datomic/ion-dev {:mvn/version "0.9.160"}}}}}
-
+                     com.datomic/ion-dev {:mvn/version "0.9.175"}}}}}
