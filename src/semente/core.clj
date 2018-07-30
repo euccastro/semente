@@ -39,6 +39,10 @@
     {:status 200
      :headers {"Content-Type" "text/html"}
      :body (rum/render-static-markup (login-form))}
+    (.startsWith uri "/edit/")
+    {:status 200
+     :headers {"Content-Type" "text/html"}
+     :body (str "Aqui é onde editarias " (subs uri (count "/edit/")))}
     (friend/authorized? #{::admin ::user} friend/*identity*)
     {:status 200
      :headers {"Content-Type" "text/plain"}
@@ -46,7 +50,7 @@
     :else
     {:status 200
      :headers {"Content-Type" "text/plain"}
-     :body "Olá plebeio! 7"}))
+     :body (str "Olá plebeio! 7" uri)}))
 
 (def ring-app
   (-> ring-handler
