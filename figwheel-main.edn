@@ -1,0 +1,4 @@
+{:watch-dirs ["src"]
+ :rebel-readline false
+ :open-file-command "emacsclient"
+ :ring-handler semente.core/ring-app}
