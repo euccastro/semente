@@ -1,5 +1,7 @@
 (ns semente.core
   (:require
+   [compojure.core :refer (defroutes GET)]
+   [compojure.route :refer (resources not-found)]
    [datomic.ion.lambda.api-gateway :as apigw]
    [cemerick.friend :as friend]
    [cemerick.friend.workflows :as wflows]
@@ -32,25 +34,45 @@
      [:div
       [:input {:type "submit"}]]]]])
 
-(defn ring-handler
-  [{:keys [headers request-method body uri params session]}]
-  (cond
-    (and (= request-method :get) (= uri "/login"))
-    {:status 200
-     :headers {"Content-Type" "text/html"}
-     :body (rum/render-static-markup (login-form))}
-    (.startsWith uri "/edit/")
-    {:status 200
-     :headers {"Content-Type" "text/html"}
-     :body (str "Aqui é onde editarias " (subs uri (count "/edit/")))}
-    (friend/authorized? #{::admin ::user} friend/*identity*)
-    {:status 200
-     :headers {"Content-Type" "text/plain"}
-     :body "Olá amo! 3"}
-    :else
-    {:status 200
-     :headers {"Content-Type" "text/plain"}
-     :body (str "Olá plebeio! 7" uri)}))
+(rum/defc edit [doc-name]
+  [:html
+   [:head
+    [:link {:rel "stylesheet" :type "text/css" :href "/css/Draft.css"}]]
+   [:body
+    [:#app "Aqui iriam as tuas movidorras."]
+    [:script {:src "/cljs-out/dev-main.js" :type "text/javascript"}]
+    [:script {:type "text/javascript"  :dangerouslySetInnerHTML {:__html (str "semente.webmain.main(\"" doc-name "\");")}}]]])
+
+(comment
+  (defn ring-handler
+    [{:keys [headers request-method body uri params session]}]
+    (cond
+      (and (= request-method :get) (= uri "/login"))
+      {:status 200
+       :headers {"Content-Type" "text/html"}
+       :body (rum/render-static-markup (login-form))}
+      (.startsWith uri "/edit/")
+      {:status 200
+       :headers {"Content-Type" "text/html"}
+       :body (rum/render-static-markup (edit (subs uri (count "/edit/"))))})))
+
+(defroutes ring-handler
+  (GET "/prova" [] "Olá!")
+  (GET "/edit/:id" [id] (rum/render-static-markup (edit id)))
+  (resources "/")
+  (not-found "U-lo?"))
+
+(comment
+  ;; auth stuff
+  (friend/authorized? #{::admin ::user} friend/*identity*)
+  {:status 200
+   :headers {"Content-Type" "text/plain"}
+   :body "Olá amo! 3"}
+  :else
+  {:status 200
+   :headers {"Content-Type" "text/plain"}
+   :body (str "Olá plebeio! 7" uri)}
+  )
 
 (def ring-app
   (-> ring-handler

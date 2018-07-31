@@ -14,13 +14,6 @@
                     (.forceUpdate (:rum/react-component state)))
         raw-contents (js/Draft.convertToRaw (.getCurrentContent @editor-state-atom))]
     [:div
-     [:div
-      [:button {:on-click (fn [e]
-                            (on-change (.toggleInlineStyle
-                                        js/Draft.RichUtils
-                                        @editor-state-atom
-                                        "BOLD")))}
-       "Clica-me!"]]
      [:div {:style {:border "1px solid black"}}
       (js/React.createElement
        js/Draft.Editor
@@ -41,8 +34,16 @@
                                                      nil
                                                      2)]]]))
 
-(defn ^:after-load reload []
-  (rum/mount (stateful) (.getElementById js/document "app")))
 
-(defn main []
+(rum/defcs edit-page [name]
+  [:div [:h2 name]]
+  (stateful))
+
+(declare +section+)
+
+(defn ^:after-load reload []
+  (rum/mount (edit-page +section+) (.getElementById js/document "app")))
+
+(defn main [section]
+  (defonce +section+ section)
   (reload))
