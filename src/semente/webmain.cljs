@@ -8,7 +8,7 @@
 ;; I probably want to add this to the state on creation or will-mount.
 (def editor-state-atom (atom (.createEmpty js/Draft.EditorState)))
 
-(rum/defcs stateful [state]
+(rum/defcs editor [state name]
   (let [on-change (fn [editor-state]
                     (reset! editor-state-atom editor-state)
                     (.forceUpdate (:rum/react-component state)))
@@ -29,14 +29,17 @@
                                          (on-change new-state)
                                          "handled")
                                        "not-handled"))}))]
-     [:div {:style {:padding 20}} [:pre (.stringify js/JSON
-                                                     raw-contents
-                                                     nil
-                                                     2)]]]))
+     [:div {:style {:padding 12}}
+      [:button {:on-click (fn [e] (js/alert "yes"))} "Guardar"]]
+     [:div {:style {:padding 12}}
+      [:pre (.stringify js/JSON
+                        raw-contents
+                        nil
+                        2)]]]))
 
 
 (rum/defc edit-page [name]
-  [:div [:h2 name] (stateful)])
+  [:div [:h2 name] (editor name)])
 
 (declare +section+)
 
