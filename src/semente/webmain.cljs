@@ -1,12 +1,19 @@
 (ns ^:figwheel-hooks semente.webmain
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require cljsjs.draft-js
-            [rum.core :as rum]))
+            [rum.core :as rum]
+            [cljs-http.client :as http]
+            [cljs.core.async :refer [<!]]))
 
 ;; XXX: only works well with a single editor. I really want to attach it to the
 ;; state but not make it a local stateful thing, since I'm rendering immediately
 ;; when this changes (on-change)
 ;; I probably want to add this to the state on creation or will-mount.
 (def editor-state-atom (atom (.createEmpty js/Draft.EditorState)))
+
+(defn save-doc [name contents]
+  (go (println (<! (http/post "http://localhost:9500/guarda"
+                              {:form-params {:name name :contents contents}})))))
 
 (rum/defcs editor [state name]
   (let [on-change (fn [editor-state]
@@ -30,7 +37,7 @@
                                          "handled")
                                        "not-handled"))}))]
      [:div {:style {:padding 12}}
-      [:button {:on-click (fn [e] (js/alert "yes"))} "Guardar"]]
+      [:button {:on-click (fn [e] (save-doc name (.stringify js/JSON raw-contents)))} "Guardar"]]
      [:div {:style {:padding 12}}
       [:pre (.stringify js/JSON
                         raw-contents

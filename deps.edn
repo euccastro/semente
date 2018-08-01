@@ -1,5 +1,8 @@
 {:paths ["src" "resources"]
- :deps {cljsjs/draft-js {:mvn/version "0.10.5-0"}
+ :deps {;cc.qbits/spandex {:mvn/version "0.6.4"}
+        clj-http {:mvn/version "3.9.1"}
+        cljs-http {:mvn/version "0.1.45"}
+        cljsjs/draft-js {:mvn/version "0.10.5-0"}
         cljsjs/react {:mvn/version "16.4.1-0"}
         cljsjs/react-dom {:mvn/version "16.4.1-0"}
         com.cemerick/friend {:mvn/version "0.2.3"}

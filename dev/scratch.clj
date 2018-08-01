@@ -1,3 +1,42 @@
+(require '[qbits.spandex :as sp])
+
+(require '[clojure.data.json :as json])
+
+(def c (sp/client {:hosts ["https://search-semente-mbk7y7yizywtxbov5s64to2gdm.eu-central-1.es.amazonaws.com"]}))
+
+(sp/request c {:method :get})
+
+(in-ns user)
+
+(def es "https://search-semente-mbk7y7yizywtxbov5s64to2gdm.eu-central-1.es.amazonaws.com")
+(require '[clj-http.client :as client])
+
+(print (:body (client/put (str es "/edits/_doc/xyz?pretty") {:body "{\"a\": \"hello\"}"
+                                                             :content-type "application/json"})))
+
+
+(print (:body (client/get (str es "/edits/_doc/xyz?pretty"))))
+
+(defn doc-url [name]
+  (str es "/edits/_doc/" name))
+
+(defn save-doc [name contents]
+  (client/put (doc-url name)
+              {:body (json/write-str contents)
+               :content-type "application/json"}))
+
+(defn load-doc [name]
+  (-> name
+      doc-url
+      client/get
+      :body
+      json/read-str
+      (get "_source")))
+
+(load-doc "xyz")
+
+;; ----------------
+
 (ns semente.scratch
   (:require [datomic.client.api :as d]))
 

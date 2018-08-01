@@ -1,6 +1,6 @@
 (ns semente.core
   (:require
-   [compojure.core :refer (defroutes GET)]
+   [compojure.core :refer (defroutes GET POST)]
    [compojure.route :refer (resources not-found)]
    [datomic.ion.lambda.api-gateway :as apigw]
    [cemerick.friend :as friend]
@@ -57,6 +57,8 @@
        :body (rum/render-static-markup (edit (subs uri (count "/edit/"))))})))
 
 (defroutes ring-handler
+  (POST "/guarda" [name contents]
+        (println "Agora guardaria" name contents))
   (GET "/prova" [] "Olá!")
   (GET "/edit/:id" [id] (rum/render-static-markup (edit id)))
   (resources "/")
