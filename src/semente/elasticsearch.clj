@@ -13,17 +13,21 @@
              :content-type "application/json"}))
 
 (defn load-doc [name]
-  (-> name
-      doc-url
-      http/get
-      :body
-      json/read-str
-      (get "_source")))
+  (try
+    (-> name
+        doc-url
+        http/get
+        :body
+        json/read-str
+        (get "_source"))
+    (catch Exception e nil)))
 
 (comment
 
   (save-doc "xyzzy" {:corpo "nunca"})
 
   (load-doc "xyzzy")
+
+  (load-doc "not-there")
 
   )

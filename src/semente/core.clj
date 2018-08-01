@@ -1,18 +1,19 @@
 (ns semente.core
-  (:require
-   [compojure.core :refer (defroutes GET POST)]
-   [compojure.route :refer (resources not-found)]
-   [datomic.ion.lambda.api-gateway :as apigw]
-   [cemerick.friend :as friend]
-   [cemerick.friend.workflows :as wflows]
-   [cemerick.friend.credentials :as creds]
-   [ring.middleware.keyword-params :refer (wrap-keyword-params)]
-   [ring.middleware.params :refer (wrap-params)]
-   [ring.middleware.session :refer (wrap-session)]
-   [ring.middleware.session.cookie :refer (cookie-store)]
-   [clojure.string :as str]
-   [net.icbink.expand-headers.core :refer (wrap-expand-headers)]
-   [rum.core :as rum]))
+  (:require [cemerick.friend :as friend]
+            [cemerick.friend.workflows :as wflows]
+            [cemerick.friend.credentials :as creds]
+            [clojure.string :as str]
+            [compojure.core :refer (defroutes GET POST)]
+            [compojure.route :refer (resources not-found)]
+            [datomic.ion.lambda.api-gateway :as apigw]
+            [net.icbink.expand-headers.core :refer (wrap-expand-headers)]
+            [ring.middleware.keyword-params :refer (wrap-keyword-params)]
+            [ring.middleware.params :refer (wrap-params)]
+            [ring.middleware.session :refer (wrap-session)]
+            [ring.middleware.session.cookie :refer (cookie-store)]
+            [rum.core :as rum]
+            [semente.elasticsearch :as es]
+            [clojure.data.json :as json]))
 
 (def users {"root" {:username "root"
                     :password (creds/hash-bcrypt "admin_password")
@@ -34,38 +35,35 @@
      [:div
       [:input {:type "submit"}]]]]])
 
-(rum/defc edit [doc-name]
+(rum/defc edit [doc-name contents]
   [:html
    [:head
     [:link {:rel "stylesheet" :type "text/css" :href "/css/Draft.css"}]]
    [:body
     [:#app "Aqui iriam as tuas movidorras."]
     [:script {:src "/cljs-out/dev-main.js" :type "text/javascript"}]
-    [:script {:type "text/javascript"  :dangerouslySetInnerHTML {:__html (str "semente.webmain.main(\"" doc-name "\");")}}]]])
-
-(comment
-  (defn ring-handler
-    [{:keys [headers request-method body uri params session]}]
-    (cond
-      (and (= request-method :get) (= uri "/login"))
-      {:status 200
-       :headers {"Content-Type" "text/html"}
-       :body (rum/render-static-markup (login-form))}
-      (.startsWith uri "/edit/")
-      {:status 200
-       :headers {"Content-Type" "text/html"}
-       :body (rum/render-static-markup (edit (subs uri (count "/edit/"))))})))
+    [:script {:type "text/javascript"
+              :dangerouslySetInnerHTML {:__html
+                                        (str "semente.webmain.main("
+                                             (pr-str doc-name)
+                                             ", "
+                                             (or contents "null")
+                                             ");")}}]]])
 
 (defroutes ring-handler
   (POST "/guarda" [name contents]
-        (println "Agora guardaria" name contents))
+        (es/save-doc name {:contents contents}))
   (GET "/prova" [] "Olá!")
-  (GET "/edit/:id" [id] (rum/render-static-markup (edit id)))
+  (GET "/edit/:id" [id] (rum/render-static-markup (edit id (get (es/load-doc id) "contents"))))
   (resources "/")
   (not-found "U-lo?"))
 
 (comment
   ;; auth stuff
+  (and (= request-method :get) (= uri "/login"))
+  {:status 200
+   :headers {"Content-Type" "text/html"}
+   :body (rum/render-static-markup (login-form))}
   (friend/authorized? #{::admin ::user} friend/*identity*)
   {:status 200
    :headers {"Content-Type" "text/plain"}

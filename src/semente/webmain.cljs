@@ -15,7 +15,7 @@
   (go (println (<! (http/post "http://localhost:9500/guarda"
                               {:form-params {:name name :contents contents}})))))
 
-(rum/defcs editor [state name]
+(rum/defcs editor [state name contents]
   (let [on-change (fn [editor-state]
                     (reset! editor-state-atom editor-state)
                     (.forceUpdate (:rum/react-component state)))
@@ -53,6 +53,12 @@
 (defn ^:after-load reload []
   (rum/mount (edit-page +section+) (.getElementById js/document "app")))
 
-(defn main [section]
+(defn main [section contents]
   (defonce +section+ section)
+  (when contents
+    (println "contents si" (pr-str contents))
+    (reset!
+     editor-state-atom
+     (js/Draft.EditorState.createWithContent
+      (js/Draft.convertFromRaw contents))))
   (reload))
