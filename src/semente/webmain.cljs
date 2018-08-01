@@ -6,7 +6,7 @@
 ;; state but not make it a local stateful thing, since I'm rendering immediately
 ;; when this changes (on-change)
 ;; I probably want to add this to the state on creation or will-mount.
-(def editor-state-atom (atom (.createEmpty js/Draft.EditorState decorator)))
+(def editor-state-atom (atom (.createEmpty js/Draft.EditorState)))
 
 (rum/defcs stateful [state]
   (let [on-change (fn [editor-state]
@@ -35,9 +35,8 @@
                                                      2)]]]))
 
 
-(rum/defcs edit-page [name]
-  [:div [:h2 name]]
-  (stateful))
+(rum/defc edit-page [name]
+  [:div [:h2 name] (stateful)])
 
 (declare +section+)
 
