@@ -10,6 +10,7 @@
         com.cognitect/transit-java {:mvn/version "0.8.311"}
         com.datomic/ion {:mvn/version "0.9.16"}
         com.fasterxml.jackson.core/jackson-core {:mvn/version "2.9.5"}
+        commons-codec/commons-codec {:mvn/version "1.10"}
         compojure {:mvn/version "1.6.1"}
         net.icbink/expand-headers {:git/url "https://github.com/euccastro/expand-headers.git"
                                    :sha "b2b0364422d71b8f233148942618b7b16da38ecf"}

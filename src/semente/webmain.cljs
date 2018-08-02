@@ -12,7 +12,8 @@
 (def editor-state-atom (atom (.createEmpty js/Draft.EditorState)))
 
 (defn save-doc [name contents]
-  (go (println (<! (http/post "http://localhost:9500/guarda"
+  ;; XXX: find out where to send this in dev and production
+  (go (println (<! (http/post "https://datomique.icbink.org/guarda"
                               {:form-params {:name name :contents contents}})))))
 
 (rum/defcs editor [state name contents]
@@ -53,7 +54,7 @@
 (defn ^:after-load reload []
   (rum/mount (edit-page +section+) (.getElementById js/document "app")))
 
-(defn main [section contents]
+(defn ^:export main [section contents]
   (defonce +section+ section)
   (when contents
     (println "contents si" (pr-str contents))

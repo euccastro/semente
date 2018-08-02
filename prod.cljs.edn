@@ -1,0 +1,3 @@
+{:main semente.webmain
+ :optimizations :advanced
+ :output-to "resources/public/cljs-out/dev-main.js"}
