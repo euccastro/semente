@@ -2,7 +2,7 @@
   (:require [clj-http.client :as http]
             [clojure.data.json :as json]))
 
-(def endpoint "https://search-semente-mbk7y7yizywtxbov5s64to2gdm.eu-central-1.es.amazonaws.com")
+(def endpoint "https://vpc-es-deitomique-a7235usfbeatgjhiba5f4y32za.eu-central-1.es.amazonaws.com")
 
 (defn doc-url [name]
   (str endpoint "/edits/_doc/" name))
