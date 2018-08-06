@@ -31,7 +31,7 @@
                      org.eclipse.jetty.websocket/websocket-servlet {:mvn/version "9.3.7.v20160115"}
                      org.eclipse.jetty.websocket/websocket-server {:mvn/version "9.3.7.v20160115"}
                      org.eclipse.jetty/jetty-server {:mvn/version "9.3.7.v20160115"}
-                     com.bhauman/figwheel-main {:mvn/version "0.1.4"
+                     com.bhauman/figwheel-main {:mvn/version "0.1.5"
                                                 :exclusions [org.eclipse.jetty.websocket/websocket-servlet
                                                              org.eclipse.jetty.websocket/websocket-server
                                                              org.eclipse.jetty/jetty-server]}}}}}

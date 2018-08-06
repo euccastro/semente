@@ -38,7 +38,8 @@
 (rum/defc edit [doc-name contents]
   [:html
    [:head
-    [:link {:rel "stylesheet" :type "text/css" :href "/css/Draft.css"}]]
+    [:link {:rel "stylesheet" :type "text/css" :href "/css/Draft.css"}]
+    [:link {:rel "stylesheet" :type "text/css" :href "/css/prova.css"}]]
    [:body
     [:#app "Aqui iriam as tuas movidorras."]
     [:script {:src "/cljs-out/dev-main.js" :type "text/javascript"}]
