@@ -2,3 +2,4 @@ target/*
 .nrepl*
 .cpcache/*
 out/*
+resources/public/cljs-out/
