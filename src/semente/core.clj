@@ -52,10 +52,45 @@
                                              (or contents "null")
                                              ");")}}]]])
 
+(defn merge-style [start end style]
+  (fn [xf]
+    (fn
+      ([] (xf))
+      ([result] (xf result))
+      ([result [input-start input-end input-styles]]
+       (let [xf-maybe
+             (fn [start end styles]
+               (if (< start end)
+                 (xf result [start end styles])))]
+         (xf-maybe input-start
+                   (min start input-end)
+                   input-styles)
+         (xf-maybe (max start input-start)
+                   (min end input-end)
+                   (conj input-styles style))
+         (xf-maybe (max end input-start)
+                   input-end
+                   input-styles))))))
+
+(defn add-span [spans next]
+  (let [start (:offset next)
+        end (+ start (:length next))
+        style (-> next :style str/lower-case keyword)]
+    (into [] (merge-style start end style) spans)))
+
+(comment
+  (into [] (merge-style 5 10 :bold) [[0 20 []]])
+  )
+
+(defn render-text [block]
+  (let [spans (reduce add-span
+                      [[0 (.length (:text block)) []]]
+                      (:inlineStyleRanges block))]))
+
 (defn content-state->hiccup [content-state]
   (for [b (:blocks content-state)]
     (if (= (:type b) "unstyled")
-      [:p {:key (:key b)} (:text b)]
+      [:p {:key (:key b)} (render-text b)]
       [:pre {:key (:key b)} (with-out-str (clojure.pprint/pprint b))])))
 
 (rum/defc view [contents]
