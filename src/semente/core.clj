@@ -38,6 +38,7 @@
 (rum/defc edit [doc-name contents]
   [:html
    [:head
+    [:meta {:charset "UTF-8"}]
     [:link {:rel "stylesheet" :type "text/css" :href "/css/Draft.css"}]
     [:link {:rel "stylesheet" :type "text/css" :href "/css/prova.css"}]]
    [:body
@@ -51,11 +52,29 @@
                                              (or contents "null")
                                              ");")}}]]])
 
+(defn content-state->hiccup [content-state]
+  (for [b (:blocks content-state)]
+    (if (= (:type b) "unstyled")
+      [:p {:key (:key b)} (:text b)]
+      [:pre {:key (:key b)} (with-out-str (clojure.pprint/pprint b))])))
+
+(rum/defc view [contents]
+  [:html
+   [:head
+    [:meta {:charset "UTF-8"}]]
+   [:body (content-state->hiccup contents)]])
+
 (defroutes ring-handler
   (POST "/guarda" [name contents]
         (es/save-doc name {:contents contents}))
   (GET "/prova" [] "Olá!")
   (GET "/edit/:id" [id] (rum/render-static-markup (edit id (get (es/load-doc id) "contents"))))
+  (GET "/view/:id" [id] (some-> id
+                                es/load-doc
+                                (get "contents")
+                                (json/read-str :key-fn keyword)
+                                view
+                                rum/render-static-markup))
   (resources "/")
   (not-found "U-lo?"))
 
