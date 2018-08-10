@@ -59,35 +59,59 @@
       ([result] (xf result))
       ([result [input-start input-end input-styles]]
        (let [xf-maybe
-             (fn [start end styles]
+             (fn [result start end styles]
                (if (< start end)
-                 (xf result [start end styles])))]
-         (xf-maybe input-start
-                   (min start input-end)
-                   input-styles)
-         (xf-maybe (max start input-start)
-                   (min end input-end)
-                   (conj input-styles style))
-         (xf-maybe (max end input-start)
-                   input-end
-                   input-styles))))))
+                 (xf result [start end styles])
+                 result))]
+         (-> result
+             (xf-maybe input-start
+                       (min start input-end)
+                       input-styles)
+             (xf-maybe (max start input-start)
+                       (min end input-end)
+                       (conj input-styles style))
+             (xf-maybe (max end input-start)
+                       input-end
+                       input-styles)))))))
+
+(def block-style->tag
+  {"BOLD" :strong
+   "ITALIC" :em})
 
 (defn add-span [spans next]
   (let [start (:offset next)
         end (+ start (:length next))
-        style (-> next :style str/lower-case keyword)]
+        style (-> next :style block-style->tag)]
     (into [] (merge-style start end style) spans)))
 
 (comment
-  (into [] (merge-style 5 10 :bold) [[0 20 []]])
+  (into [] (merge-style 0 40 :bold) spans)
+  (def block
+    {:key "ds774", :text "mola! e prova deveria ser algo que tenha", :type "unstyled", :depth 0, :inlineStyleRanges [{:offset 35, :length 5, :style "ITALIC"}], :entityRanges [], :data {}})
+  (add-span [[0 (.length (:text block)) []]] (first (:inlineStyleRanges block)))
+  (def spans [[0 (.length (:text block)) []]])
+  (def next *1)
+  (def start (:offset next))
+  (def end (+ start (:length next)))
+  (def style *1)
+  (def ms *1)
+  (render-text block)
   )
 
-(defn render-text [block]
+(defn render-text [{:keys [text] :as block}]
+  (println "block si")
+  (prn block)
+  (println)
   (let [spans (reduce add-span
-                      [[0 (.length (:text block)) []]]
-                      (:inlineStyleRanges block))]))
+                      [[0 (.length text) []]]
+                      (:inlineStyleRanges block))]
+    (for [[start end styles] spans]
+      (reduce (fn [x style] [style x]) (subs text start end) styles))))
 
 (defn content-state->hiccup [content-state]
+  (println "content state si")
+  (prn content-state)
+  (println)
   (for [b (:blocks content-state)]
     (if (= (:type b) "unstyled")
       [:p {:key (:key b)} (render-text b)]
