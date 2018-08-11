@@ -16,8 +16,23 @@
   (go (println (<! (http/post "https://datomique.icbink.org/guarda"
                               {:form-params {:name name :contents contents}})))))
 
+(defn image [props]
+  (println "got props!")
+  (pr-str props)
+  (let [block (.-block props)
+        content-state (.-contentState props)
+        entity (.getEntity content-state (.getEntityAt block 0))
+        url (.-url (.getData entity))]
+    (js/React.createElement "img" (clj->js {:src url}))))
+
 (rum/defcs editor [state name contents]
-  (let [on-change (fn [editor-state]
+  (let [add-image (fn [editor-state blob]
+                    (let [content-state (.getCurrentContent editor-state)
+                          cs-with-entity (.createEntity content-state "IMAGE" "IMMUTABLE" (clj->js {:url (js/URL.createObjectURL blob)}))
+                          entity-key (.getLastCreatedEntityKey cs-with-entity)
+                          es-with-entity (js/Draft.EditorState.set editor-state (clj->js {:currentContent cs-with-entity}))]
+                      (js/Draft.AtomicBlockUtils.insertAtomicBlock es-with-entity entity-key " ")))
+        on-change (fn [editor-state]
                     (reset! editor-state-atom editor-state)
                     (.forceUpdate (:rum/react-component state)))
         raw-contents (js/Draft.convertToRaw (.getCurrentContent @editor-state-atom))]
@@ -36,7 +51,20 @@
                                          (println "RESETTING")
                                          (on-change new-state)
                                          "handled")
-                                       "not-handled"))}))]
+                                       "not-handled"))
+                 :handleDroppedFiles (fn [selection-state files]
+                                       (println "got dropped files!")
+                                       (js/console.log selection-state)
+                                       (js/console.log files))
+                 :handlePastedFiles (fn [blobs]
+                                      (println "got pasted FILES!" (.-length blobs))
+                                      (on-change (reduce add-image @editor-state-atom (array-seq blobs)))
+                                      "handled")
+                 :blockRendererFn (fn [block]
+                                    (println "block render" (.getType block))
+                                    (if (= (.getType block) "atomic")
+                                      (clj->js {:component image
+                                                :editable false})))}))]
      [:div {:style {:padding 12}}
       [:button {:on-click (fn [e] (save-doc name (.stringify js/JSON raw-contents)))} "Guardar"]]
      [:div {:style {:padding 12}}
