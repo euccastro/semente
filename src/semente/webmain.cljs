@@ -9,14 +9,20 @@
 ;; state but not make it a local stateful thing, since I'm rendering immediately
 ;; when this changes (on-change)
 ;; I probably want to add this to the state on creation or will-mount.
-(def editor-state-atom (atom (.createEmpty js/Draft.EditorState)))
+(defonce editor-state-atom (atom (.createEmpty js/Draft.EditorState)))
 
 (def url->blob (atom {}))
 
 (defn save-doc [name contents]
   ;; XXX: find out where to send this in dev and production
-  (go (println (<! (http/post "http://localhost:9500/guarda"
-                              {:multipart-params [["name" name] ["contents" contents]]})))))
+  (let [blob-uris (for [m (array-seq (js/Object.values (.-entityMap contents)))]
+                    (.-url (.-data m)))
+        u->b @url->blob
+        blobs (for [uri blob-uris] [uri (u->b uri)])]
+    (go (println (<! (http/post "http://localhost:9500/guarda"
+                                {:multipart-params (into [["name" name]
+                                                          ["contents" (.stringify js/JSON contents)]]
+                                                         blobs)}))))))
 
 (def create-blob-url (memoize js/URL.createObjectURL))
 
@@ -80,7 +86,7 @@
                                       (clj->js {:component image
                                                 :editable false})))}))]
      [:div {:style {:padding 12}}
-      [:button {:on-click (fn [e] (save-doc name (.stringify js/JSON raw-contents)))} "Guardar"]]
+      [:button {:on-click (fn [e] (save-doc name raw-contents))} "Guardar"]]
      [:div {:style {:padding 12}}
       [:pre (.stringify js/JSON
                         raw-contents

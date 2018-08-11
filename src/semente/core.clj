@@ -124,8 +124,11 @@
    [:body (content-state->hiccup contents)]])
 
 (defroutes ring-handler
-  (POST "/guarda" [name contents]
-        (es/save-doc name {:contents contents}))
+  (POST "/guarda" [name contents & etc]
+        (do
+          (println "got etc:")
+          (clojure.pprint/pprint etc)
+          (es/save-doc name {:contents contents})))
   (GET "/prova" [] "Olá!")
   (GET "/edit/:id" [id] (rum/render-static-markup (edit id (get (es/load-doc id) "contents"))))
   (GET "/view/:id" [id] (some-> id
