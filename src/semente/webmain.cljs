@@ -11,10 +11,24 @@
 ;; I probably want to add this to the state on creation or will-mount.
 (def editor-state-atom (atom (.createEmpty js/Draft.EditorState)))
 
+(def url->blob (atom {}))
+
 (defn save-doc [name contents]
   ;; XXX: find out where to send this in dev and production
-  (go (println (<! (http/post "https://datomique.icbink.org/guarda"
-                              {:form-params {:name name :contents contents}})))))
+  (go (println (<! (http/post "http://localhost:9500/guarda"
+                              {:multipart-params [["name" name] ["contents" contents]]})))))
+
+(def create-blob-url (memoize js/URL.createObjectURL))
+
+(defn register-blob [blob]
+  (let [url (create-blob-url blob)]
+    (swap! url->blob assoc url blob)
+    url))
+
+(defn stringify-keys [x]
+  (if (map? x)
+    (into {} (for [[k v] x] [(name k) (stringify-keys v)]))
+    x))
 
 (defn image [props]
   (println "got props!")
@@ -28,7 +42,7 @@
 (rum/defcs editor [state name contents]
   (let [add-image (fn [editor-state blob]
                     (let [content-state (.getCurrentContent editor-state)
-                          cs-with-entity (.createEntity content-state "IMAGE" "IMMUTABLE" (clj->js {:url (js/URL.createObjectURL blob)}))
+                          cs-with-entity (.createEntity content-state "IMAGE" "IMMUTABLE" (clj->js {:url (register-blob blob)}))
                           entity-key (.getLastCreatedEntityKey cs-with-entity)
                           es-with-entity (js/Draft.EditorState.set editor-state (clj->js {:currentContent cs-with-entity}))]
                       (js/Draft.AtomicBlockUtils.insertAtomicBlock es-with-entity entity-key " ")))
