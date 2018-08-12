@@ -14,7 +14,6 @@
 (def url->blob (atom {}))
 
 (defn save-doc [name contents]
-  ;; XXX: find out where to send this in dev and production
   (let [blob-uris (for [m (array-seq (js/Object.values (.-entityMap contents)))]
                     (.-url (.-data m)))
         u->b @url->blob
@@ -22,7 +21,7 @@
                     :let [blob (u->b uri)]
                     :when blob]
                 [uri blob])]
-    (go (println (<! (http/post "http://localhost:9500/guarda"
+    (go (println (<! (http/post "/guarda"
                                 {:multipart-params
                                  (into [["name" name]
                                         ["contents" (.stringify js/JSON contents)]]
