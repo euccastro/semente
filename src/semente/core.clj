@@ -1,19 +1,23 @@
 (ns semente.core
-  (:require [cemerick.friend :as friend]
+  (:require [amazonica.aws.s3 :as s3]
+            [cemerick.friend :as friend]
             [cemerick.friend.workflows :as wflows]
             [cemerick.friend.credentials :as creds]
+            [clojure.data.json :as json]
+            [clojure.java.io :as io]
             [clojure.string :as str]
+            [com.rpl.specter :as s]
             [compojure.core :refer (defroutes GET POST)]
             [compojure.route :refer (resources not-found)]
             [datomic.ion.lambda.api-gateway :as apigw]
+            digest
             [net.icbink.expand-headers.core :refer (wrap-expand-headers)]
             [ring.middleware.keyword-params :refer (wrap-keyword-params)]
             [ring.middleware.params :refer (wrap-params)]
             [ring.middleware.session :refer (wrap-session)]
             [ring.middleware.session.cookie :refer (cookie-store)]
             [rum.core :as rum]
-            [semente.elasticsearch :as es]
-            [clojure.data.json :as json]))
+            [semente.elasticsearch :as es]))
 
 (def users {"root" {:username "root"
                     :password (creds/hash-bcrypt "admin_password")
@@ -123,12 +127,32 @@
     [:meta {:charset "UTF-8"}]]
    [:body (content-state->hiccup contents)]])
 
+(defn put-public [k content-type size contents]
+  (s3/put-object {:bucket-name "datomique.icbink.org"
+                  :key k
+                  :metadata {:content-type content-type
+                             :content-size size}
+                  :input-stream (io/input-stream contents)
+                  :canned-acl :public-read}))
+
 (defroutes ring-handler
   (POST "/guarda" [name contents & etc]
-        (do
-          (println "got etc:")
-          (clojure.pprint/pprint etc)
-          (es/save-doc name {:contents contents})))
+        (let [blobs (filter (fn [[k _]] (str/starts-with? k "blob:")) etc)
+              filenames (into {} (pmap (fn [[k v]]
+                                         [k (str "img/"
+                                                 (digest/sha-256 (:tempfile v))
+                                                 "." (last (str/split (:content-type v) #"/")))])
+                                       blobs))]
+          (println "filenames si")
+          (clojure.pprint/pprint filenames)
+          (dorun (pmap (fn [[k {:keys [content-type size tempfile]}]]
+                         (put-public (filenames k) content-type size tempfile))
+                       blobs))
+          (es/save-doc name {:contents (->> contents
+                                            json/read-str
+                                            (s/transform ["entityMap" s/MAP-VALS "data" "url"]
+                                                         #(str "https://datomique.icbink.org/res/" (filenames %)))
+                                            json/write-str)})))
   (GET "/prova" [] "Olá!")
   (GET "/edit/:id" [id] (rum/render-static-markup (edit id (get (es/load-doc id) "contents"))))
   (GET "/view/:id" [id] (some-> id
@@ -142,6 +166,11 @@
 
 (comment
   ;; auth stuff
+  (def conv {"blob:http://localhost:9500/2f3b2a63-b3ce-4b7a-a5ea-4eb5af284799" "CONVERTERED!"})
+  (require '[com.rpl.specter :as s])
+  (clojure.pprint/pprint
+   )
+  (str/split "um/dous" #"/")
   (and (= request-method :get) (= uri "/login"))
   {:status 200
    :headers {"Content-Type" "text/html"}
