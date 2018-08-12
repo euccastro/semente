@@ -1,12 +1,5 @@
-(require '[qbits.spandex :as sp])
-
-(require '[clojure.data.json :as json])
-
-(def c (sp/client {:hosts ["https://search-semente-mbk7y7yizywtxbov5s64to2gdm.eu-central-1.es.amazonaws.com"]}))
-
-(sp/request c {:method :get})
-
-(in-ns user)
+(ns semente.scratch
+  (:require [datomic.client.api :as d]))
 
 (def es "https://search-semente-mbk7y7yizywtxbov5s64to2gdm.eu-central-1.es.amazonaws.com")
 (require '[clj-http.client :as client])
@@ -37,8 +30,6 @@
 
 ;; ----------------
 
-(ns semente.scratch
-  (:require [datomic.client.api :as d]))
 
 (def cfg {:server-type :ion
           :region "eu-central-1"
@@ -49,6 +40,7 @@
 
 (def client (d/client cfg))
 
+(d/delete-database client {:db-name "semente"})
 (d/create-database client {:db-name "semente"})
 
 (def conn (d/connect client {:db-name "semente"}))
@@ -63,6 +55,11 @@
     :db/cardinality :db.cardinality/one
     :db/doc "Nome (só minúsculas ASCII)"}
 
+   {:db/ident :user/password-hash
+    :db/valueType :db.type/string
+    :db/cardinality :db.cardinality/one
+    :db/doc "Hash bcryptada da senha"}
+
    {:db/ident :user/email
     :db/unique :db.unique/identity
     :db/valueType :db.type/string
@@ -71,8 +68,7 @@
 
    {:db/ident :user/permission
     :db/valueType :db.type/ref
-    :db/cardinality :db.cardinality/many
-    :db/isComponent true}
+    :db/cardinality :db.cardinality/many}
 
    {:db/ident :permission/scope
     :db/valueType :db.type/ref
@@ -127,12 +123,27 @@
    {:db/ident :permission.privilege/admin}])
 
 
-(def eu {:user/name "estevo"
-         :user/email "euccastro@gmail.com"
-         :user/permission [{:permission/scope :scope/national
-                            :permission/privilege :permission.privilege/admin}]})
+(def eu [{:user/name "estevo"
+          :user/email "euccastro@gmail.com"
+          :user/permission [{:db/ident :permission/national-admin
+                             :permission/scope :scope/national
+                             :permission/privilege :permission.privilege/admin}]}])
+
+(require '[semente.core :as sc])
+
+(sc/load-credentials "estevo")
 (comment
-  (d/transact conn {:tx-data })
+  (derive ::a ::b)
+  (isa? ::a ::b)
+  (d/transact conn {:tx-data schema})
+  (d/transact conn {:tx-data *1})
+
+  (def username "estevo")
+  (d/pull (d/db conn) '[{:user/permission [:db/ident]}] [:user/name username])
+  (d/pull (d/db conn) '[*] [:user/name "estevo"])
+  (require
+   '[cemerick.friend.credentials :as creds])
+  (d/transact conn {:tx-data [[:db/add [:user/name "estevo"] :user/password-hash (creds/hash-bcrypt "abcd")]]})
 
   (d/q '[:find ?n
          :where

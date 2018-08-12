@@ -9,6 +9,7 @@
             [com.rpl.specter :as s]
             [compojure.core :refer (defroutes GET POST)]
             [compojure.route :refer (resources not-found)]
+            [datomic.client.api :as d]
             [datomic.ion.lambda.api-gateway :as apigw]
             digest
             [net.icbink.expand-headers.core :refer (wrap-expand-headers)]
@@ -19,15 +20,48 @@
             [rum.core :as rum]
             [semente.elasticsearch :as es]))
 
-(def users {"root" {:username "root"
-                    :password (creds/hash-bcrypt "admin_password")
-                    :roles #{::admin}}
-            "jane" {:username "jane"
-                    :password (creds/hash-bcrypt "user_password")
-                    :roles #{::user}}})
+(def conn
+  (memoize
+   (fn []
+     (d/connect
+      (d/client {:server-type :ion
+                 :region "eu-central-1"
+                 :system "deitomique"
+                 :query-group "deitomique"
+                 :endpoint "http://entry.deitomique.eu-central-1.datomic.net:8182/"
+                 :proxy-port 8182})
+      {:db-name "semente"}))))
+
+(def init-permission-hierarchy
+  (memoize
+   (fn [p]
+     (let [m (d/pull (d/db (conn))
+                     '[{:permission/privilege [:db/ident]}
+                       {:permission/scope [:db/ident]}]
+                     p)]
+       (some->> (get-in m [:permission/privilege :db/ident]) (derive p))
+       (some->> (get-in m [:permission/scope :db/ident]) (derive p))))))
+
+(defn init-permission-hierarchies [ps]
+  (dorun (map init-permission-hierarchy ps)))
+
+(comment
+  ;; to set a password:
+  (d/transact conn {:tx-data [[:db/add [:user/name "estevo"] :user/password-hash (creds/hash-bcrypt "abcd")]]})
+  )
+
+(defn load-credentials [username]
+  (when-let [m (d/pull (d/db (conn))
+                       '[:user/password-hash {:user/permission [:db/ident]}]
+                       [:user/name username])]
+    {:username username
+     :password (:user/password-hash m)
+     :roles (doto (into #{} (map :db/ident (:user/permission m)))
+              init-permission-hierarchies)}))
 
 (rum/defc login-form []
   [:html
+   [:head [:meta {:charset "UTF-8"}]]
    [:body
     [:form {:action "/login" :method "post"}
      [:div
@@ -88,20 +122,6 @@
         style (-> next :style block-style->tag)]
     (into [] (merge-style start end style) spans)))
 
-(comment
-  (into [] (merge-style 0 40 :bold) spans)
-  (def block
-    {:key "ds774", :text "mola! e prova deveria ser algo que tenha", :type "unstyled", :depth 0, :inlineStyleRanges [{:offset 35, :length 5, :style "ITALIC"}], :entityRanges [], :data {}})
-  (add-span [[0 (.length (:text block)) []]] (first (:inlineStyleRanges block)))
-  (def spans [[0 (.length (:text block)) []]])
-  (def next *1)
-  (def start (:offset next))
-  (def end (+ start (:length next)))
-  (def style *1)
-  (def ms *1)
-  (render-text block)
-  )
-
 (defn render-text [{:keys [text] :as block}]
   (println "block si")
   (prn block)
@@ -143,8 +163,6 @@
                                                  (digest/sha-256 (:tempfile v))
                                                  "." (last (str/split (:content-type v) #"/")))])
                                        blobs))]
-          (println "filenames si")
-          (clojure.pprint/pprint filenames)
           (dorun (pmap (fn [[k {:keys [content-type size tempfile]}]]
                          (put-public (filenames k) content-type size tempfile))
                        blobs))
@@ -153,14 +171,18 @@
                                             (s/transform ["entityMap" s/MAP-VALS "data" "url"]
                                                          #(str "https://datomique.icbink.org/res/" (filenames %)))
                                             json/write-str)})))
-  (GET "/prova" [] "Olá!")
-  (GET "/edit/:id" [id] (rum/render-static-markup (edit id (get (es/load-doc id) "contents"))))
-  (GET "/view/:id" [id] (some-> id
-                                es/load-doc
-                                (get "contents")
-                                (json/read-str :key-fn keyword)
-                                view
-                                rum/render-static-markup))
+  (GET "/login" []
+       (rum/render-static-markup (login-form)))
+  (GET "/prova" [] (friend/authorize #{:permission.privilege/admin} "Olá!"))
+  (GET "/edit/:id" [id]
+       (rum/render-static-markup (edit id (get (es/load-doc id) "contents"))))
+  (GET "/view/:id" [id]
+       (some-> id
+               es/load-doc
+               (get "contents")
+               (json/read-str :key-fn keyword)
+               view
+               rum/render-static-markup))
   (resources "/")
   (not-found "U-lo?"))
 
@@ -187,7 +209,7 @@
 
 (def ring-app
   (-> ring-handler
-      (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn users)
+      (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn load-credentials)
                             :workflows [(wflows/interactive-form)]})
       (wrap-session {:store (cookie-store {:key "a 16-byte secret"})})
       wrap-keyword-params
