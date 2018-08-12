@@ -18,11 +18,15 @@
   (let [blob-uris (for [m (array-seq (js/Object.values (.-entityMap contents)))]
                     (.-url (.-data m)))
         u->b @url->blob
-        blobs (for [uri blob-uris] [uri (u->b uri)])]
+        blobs (for [uri blob-uris
+                    :let [blob (u->b uri)]
+                    :when blob]
+                [uri blob])]
     (go (println (<! (http/post "http://localhost:9500/guarda"
-                                {:multipart-params (into [["name" name]
-                                                          ["contents" (.stringify js/JSON contents)]]
-                                                         blobs)}))))))
+                                {:multipart-params
+                                 (into [["name" name]
+                                        ["contents" (.stringify js/JSON contents)]]
+                                       blobs)}))))))
 
 (def create-blob-url (memoize js/URL.createObjectURL))
 
@@ -36,14 +40,15 @@
     (into {} (for [[k v] x] [(name k) (stringify-keys v)]))
     x))
 
-(defn image [props]
-  (println "got props!")
-  (pr-str props)
+(rum/defc image [url]
+  [:img {:src url}])
+
+(defn native-image [props]
   (let [block (.-block props)
         content-state (.-contentState props)
         entity (.getEntity content-state (.getEntityAt block 0))
         url (.-url (.getData entity))]
-    (js/React.createElement "img" (clj->js {:src url}))))
+    (image url)))
 
 (rum/defcs editor [state name contents]
   (let [add-image (fn [editor-state blob]
@@ -83,7 +88,7 @@
                  :blockRendererFn (fn [block]
                                     (println "block render" (.getType block))
                                     (if (= (.getType block) "atomic")
-                                      (clj->js {:component image
+                                      (clj->js {:component native-image
                                                 :editable false})))}))]
      [:div {:style {:padding 12}}
       [:button {:on-click (fn [e] (save-doc name raw-contents))} "Guardar"]]
