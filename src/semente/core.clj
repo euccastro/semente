@@ -18,19 +18,10 @@
             [ring.middleware.session :refer (wrap-session)]
             [ring.middleware.session.cookie :refer (cookie-store)]
             [rum.core :as rum]
+            [semente.datomic :refer (conn)]
             [semente.elasticsearch :as es]))
 
-(def conn
-  (memoize
-   (fn []
-     (d/connect
-      (d/client {:server-type :ion
-                 :region "eu-central-1"
-                 :system "deitomique"
-                 :query-group "deitomique"
-                 :endpoint "http://entry.deitomique.eu-central-1.datomic.net:8182/"
-                 :proxy-port 8182})
-      {:db-name "semente"}))))
+(def login-uri "/entra")
 
 (def init-permission-hierarchy
   (memoize
@@ -63,8 +54,9 @@
   [:html
    [:head [:meta {:charset "UTF-8"}]]
    [:body
-    [:div "Esta página precisa autenticaçom."]
-    [:form {:action "/ingressa" :method "post"}
+    [:h1 "Quem és?"]
+    [:div "Esta página requer autenticaçom."]
+    [:form {:action login-uri :method "post"}
      [:div
       [:div "utente"]
       [:input {:type "text" :name "username"}]]
@@ -172,7 +164,7 @@
                                             (s/transform ["entityMap" s/MAP-VALS "data" "url"]
                                                          #(str "https://datomique.icbink.org/res/" (filenames %)))
                                             json/write-str)})))
-  (GET "/ingressa" []
+  (GET login-uri []
        (rum/render-static-markup (login-form)))
   (GET "/prova" [] (friend/authorize #{:permission.privilege/admin} "Olá!"))
   (GET "/pravo" [] (friend/authorize #{:permission.privilege/unobtainium} "Alô!"))
@@ -186,23 +178,54 @@
                (json/read-str :key-fn keyword)
                view
                rum/render-static-markup))
-  (friend/logout (GET "/sae" [] "OK, tás fora."))
+  (friend/logout (GET "/abur" [] "OK, tás fora."))
   (resources "/")
   (not-found "U-lo?"))
+
+(defonce bad-req (atom nil))
+
+(comment
+  (def req @bad-req)
+
+  (def required-roles (get-in req [:cemerick.friend/authorization-failure :cemerick.friend/required-roles]))
+  (def required-permission-names *1)
+  (first #{:a})
+  )
+
+(defn unauthorized-handler [{{:keys [cemerick.friend/required-roles]} :cemerick.friend/authorization-failure
+                             :as req}]
+  (reset! bad-req req)
+  (let [required-permission-names
+        (map first
+             (d/q '[:find ?n
+                    :in $ [?r ...]
+                    :where [?r :permission/display-name ?n]]
+                  (d/db (conn))
+                  required-roles))])
+  {:status 200
+   :headers {"Content-Type" "text/html"}
+   :body (rum/render-static-markup
+          [:html
+           [:head
+            [:meta {:char-set "UTF-8"}]
+            [:title "Erro de autorizaçom"]]
+           [:body
+            [:h1 "Erro de autorizaçom"]
+            (if (= (count required-permission-names) 1)
+              [:div "Esta página requer o permisso "
+               [:strong (first required-permission-names)]
+               "."]
+              [:div "Esta página requer os permissos:"
+               [:ul
+                (for [p required-permission-names]
+                  [:li [:strong p]])]])]])})
 
 (def ring-app
   (-> ring-handler
       (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn load-credentials)
                             :workflows [(wflows/interactive-form)]
-                            :login-uri "/ingressa"
-                            :unauthorized-handler
-                            (fn [req]
-                              {:status 200
-                               :headers {"Content-Type" "text/html"}
-                               :body (str "nom tés o perfil que estamos procurando...<br><br><pre>"
-                                          (with-out-str
-                                            (clojure.pprint/pprint req))
-                                          "</pre>")})})
+                            :login-uri login-uri
+                            :unauthorized-handler unauthorized-handler})
       (wrap-session {:store (cookie-store {:key "a 16-byte secret"})})
       wrap-keyword-params
       wrap-params
