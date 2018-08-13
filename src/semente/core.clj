@@ -63,7 +63,8 @@
   [:html
    [:head [:meta {:charset "UTF-8"}]]
    [:body
-    [:form {:action "/login" :method "post"}
+    [:div "Esta página precisa autenticaçom."]
+    [:form {:action "/ingressa" :method "post"}
      [:div
       [:div "utente"]
       [:input {:type "text" :name "username"}]]
@@ -171,9 +172,11 @@
                                             (s/transform ["entityMap" s/MAP-VALS "data" "url"]
                                                          #(str "https://datomique.icbink.org/res/" (filenames %)))
                                             json/write-str)})))
-  (GET "/login" []
+  (GET "/ingressa" []
        (rum/render-static-markup (login-form)))
   (GET "/prova" [] (friend/authorize #{:permission.privilege/admin} "Olá!"))
+  (GET "/pravo" [] (friend/authorize #{:permission.privilege/unobtainium} "Alô!"))
+  (GET "/privo" [] (friend/authorize #{:scope/national} "Ei!"))
   (GET "/edit/:id" [id]
        (rum/render-static-markup (edit id (get (es/load-doc id) "contents"))))
   (GET "/view/:id" [id]
@@ -183,34 +186,23 @@
                (json/read-str :key-fn keyword)
                view
                rum/render-static-markup))
+  (friend/logout (GET "/sae" [] "OK, tás fora."))
   (resources "/")
   (not-found "U-lo?"))
-
-(comment
-  ;; auth stuff
-  (def conv {"blob:http://localhost:9500/2f3b2a63-b3ce-4b7a-a5ea-4eb5af284799" "CONVERTERED!"})
-  (require '[com.rpl.specter :as s])
-  (clojure.pprint/pprint
-   )
-  (str/split "um/dous" #"/")
-  (and (= request-method :get) (= uri "/login"))
-  {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body (rum/render-static-markup (login-form))}
-  (friend/authorized? #{::admin ::user} friend/*identity*)
-  {:status 200
-   :headers {"Content-Type" "text/plain"}
-   :body "Olá amo! 3"}
-  :else
-  {:status 200
-   :headers {"Content-Type" "text/plain"}
-   :body (str "Olá plebeio! 7" uri)}
-  )
 
 (def ring-app
   (-> ring-handler
       (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn load-credentials)
-                            :workflows [(wflows/interactive-form)]})
+                            :workflows [(wflows/interactive-form)]
+                            :login-uri "/ingressa"
+                            :unauthorized-handler
+                            (fn [req]
+                              {:status 200
+                               :headers {"Content-Type" "text/html"}
+                               :body (str "nom tés o perfil que estamos procurando...<br><br><pre>"
+                                          (with-out-str
+                                            (clojure.pprint/pprint req))
+                                          "</pre>")})})
       (wrap-session {:store (cookie-store {:key "a 16-byte secret"})})
       wrap-keyword-params
       wrap-params
