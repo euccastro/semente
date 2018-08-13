@@ -8,7 +8,7 @@
             [rum.core :as rum]
             [semente.elasticsearch :as es]))
 
-(rum/defc edit [doc-name contents]
+(rum/defc edit-page [doc-name contents]
   [:html
    [:head
     [:meta {:charset "UTF-8"}]
@@ -70,7 +70,7 @@
       [:p {:key (:key b)} (render-text b)]
       [:pre {:key (:key b)} (with-out-str (clojure.pprint/pprint b))])))
 
-(rum/defc view [contents]
+(rum/defc view-page [contents]
   [:html
    [:head
     [:meta {:charset "UTF-8"}]]
@@ -99,3 +99,15 @@
                                       (sp/transform ["entityMap" sp/MAP-VALS "data" "url"]
                                                    #(str "https://datomique.icbink.org/res/" (filenames %)))
                                       json/write-str)})))
+
+(defn edit [id]
+  (rum/render-static-markup
+   (edit-page id (get (es/load-doc id) "contents"))))
+
+(defn view [id]
+  (some-> id
+          es/load-doc
+          (get "contents")
+          (json/read-str :key-fn keyword)
+          view-page
+          rum/render-static-markup))

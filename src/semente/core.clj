@@ -12,26 +12,20 @@
             [ring.middleware.session.cookie :refer (cookie-store)]
             [rum.core :as rum]
             [semente.auth :as auth]
-            [semente.draft-js :as draft-js]
-            [semente.elasticsearch :as es]))
+            [semente.draft-js :as draft-js]))
 
 (defroutes ring-handler
   (POST "/guarda" [name contents & etc]
         (apply draft-js/save name contents etc))
-  (GET auth/login-uri []
-       (rum/render-static-markup (auth/login-form)))
+  (GET auth/login-uri [erro utente]
+       (auth/login erro utente))
   (GET "/prova" [] (friend/authorize #{:permission.privilege/admin} "Olá!"))
   (GET "/pravo" [] (friend/authorize #{:permission.privilege/unobtainium} "Alô!"))
   (GET "/privo" [] (friend/authorize #{:scope/national} "Ei!"))
   (GET "/edit/:id" [id]
-       (rum/render-static-markup (draft-js/edit id (get (es/load-doc id) "contents"))))
+       (draft-js/edit id))
   (GET "/view/:id" [id]
-       (some-> id
-               es/load-doc
-               (get "contents")
-               (json/read-str :key-fn keyword)
-               draft-js/view
-               rum/render-static-markup))
+       (draft-js/view id))
   (friend/logout (GET "/abur" [] "OK, tás fora."))
   (resources "/")
   (not-found "U-lo?"))
@@ -41,6 +35,7 @@
       (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn auth/load-credentials)
                             :workflows [(wflows/interactive-form)]
                             :login-uri auth/login-uri
+                            :login-failure-handler auth/unauthenticated-handler
                             :unauthorized-handler auth/unauthorized-handler})
       (wrap-session {:store (cookie-store {:key "a 16-byte secret"})})
       wrap-keyword-params

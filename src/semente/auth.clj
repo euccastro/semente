@@ -1,5 +1,6 @@
 (ns semente.auth
   (:require [datomic.client.api :as d]
+            ring.util.response
             [rum.core :as rum]
             [semente.datomic :refer (conn)]))
 
@@ -19,13 +20,24 @@
   (dorun (map init-permission-hierarchy ps)))
 
 (defn load-credentials [username]
-  (when-let [m (d/pull (d/db (conn))
-                       '[:user/password-hash {:user/permission [:db/ident]}]
-                       [:user/name username])]
-    {:username username
-     :password (:user/password-hash m)
-     :roles (doto (into #{} (map :db/ident (:user/permission m)))
-              init-permission-hierarchies)}))
+  (let [m (d/pull (d/db (conn))
+                  '[:user/password-hash {:user/permission [:db/ident]}]
+                  [:user/name username])]
+    (when (not-empty m)
+      {:username username
+       :password (:user/password-hash m)
+       :roles (doto (into #{} (map :db/ident (:user/permission m)))
+                init-permission-hierarchies)})))
+
+(defn- username
+  [form-params params]
+  (or (get form-params "username") (:username params "")))
+
+(defn unauthenticated-handler
+  [{:keys [form-params params]}]
+  (ring.util.response/redirect
+   (str login-uri "?erro=nom-quadra&utente="
+        (java.net.URLEncoder/encode (username form-params params)))))
 
 (defn unauthorized-handler [{{:keys [cemerick.friend/required-roles]} :cemerick.friend/authorization-failure
                              :as req}]
@@ -54,16 +66,19 @@
                   (for [p required-permission-names]
                     [:li [:strong p]])]])]])}))
 
-(rum/defc login-form []
+(rum/defc login-form [erro utente]
   [:html
    [:head [:meta {:charset "UTF-8"}]]
    [:body
     [:h1 "Quem és?"]
-    [:div "Esta página requer autenticaçom."]
+    (if erro
+      ;; XXX: estilo
+      [:div.erro {:style {:color :red}} "Nom conheço " [:em utente] " ou a senha nom quadra."]
+      [:div "Esta página requer autenticaçom."])
     [:form {:action login-uri :method "post"}
      [:div
       [:div "utente"]
-      [:input {:type "text" :name "username"}]]
+      [:input {:type "text" :name "username" :value utente}]]
      [:div
       [:div "senha"]
       [:input {:type "password" :name "password"}]]
@@ -74,3 +89,6 @@
   ;; to set a password:
   (d/transact (conn) {:tx-data [[:db/add [:user/name "estevo"] :user/password-hash (creds/hash-bcrypt "abcd")]]})
   )
+
+(defn login [erro utente]
+  (rum/render-static-markup (login-form erro utente)))
