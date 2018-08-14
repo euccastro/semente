@@ -7,6 +7,11 @@
 (print (:body (client/put (str es "/edits/_doc/xyz?pretty") {:body "{\"a\": \"hello\"}"
                                                              :content-type "application/json"})))
 
+(isa? :blah clojure.lang.Keyword)
+
+(type clojure.lang.Keyword)
+
+(type :blah)
 
 (print (:body (client/get (str es "/edits/_doc/xyz?pretty"))))
 

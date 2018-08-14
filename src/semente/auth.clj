@@ -13,6 +13,7 @@
                      '[{:permission/privilege [:db/ident]}
                        {:permission/scope [:db/ident]}]
                      p)]
+       (derive p :permission/any)
        (some->> (get-in m [:permission/privilege :db/ident]) (derive p))
        (some->> (get-in m [:permission/scope :db/ident]) (derive p))))))
 

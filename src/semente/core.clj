@@ -2,7 +2,7 @@
   (:require [cemerick.friend :as friend]
             [cemerick.friend.workflows :as wflows]
             [cemerick.friend.credentials :as creds]
-            [compojure.core :refer (defroutes GET POST)]
+            [compojure.core :as compojure :refer (defroutes GET POST)]
             [compojure.route :refer (resources not-found)]
             [datomic.ion.lambda.api-gateway :as apigw]
             [net.icbink.expand-headers.core :refer (wrap-expand-headers)]
@@ -14,7 +14,13 @@
             [semente.auth :as auth]
             [semente.draft-js :as draft-js]))
 
+(defroutes admin-routes
+  (GET "/" [] "parabéns admin!"))
+
 (defroutes ring-handler
+  (compojure/context
+   "/admin" []
+   (friend/wrap-authorize admin-routes #{:permission.privilege/admin}))
   (POST "/guarda" [name contents & etc]
         (apply draft-js/save name contents etc))
   (GET auth/login-uri [erro utente]
