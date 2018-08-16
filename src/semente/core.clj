@@ -17,6 +17,15 @@
 (defroutes admin-routes
   (GET "/" [] "parabéns admin!"))
 
+(rum/defc prova-css []
+  [:html
+   [:head
+    [:link {:rel "stylesheet" :type "text/css" :href "/res/css/garden.css"}]]
+   [:body
+    "Olá mundo!"
+    ;; for CSS reloading...
+    [:script {:src "/cljs-out/dev-main.js" :type "text/javascript"}]]])
+
 (defroutes ring-handler
   (compojure/context
    "/admin" []
@@ -25,6 +34,7 @@
         (apply draft-js/save name contents etc))
   (GET auth/login-uri [erro utente]
        (auth/login erro utente))
+  (GET "/prova-css" [] (rum/render-static-markup (prova-css)))
   (GET "/prova" [] (friend/authorize #{:permission.privilege/admin} "Olá!"))
   (GET "/pravo" [] (friend/authorize #{:permission.privilege/unobtainium} "Alô!"))
   (GET "/privo" [] (friend/authorize #{:scope/national} "Ei!"))
