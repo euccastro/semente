@@ -12,7 +12,8 @@
             [ring.middleware.session.cookie :refer (cookie-store)]
             [rum.core :as rum]
             [semente.auth :as auth]
-            [semente.draft-js :as draft-js]))
+            [semente.draft-js :as draft-js]
+            [semente.stage :refer (in-development in-production)]))
 
 (defroutes admin-routes
   (GET "/" [] "parabéns admin!"))
@@ -24,7 +25,8 @@
    [:body
     "Olá mundo!"
     ;; for CSS reloading...
-    [:script {:src "/cljs-out/dev-main.js" :type "text/javascript"}]]])
+    (in-development
+     [:script {:src "/cljs-out/dev-main.js" :type "text/javascript"}])]])
 
 (defroutes ring-handler
   (compojure/context

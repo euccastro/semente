@@ -47,4 +47,6 @@
                 hawk {:mvn/version "0.2.11"}
                 org.eclipse.jetty.websocket/websocket-servlet {:mvn/version "9.3.7.v20160115"}
                 org.eclipse.jetty.websocket/websocket-server {:mvn/version "9.3.7.v20160115"}
-                org.eclipse.jetty/jetty-server {:mvn/version "9.3.7.v20160115"}}}}}
+                org.eclipse.jetty/jetty-server {:mvn/version "9.3.7.v20160115"}}}
+  :production
+  {:extra-paths ["production"]}}}
