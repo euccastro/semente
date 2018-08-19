@@ -8,7 +8,7 @@
   (let [body (rule :body)]
     (body
      {:font-family "Helvetica Neue"
-      :color "blue"
+      :color "green"
       :font-size   "16px"
       :line-height 1.5})))
 

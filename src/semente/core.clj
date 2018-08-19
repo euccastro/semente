@@ -26,7 +26,7 @@
     "Olá mundo!"
     ;; for CSS reloading...
     (in-development
-     [:script {:src "/cljs-out/dev-main.js" :type "text/javascript"}])]])
+     [:script {:src "/res/js/main.js" :type "text/javascript"}])]])
 
 (defroutes ring-handler
   (compojure/context

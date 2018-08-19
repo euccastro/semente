@@ -1,0 +1,4 @@
+#!/bin/bash
+
+clj -A:dev:build -m figwheel.main -bo prod
+clj -A:dev:deploy -m deploy

@@ -16,7 +16,7 @@
     [:link {:rel "stylesheet" :type "text/css" :href "/css/prova.css"}]]
    [:body
     [:#app "Aqui iriam as tuas movidorras."]
-    [:script {:src "/cljs-out/dev-main.js" :type "text/javascript"}]
+    [:script {:src "/res/js/main.js" :type "text/javascript"}]
     [:script {:type "text/javascript"
               :dangerouslySetInnerHTML {:__html
                                         (str "semente.webmain.main("

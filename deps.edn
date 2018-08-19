@@ -35,8 +35,7 @@
  :mvn/repos {"datomic-cloud" {:url "s3://datomic-releases-1fc2183a/maven/releases"}}
  :aliases
  {:dev
-  {:extra-paths ["dev" "target"]
-   :extra-deps {cider/piggieback {:mvn/version "0.3.8"}
+  {:extra-deps {cider/piggieback {:mvn/version "0.3.8"}
                 com.bhauman/figwheel-main {:mvn/version "0.1.5"
                                            :exclusions [org.eclipse.jetty.websocket/websocket-servlet
                                                         org.eclipse.jetty.websocket/websocket-server
@@ -48,5 +47,9 @@
                 org.eclipse.jetty.websocket/websocket-servlet {:mvn/version "9.3.7.v20160115"}
                 org.eclipse.jetty.websocket/websocket-server {:mvn/version "9.3.7.v20160115"}
                 org.eclipse.jetty/jetty-server {:mvn/version "9.3.7.v20160115"}}}
-  :production
-  {:extra-paths ["production"]}}}
+  :tinker
+  {:extra-paths ["target" "dev-src"]}
+  :build
+  {:extra-paths ["target" "deploy-src"]}
+  :deploy
+  {:extra-paths ["script" "deploy-src"]}}}
