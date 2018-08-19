@@ -13,7 +13,7 @@
             [rum.core :as rum]
             [semente.auth :as auth]
             [semente.draft-js :as draft-js]
-            [semente.stage :refer (in-development in-production)]))
+            [semente.stage :refer (stage)]))
 
 (defroutes admin-routes
   (GET "/" [] "parabéns admin!"))
@@ -25,7 +25,7 @@
    [:body
     "Olá mundo!"
     ;; for CSS reloading...
-    (in-development
+    (when (not= stage :production)
      [:script {:src "/res/js/main.js" :type "text/javascript"}])]])
 
 (defroutes ring-handler

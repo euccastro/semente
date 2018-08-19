@@ -1,4 +1,4 @@
-{:paths ["src/common" "resources"]
+{:paths ["src" "resources"]
  :deps {amazonica {:mvn/version "0.3.130"
                    :exclusions [com.amazonaws/aws-java-sdk
                                 com.amazonaws/amazon-kinesis-client
@@ -35,7 +35,8 @@
  :mvn/repos {"datomic-cloud" {:url "s3://datomic-releases-1fc2183a/maven/releases"}}
  :aliases
  {:dev
-  {:extra-deps {cider/piggieback {:mvn/version "0.3.8"}
+  {:extra-paths ["dev" "target"]
+   :extra-deps {cider/piggieback {:mvn/version "0.3.8"}
                 com.bhauman/figwheel-main {:mvn/version "0.1.5"
                                            :exclusions [org.eclipse.jetty.websocket/websocket-servlet
                                                         org.eclipse.jetty.websocket/websocket-server
@@ -46,10 +47,4 @@
                 hawk {:mvn/version "0.2.11"}
                 org.eclipse.jetty.websocket/websocket-servlet {:mvn/version "9.3.7.v20160115"}
                 org.eclipse.jetty.websocket/websocket-server {:mvn/version "9.3.7.v20160115"}
-                org.eclipse.jetty/jetty-server {:mvn/version "9.3.7.v20160115"}}}
-  :tinker
-  {:extra-paths ["target" "src/dev" "src/tinker"]}
-  :build  ; XXX: remove when figwheel-main stops checking for target
-  {:extra-paths ["target" "src/deploy"]}
-  :deploy
-  {:extra-paths ["script" "src/deploy"]}}}
+                org.eclipse.jetty/jetty-server {:mvn/version "9.3.7.v20160115"}}}}}

@@ -1,4 +1,4 @@
-^{:watch-dirs ["src/common" "src/dev"]}
+^{:watch-dirs ["src"]}
 {:main semente.webmain
  :output-dir "target/public/res/js/out"
  :output-to "target/public/res/js/main.js"
