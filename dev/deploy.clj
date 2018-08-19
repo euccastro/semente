@@ -42,7 +42,7 @@
       (let [status (ion/deploy-status {:execution-arn arn})]
         (println "Status:" status)
         (when-not (= (:code-deploy-status status)
-                     (:execution-status status)
+                     (:deploy-status status)
                      "SUCCEEDED")
           (Thread/sleep 5000)
           (recur))))))
