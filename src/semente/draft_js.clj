@@ -1,12 +1,11 @@
 (ns semente.draft-js
-  (:require [amazonica.aws.s3 :as s3]
-            [clojure.data.json :as json]
-            [clojure.java.io :as io]
+  (:require [clojure.data.json :as json]
             [clojure.string :as str]
             [com.rpl.specter :as sp]
             digest
             [rum.core :as rum]
-            [semente.elasticsearch :as es]))
+            [semente.elasticsearch :as es]
+            [semente.s3 :as s3]))
 
 (rum/defc edit-page [doc-name contents]
   [:html
@@ -76,13 +75,6 @@
     [:meta {:charset "UTF-8"}]]
    [:body (content-state->hiccup contents)]])
 
-(defn put-public [k content-type size contents]
-  (s3/put-object {:bucket-name "datomique.icbink.org"
-                  :key k
-                  :metadata {:content-type content-type
-                             :content-size size}
-                  :input-stream (io/input-stream contents)
-                  :canned-acl :public-read}))
 
 (defn save [name contents & etc]
   (let [blobs (filter (fn [[k _]] (str/starts-with? k "blob:")) etc)
@@ -92,7 +84,7 @@
                                            "." (last (str/split (:content-type v) #"/")))])
                                  blobs))]
     (dorun (pmap (fn [[k {:keys [content-type size tempfile]}]]
-                   (put-public (filenames k) content-type size tempfile))
+                   (s3/put-public (filenames k) tempfile {:content-type content-type :size size}))
                  blobs))
     (es/save-doc name {:contents (->> contents
                                       json/read-str
