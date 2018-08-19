@@ -27,7 +27,7 @@
     (println "Building js...")
     (io/make-parents path)
     (fw/-main "-bo" "prod")
-    (print "Uploading js...")
+    (println "Uploading js...")
     (upload path "application/javascript")
     (println "Done uploading js.")))
 
