@@ -22,14 +22,15 @@
 
 (def js-path "target/s3/js/main.js")
 
-(defn build-and-upload-js []
+(defn build-and-upload-js [prom]
   (let [path (:output-to (clojure.edn/read-string (slurp "prod.cljs.edn")))]
     (println "Building js...")
     (io/make-parents path)
     (fw/-main "-bo" "prod")
     (println "Uploading js...")
     (upload path "application/javascript")
-    (println "Done uploading js.")))
+    (println "Done uploading js.")
+    (deliver prom nil)))
 
 (defn push-and-deploy-ions []
   (let [uname "wip"
@@ -45,17 +46,20 @@
                      (:deploy-status status)
                      "SUCCEEDED")
           (Thread/sleep 5000)
-          (recur))))))
+          (recur))))
+    (println "Done deploying ions.")))
 
 (defn -main []
   ;; figwheel-main will error if these are not present
   (dorun (map #(io/make-parents (str % "/blah"))
               (:css-dirs (clojure.edn/read-string (slurp "figwheel-main.edn")))))
   (let [css-future (future (build-and-upload-css))
-        js-future (future (build-and-upload-js))
+        js-promise (promise)
         ions-future (future (push-and-deploy-ions))]
+    (future (build-and-upload-js js-promise))
     @css-future
-    @js-future
+    @js-promise
     @ions-future
-    nil)
+    (println "All done."))
+    (System/exit 0)
 )
