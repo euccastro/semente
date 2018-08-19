@@ -1,5 +1,6 @@
 (ns deploy
   (:require [clojure.java.io :as io]
+            [datomic.ion.dev :as ion]
             [figwheel.main :as fw]
             [semente.s3 :as s3]
             styles))
@@ -30,13 +31,29 @@
     (upload path "application/javascript")
     (println "Done uploading js.")))
 
+(defn push-and-deploy-ions []
+  (let [uname "wip"
+        _ (println "Pushing to ions...")
+        {[group] :deploy-groups} (ion/push {:uname uname})
+        _ (println "Deploying to ions...")
+        {arn :execution-arn} (ion/deploy {:group group :uname uname})]
+    (println "Deployed; waiting for successful status...")
+    (loop []
+      (let [status (ion/deploy-status {:execution-arn arn})]
+        (println "Status:" status)
+        (when-not (= (:deploy-status status) (:execution-status status) 'SUCCEEDED)
+          (Thread/sleep 5000)
+          (recur))))))
+
 (defn -main []
   ;; figwheel-main will error if these are not present
   (dorun (map #(io/make-parents (str % "/blah"))
               (:css-dirs (clojure.edn/read-string (slurp "figwheel-main.edn")))))
   (let [css-future (future (build-and-upload-css))
-        js-future (future (build-and-upload-js))]
+        js-future (future (build-and-upload-js))
+        ions-future (future (push-and-deploy-ions))]
     @css-future
     @js-future
+    @ions-future
     nil)
 )
