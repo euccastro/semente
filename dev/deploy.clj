@@ -31,8 +31,7 @@
     (println "Done uploading js.")))
 
 (defn -main []
-  ;; figwheel-main will error if this is not present
-  (io/make-parents "target/1/2/3/4")
+  ;; figwheel-main will error if these are not present
   (dorun (map #(io/make-parents (str % "/blah"))
               (:css-dirs (clojure.edn/read-string (slurp "figwheel-main.edn")))))
   (let [css-future (future (build-and-upload-css))
