@@ -1,5 +1,5 @@
 {:watch-dirs ["src"]
- :css-dirs ["resources/public/res/css"]
+ :css-dirs ["target/public/res/css"]
  :rebel-readline false
  :open-file-command "emacsclient"
  :ring-handler semente.core/ring-app}

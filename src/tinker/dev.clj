@@ -4,9 +4,9 @@
 
 (defn -main []
   (println "installing watch for garden files...")
-  (hawk/watch! [{:paths ["dev-src/semente/styles.clj"]
+  (hawk/watch! [{:paths ["src/tinker/semente/styles.clj"]
                  :handler (fn [ctx e]
                             (println "writing new css")
                             (require 'semente.styles :reload)
-                            (semente.styles/write-styles "resources/public/res/css/garden.css")
+                            (semente.styles/write-styles "target/public/res/css/garden.css")
                             ctx)}]))
