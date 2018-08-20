@@ -9,7 +9,7 @@
 (defn -main []
   (println "Initializing styles...")
   (io/make-parents garden-css-path)
-  (styles/write-styles garden-css-path)
+  (styles/write-styles garden-css-path true)
   (println "Overriding stage...")
   (alter-var-root #'semente.stage/stage (constantly :dev))
   (println "Installing watch for garden files...")
@@ -17,6 +17,6 @@
                  :handler (fn [ctx e]
                             (println "writing new css")
                             (require 'styles :reload)
-                            (styles/write-styles garden-css-path)
+                            (styles/write-styles garden-css-path true)
                             ctx)}])
   (println "Initialization done."))

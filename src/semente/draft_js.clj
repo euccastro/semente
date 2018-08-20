@@ -12,7 +12,7 @@
    [:head
     [:meta {:charset "UTF-8"}]
     [:link {:rel "stylesheet" :type "text/css" :href "/res/css/Draft.css"}]
-    [:link {:rel "stylesheet" :type "text/css" :href "/res/css/prova.css"}]]
+    [:link {:rel "stylesheet" :type "text/css" :href "/res/css/garden.css"}]]
    [:body
     [:#app "Aqui iriam as tuas movidorras."]
     [:script {:src "/res/js/main.js" :type "text/javascript"}]

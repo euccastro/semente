@@ -16,7 +16,7 @@
 (defn build-and-upload-css []
   (io/make-parents garden-css-path)
   (println "Building css...")
-  (styles/write-styles garden-css-path)
+  (styles/write-styles garden-css-path false)
   (println "Uploading css...")
   (upload garden-css-path "text/css")
   (println "Done uploading css."))
