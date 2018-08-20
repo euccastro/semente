@@ -1,4 +1,4 @@
 #!/bin/bash
 
 rm -rf target/*
-clj -A:dev -m deploy
+time clj -A:dev -m deploy && echo && echo "Warming up Lambda..." && curl -i https://datomique.icbink.org/esperta && echo

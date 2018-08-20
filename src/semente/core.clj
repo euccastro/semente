@@ -45,6 +45,7 @@
   (GET "/view/:id" [id]
        (draft-js/view id))
   (friend/logout (GET "/abur" [] "OK, tás fora."))
+  (GET "/esperta" [] "Tou!")
   (resources "/")
   (not-found "U-lo?"))
 

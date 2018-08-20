@@ -11,8 +11,8 @@
   [:html
    [:head
     [:meta {:charset "UTF-8"}]
-    [:link {:rel "stylesheet" :type "text/css" :href "/css/Draft.css"}]
-    [:link {:rel "stylesheet" :type "text/css" :href "/css/prova.css"}]]
+    [:link {:rel "stylesheet" :type "text/css" :href "/res/css/Draft.css"}]
+    [:link {:rel "stylesheet" :type "text/css" :href "/res/css/prova.css"}]]
    [:body
     [:#app "Aqui iriam as tuas movidorras."]
     [:script {:src "/res/js/main.js" :type "text/javascript"}]
