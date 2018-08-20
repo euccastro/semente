@@ -21,6 +21,7 @@
 (rum/defc prova-css []
   [:html
    [:head
+    [:link {:rel "stylesheet" :type "text/css" :href "/res/css/fonts.css"}]
     [:link {:rel "stylesheet" :type "text/css" :href "/res/css/garden.css"}]]
    [:body
     "Olá mundo!"

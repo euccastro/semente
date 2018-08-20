@@ -7,9 +7,9 @@
 (defstyles semente
   (let [body (rule :body)]
     (body
-     {:font-family "Helvetica Neue"
-      :color "blue"
-      :font-size   "16px"
+     {:font-family "dejavu_serif, serif"
+      :color "red"
+      :font-size   "20px"
       :line-height 1.5})))
 
 (defn write-styles [file]

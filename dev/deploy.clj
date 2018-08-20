@@ -56,6 +56,8 @@
     (case ext
       "css" "text/css"
       "js" "application/javascript"
+      "woff" "font/woff"
+      "woff2" "font/woff2"
       (throw (ex-info "Unsupported extension" {:path path :ext ext})))))
 
 (defn upload-file [f]
