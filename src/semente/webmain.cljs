@@ -11,6 +11,8 @@
 ;; I probably want to add this to the state on creation or will-mount.
 (defonce editor-state-atom (atom (.createEmpty js/Draft.EditorState)))
 
+;(def editor-ref-atom (atom nil))
+
 (def url->blob (atom {}))
 
 (defn save-doc [name contents]
@@ -66,10 +68,12 @@
     [:div
      [:div {:style {:margin-bottom "4px"}}
       [:span {:style {:border "1px solid blue"
-                      :padding "0 4px 0 4px"}
-              ;; XXX cursor, pressed state
+                      :padding "0 4px 0 4px"
+                      :cursor "pointer"}
+              :on-mouse-down (fn [e]
+                               ;; Don't steal focus from main editor.
+                               (.preventDefault e))
               :on-click (fn [_]
-                          (println "toggling!")
                           (on-change
                            (toggle-inline-style @editor-state-atom
                                                 "BOLD")))}
@@ -78,6 +82,7 @@
       (js/React.createElement
        js/Draft.Editor
        (clj->js {:onChange on-change
+                 ;:ref (partial reset! editor-ref-atom)
                  :editorState @editor-state-atom
                  :handleKeyCommand (fn [command editor-state]
                                      (if-let [new-state (.handleKeyCommand
