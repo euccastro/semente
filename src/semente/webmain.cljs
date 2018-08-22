@@ -49,6 +49,9 @@
         url (.-url (.getData entity))]
     (image url)))
 
+(defn toggle-inline-style [editor-state style]
+  (js/Draft.RichUtils.toggleInlineStyle editor-state style))
+
 (rum/defcs editor [state name contents]
   (let [add-image (fn [editor-state blob]
                     (let [content-state (.getCurrentContent editor-state)
@@ -61,6 +64,16 @@
                     (.forceUpdate (:rum/react-component state)))
         raw-contents (js/Draft.convertToRaw (.getCurrentContent @editor-state-atom))]
     [:div
+     [:div {:style {:margin-bottom "4px"}}
+      [:span {:style {:border "1px solid blue"
+                      :padding "0 4px 0 4px"}
+              ;; XXX cursor, pressed state
+              :on-click (fn [_]
+                          (println "toggling!")
+                          (on-change
+                           (toggle-inline-style @editor-state-atom
+                                                "BOLD")))}
+       [:b "B"]]]
      [:div {:style {:border "1px solid black"}}
       (js/React.createElement
        js/Draft.Editor
