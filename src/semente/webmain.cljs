@@ -64,12 +64,16 @@
         on-change (fn [editor-state]
                     (reset! editor-state-atom editor-state)
                     (.forceUpdate (:rum/react-component state)))
-        raw-contents (js/Draft.convertToRaw (.getCurrentContent @editor-state-atom))]
+        raw-contents (js/Draft.convertToRaw (.getCurrentContent @editor-state-atom))
+        current-style (set (array-seq (.toArray (.getCurrentInlineStyle @editor-state-atom))))]
     [:div
      [:div {:style {:margin-bottom "4px"}}
-      [:span {:style {:border "1px solid blue"
-                      :padding "0 4px 0 4px"
-                      :cursor "pointer"}
+      [:span {:style (cond-> {:border "1px solid black"
+                              :padding "0 4px 0 4px"
+                              :cursor "pointer"}
+                       (do (prn current-style)
+                           (current-style "BOLD"))
+                       (assoc :background-color "orange"))
               :on-mouse-down (fn [e]
                                ;; Don't steal focus from main editor.
                                (.preventDefault e))
@@ -109,6 +113,11 @@
                                                 :editable false})))}))]
      [:div {:style {:padding 12}}
       [:button {:on-click (fn [e] (save-doc name raw-contents))} "Guardar"]]
+     [:div {:style {:padding 12}}
+      [:pre (.stringify js/JSON
+                        (.getCurrentInlineStyle @editor-state-atom)
+                        nil
+                        2)]]
      [:div {:style {:padding 12}}
       [:pre (.stringify js/JSON
                         raw-contents
