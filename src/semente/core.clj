@@ -7,6 +7,7 @@
             [datomic.ion.lambda.api-gateway :as apigw]
             [net.icbink.expand-headers.core :refer (wrap-expand-headers)]
             [ring.middleware.keyword-params :refer (wrap-keyword-params)]
+            [ring.middleware.multipart-params :refer (wrap-multipart-params)]
             [ring.middleware.params :refer (wrap-params)]
             [ring.middleware.session :refer (wrap-session)]
             [ring.middleware.session.cookie :refer (cookie-store)]
@@ -59,6 +60,7 @@
                             :unauthorized-handler auth/unauthorized-handler})
       (wrap-session {:store (cookie-store {:key "a 16-byte secret"})})
       wrap-keyword-params
+      wrap-multipart-params
       wrap-params
       wrap-expand-headers))
 
