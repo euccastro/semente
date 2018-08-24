@@ -3,7 +3,9 @@
   (:require cljsjs.draft-js
             [rum.core :as rum]
             [cljs-http.client :as http]
-            [cljs.core.async :refer [<!]]))
+            [cljs.core.async :refer [<!]]
+            [goog.object :as gobj]))
+
 
 ;; XXX: only works well with a single editor. I really want to attach it to the
 ;; state but not make it a local stateful thing, since I'm rendering immediately
@@ -16,7 +18,7 @@
 (def url->blob (atom {}))
 
 (defn save-doc [name contents]
-  (let [blob-uris (for [m (array-seq (js/Object.values (.-entityMap contents)))]
+  (let [blob-uris (for [m (array-seq (js/Object.values (gobj/get contents "entityMap")))]
                     (.-url (.-data m)))
         u->b @url->blob
         blobs (for [uri blob-uris
@@ -112,7 +114,7 @@
                                       (clj->js {:component native-image
                                                 :editable false})))}))]
      [:div {:style {:padding 12}}
-      [:button {:on-click (fn [e] (save-doc name raw-contents))} "Guardar"]]
+      [:button {:on-click (fn [_] (save-doc name raw-contents))} "Guardar"]]
      [:div {:style {:padding 12}}
       [:pre (.stringify js/JSON
                         (.getCurrentInlineStyle @editor-state-atom)
