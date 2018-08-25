@@ -34,11 +34,8 @@
     [{:strategy (fn [& args] (apply link-strategy args))
       :component (fn [& args] (apply link-component args))}])))
 
-;; XXX: only works well with a single editor. I really want to attach it to the
-;; state but not make it a local stateful thing, since I'm rendering immediately
-;; when this changes (on-change)
-;; I probably want to add this to the state on creation or will-mount.
-(defonce editor-state-atom (atom (.createEmpty js/Draft.EditorState decorator)))
+(defonce app-state
+  (atom {}))
 
 ;(def editor-ref-atom (atom nil))
 
@@ -83,16 +80,28 @@
 (defn toggle-inline-style [editor-state style]
   (js/Draft.RichUtils.toggleInlineStyle editor-state style))
 
-(defn apply-entity-to-selection [editor-state entity-type mutability data]
+(defn create-entity [editor-state entity-type mutability data]
   (let [content-state (.getCurrentContent editor-state)
-        cs-with-entity (.createEntity content-state entity-type mutability (clj->js data))
-        entity-key (.getLastCreatedEntityKey cs-with-entity)]
-    (js/Draft.RichUtils.toggleLink editor-state
-                                   (.getSelection editor-state)
-                                   entity-key)))
+        cs-with-entity (.createEntity content-state entity-type mutability (clj->js data))]
+    (.getLastCreatedEntityKey cs-with-entity)))
 
-(rum/defcs editor [state name contents]
-  (let [editor-state @editor-state-atom
+
+(defn set-entity-in-selection [editor-state ?entity-key]
+  (js/Draft.RichUtils.toggleLink
+   editor-state
+   (.getSelection editor-state)
+   ?entity-key))
+
+(defn add-entity-to-selection [editor-state & args]
+  (set-entity-in-selection editor-state
+                           (apply create-entity editor-state args)))
+
+(defn remove-entities-from-selection [editor-state]
+  (set-entity-in-selection editor-state nil))
+
+(rum/defcs editor < rum/reactive
+  [state]
+  (let [{:keys [doc-name ^js/Draft.EditorState editor-state]} (rum/react app-state)
         add-image (fn [editor-state blob]
                     ;; XXX: factor out insert-entity-block or something
                     (let [content-state (.getCurrentContent editor-state)
@@ -101,7 +110,7 @@
                           es-with-entity (js/Draft.EditorState.set editor-state (clj->js {:currentContent cs-with-entity}))]
                       (js/Draft.AtomicBlockUtils.insertAtomicBlock es-with-entity entity-key " ")))
         on-change (fn [editor-state]
-                    (reset! editor-state-atom editor-state)
+                    (swap! app-state assoc :editor-state editor-state)
                     (.forceUpdate (:rum/react-component state)))
         raw-contents (js/Draft.convertToRaw (.getCurrentContent editor-state))
         current-style (set (array-seq (.toArray (.getCurrentInlineStyle editor-state))))]
@@ -129,20 +138,28 @@
                                ;; Don't steal focus from main editor.
                                (.preventDefault e))
               :on-click (fn [e]
-                          (println "wat")
-                          (on-change (apply-entity-to-selection
+                          (on-change (add-entity-to-selection
                                       editor-state
                                       "LINK"
                                       "MUTABLE"
-                                      {:url "https://www.google.com"}))
-                          (println "wut"))}
-       "8"]]
+                                      {:url "https://www.google.com"})))}
+       "8"]
+      [:span {:style {:border "1px solid black"
+                      :padding "0 4px 0 4px"
+                      :cursor "pointer"}
+              :on-mouse-down (fn [e]
+                               ;; Don't steal focus from main editor.
+                               (.preventDefault e))
+              :on-click (fn [e]
+                          (on-change (remove-entities-from-selection
+                                      editor-state)))}
+       "3"]]
      [:div {:style {:border "1px solid black"}}
       (js/React.createElement
        js/Draft.Editor
        (clj->js {:onChange on-change
                  ;:ref (partial reset! editor-ref-atom)
-                 :editorState @editor-state-atom
+                 :editorState editor-state
                  :handleKeyCommand (fn [command editor-state]
                                      (if-let [new-state (.handleKeyCommand
                                                          js/Draft.RichUtils
@@ -159,7 +176,7 @@
                                        (js/console.log files))
                  :handlePastedFiles (fn [blobs]
                                       (println "got pasted FILES!" (.-length blobs))
-                                      (on-change (reduce add-image @editor-state-atom (array-seq blobs)))
+                                      (on-change (reduce add-image editor-state (array-seq blobs)))
                                       "handled")
                  :blockRendererFn (fn [block]
                                     (if (= (.getType block) "atomic")
@@ -167,7 +184,7 @@
                                                 :editable false})))}))]
      [:div {:style {:padding 12}}
       [:button {:on-click (fn [_] (save-doc name raw-contents))} "Guardar"]]
-     [:div {:style {:padding 12}}
+     #_[:div {:style {:padding 12}}
       [:pre (.stringify js/JSON
                         (.getCurrentInlineStyle @editor-state-atom)
                         nil
@@ -179,21 +196,17 @@
                         2)]]]))
 
 
-(rum/defc edit-page [name]
-  [:div [:h2 name] (editor name)])
-
-(declare +section+)
 
 (defn ^:after-load reload []
-  (rum/mount (edit-page +section+) (.getElementById js/document "app")))
+  (rum/mount (editor) (.getElementById js/document "app")))
 
-(defn ^:export main [section contents]
-  (defonce +section+ section)
-  (when contents
-    (println "contents si" (pr-str contents))
-    (reset!
-     editor-state-atom
-     (js/Draft.EditorState.createWithContent
-      (js/Draft.convertFromRaw contents)
-      decorator)))
+(defn ^:export main [doc-name contents]
+  (swap! app-state assoc
+         :doc-name doc-name
+         :editor-state
+         (if contents
+           (js/Draft.EditorState.createWithContent
+            (js/Draft.convertFromRaw contents)
+            decorator)
+           (js/Draft.EditorState.createEmpty decorator)))
   (reload))
