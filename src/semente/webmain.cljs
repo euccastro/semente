@@ -6,12 +6,39 @@
             [cljs.core.async :refer [<!]]
             [goog.object :as gobj]))
 
+(rum/defc link [url contents]
+  [:a {:href url} contents])
+
+(defn link-strategy
+  [content-block callback content-state]
+  (.findEntityRanges content-block
+                     (fn [^js/Draft.CharacterMetadata cmd]
+                       (println "Checking" (pr-str cmd))
+                       (boolean
+                        (some-> (.getEntity cmd)
+                                (#(.getEntity content-state %))
+                                (.getType)
+                                (=  "LINK"))))
+                     (fn [start end]
+                       (println "got one se!" start end)
+                       (callback start end))))
+
+(defn link-component [^js/Draft.DraftDecoratorComponentProps props]
+  (link (.-url (.getData (.getEntity (.-contentState props)
+                                     (.-entityKey props))))
+        (.-children props)))
+
+(def decorator
+  (js/Draft.CompositeDecorator.
+   (clj->js
+    [{:strategy (fn [& args] (apply link-strategy args))
+      :component (fn [& args] (apply link-component args))}])))
 
 ;; XXX: only works well with a single editor. I really want to attach it to the
 ;; state but not make it a local stateful thing, since I'm rendering immediately
 ;; when this changes (on-change)
 ;; I probably want to add this to the state on creation or will-mount.
-(defonce editor-state-atom (atom (.createEmpty js/Draft.EditorState)))
+(defonce editor-state-atom (atom (.createEmpty js/Draft.EditorState decorator)))
 
 ;(def editor-ref-atom (atom nil))
 
@@ -56,8 +83,20 @@
 (defn toggle-inline-style [editor-state style]
   (js/Draft.RichUtils.toggleInlineStyle editor-state style))
 
+(defn apply-entity-to-selection [editor-state entity-type mutability data]
+  (let [content-state (.getCurrentContent editor-state)
+        cs-with-entity (.createEntity content-state entity-type mutability (clj->js data))
+        entity-key (.getLastCreatedEntityKey cs-with-entity)
+        cs-with-entity (js/Draft.Modifier.applyEntity
+                        cs-with-entity
+                        (.getSelection editor-state)
+                        entity-key)]
+    (js/Draft.EditorState.set editor-state (clj->js {:currentContent cs-with-entity}))))
+
 (rum/defcs editor [state name contents]
-  (let [add-image (fn [editor-state blob]
+  (let [editor-state @editor-state-atom
+        add-image (fn [editor-state blob]
+                    ;; XXX: factor out insert-entity-block or something
                     (let [content-state (.getCurrentContent editor-state)
                           cs-with-entity (.createEntity content-state "IMAGE" "IMMUTABLE" (clj->js {:url (register-blob blob)}))
                           entity-key (.getLastCreatedEntityKey cs-with-entity)
@@ -66,8 +105,8 @@
         on-change (fn [editor-state]
                     (reset! editor-state-atom editor-state)
                     (.forceUpdate (:rum/react-component state)))
-        raw-contents (js/Draft.convertToRaw (.getCurrentContent @editor-state-atom))
-        current-style (set (array-seq (.toArray (.getCurrentInlineStyle @editor-state-atom))))]
+        raw-contents (js/Draft.convertToRaw (.getCurrentContent editor-state))
+        current-style (set (array-seq (.toArray (.getCurrentInlineStyle editor-state))))]
     [:div
      [:div {:style {:margin-bottom "4px"}}
       [:span {:style (cond-> {:border "1px solid black"
@@ -79,11 +118,27 @@
               :on-mouse-down (fn [e]
                                ;; Don't steal focus from main editor.
                                (.preventDefault e))
-              :on-click (fn [_]
+              :on-click (fn [e]
                           (on-change
-                           (toggle-inline-style @editor-state-atom
-                                                "BOLD")))}
-       [:b "B"]]]
+                           (toggle-inline-style editor-state
+                                                "BOLD"))
+                          (.preventDefault e))}
+       [:b "B"]]
+      [:span {:style {:border "1px solid black"
+                      :padding "0 4px 0 4px"
+                      :cursor "pointer"}
+              :on-mouse-down (fn [e]
+                               ;; Don't steal focus from main editor.
+                               (.preventDefault e))
+              :on-click (fn [e]
+                          (println "wat")
+                          (on-change (apply-entity-to-selection
+                                      editor-state
+                                      "LINK"
+                                      "MUTABLE"
+                                      {:url "https://www.google.com"}))
+                          (println "wut"))}
+       "8"]]
      [:div {:style {:border "1px solid black"}}
       (js/React.createElement
        js/Draft.Editor
@@ -109,7 +164,6 @@
                                       (on-change (reduce add-image @editor-state-atom (array-seq blobs)))
                                       "handled")
                  :blockRendererFn (fn [block]
-                                    (println "block render" (.getType block))
                                     (if (= (.getType block) "atomic")
                                       (clj->js {:component native-image
                                                 :editable false})))}))]
@@ -142,5 +196,6 @@
     (reset!
      editor-state-atom
      (js/Draft.EditorState.createWithContent
-      (js/Draft.convertFromRaw contents))))
+      (js/Draft.convertFromRaw contents)
+      decorator)))
   (reload))
