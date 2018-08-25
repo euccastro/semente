@@ -1,5 +1,6 @@
 ^{:watch-dirs ["src"]}
 {:main semente.webmain
+ :infer-externs true
  :output-dir "target/public/res/js/out"
  :output-to "target/public/res/js/main.js"
  :asset-path "http://localhost:9500/res/js/out"}

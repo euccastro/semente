@@ -6,11 +6,19 @@
             [cljs.core.async :refer [<!]]
             [goog.object :as gobj]))
 
+(set! *warn-on-infer* true)
+
+
+(defn dget [o & attrs]
+  (reduce gobj/get o attrs))
+
 (rum/defc link [url contents]
   [:a {:href url} contents])
 
 (defn link-strategy
-  [content-block callback content-state]
+  [^js/Draft.ContentBlock content-block
+   callback
+   ^js/Draft.ContentState content-state]
   (.findEntityRanges content-block
                      (fn [^js/Draft.CharacterMetadata cmd]
                        (boolean
@@ -22,9 +30,10 @@
                        (callback start end))))
 
 (defn link-component [^js/Draft.DraftDecoratorComponentProps props]
-  (link (.-url (.getData (.getEntity (.-contentState props)
-                                     (.-entityKey props))))
-        (.-children props)))
+  (let [^js/Draft.ContentState content-state  (gobj/get props "contentState")
+        ^js/Draft.DraftEntityInstance entity (.getEntity content-state (gobj/get props "entityKey"))]
+    (link (gobj/get (.getData entity) "url")
+          (gobj/get props "children"))))
 
 (def decorator
   (js/Draft.CompositeDecorator.
@@ -35,13 +44,11 @@
 (defonce app-state
   (atom {}))
 
-;(def editor-ref-atom (atom nil))
-
 (def url->blob (atom {}))
 
 (defn save-doc [name contents]
   (let [blob-uris (for [m (array-seq (js/Object.values (gobj/get contents "entityMap")))]
-                    (.-url (.-data m)))
+                    (dget m "data" "uri"))
         u->b @url->blob
         blobs (for [uri blob-uris
                     :let [blob (u->b uri)]
@@ -51,7 +58,8 @@
                                 {:multipart-params
                                  (into [["name" name]
                                         ["contents" (.stringify js/JSON contents)]]
-                                       blobs)}))))))
+                                       blobs)}))))
+    nil))
 
 (def create-blob-url (memoize js/URL.createObjectURL))
 
@@ -68,18 +76,18 @@
 (rum/defc image [url]
   [:img {:src url}])
 
-(defn native-image [props]
-  (let [block (.-block props)
-        content-state (.-contentState props)
+(defn native-image [^js/Draft.DraftDecoratorComponentProps props]
+  (let [block ^js/Draft.ContentBlock (.-block props)
+        content-state ^js/Draft.ContentState (.-contentState props)
         entity (.getEntity content-state (.getEntityAt block 0))
-        url (.-url (.getData entity))]
+        url (gobj/get (.getData entity) "url")]
     (image url)))
 
 (defn toggle-inline-style [editor-state style]
   (js/Draft.RichUtils.toggleInlineStyle editor-state style))
 
-(defn create-entity [editor-state entity-type mutability data]
-  (let [content-state (.getCurrentContent editor-state)
+(defn create-entity [^js/Draft.EditorState editor-state entity-type mutability data]
+  (let [^js/Draft.ContentState content-state (.getCurrentContent editor-state)
         cs-with-entity (.createEntity content-state entity-type mutability (clj->js data))]
     (.getLastCreatedEntityKey cs-with-entity)))
 
