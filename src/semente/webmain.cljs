@@ -86,12 +86,10 @@
 (defn apply-entity-to-selection [editor-state entity-type mutability data]
   (let [content-state (.getCurrentContent editor-state)
         cs-with-entity (.createEntity content-state entity-type mutability (clj->js data))
-        entity-key (.getLastCreatedEntityKey cs-with-entity)
-        cs-with-entity (js/Draft.Modifier.applyEntity
-                        cs-with-entity
-                        (.getSelection editor-state)
-                        entity-key)]
-    (js/Draft.EditorState.set editor-state (clj->js {:currentContent cs-with-entity}))))
+        entity-key (.getLastCreatedEntityKey cs-with-entity)]
+    (js/Draft.RichUtils.toggleLink editor-state
+                                   (.getSelection editor-state)
+                                   entity-key)))
 
 (rum/defcs editor [state name contents]
   (let [editor-state @editor-state-atom
