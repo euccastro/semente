@@ -6,7 +6,6 @@
 (defstyles semente
   [:body
    {:font-family "dejavu_serif, serif"
-    :color "red"
     :font-size   "20px"
     :line-height 1.5}]
   [:.public-DraftStyleDefault-block

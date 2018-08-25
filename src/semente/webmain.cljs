@@ -13,14 +13,12 @@
   [content-block callback content-state]
   (.findEntityRanges content-block
                      (fn [^js/Draft.CharacterMetadata cmd]
-                       (println "Checking" (pr-str cmd))
                        (boolean
                         (some-> (.getEntity cmd)
                                 (#(.getEntity content-state %))
                                 (.getType)
                                 (=  "LINK"))))
                      (fn [start end]
-                       (println "got one se!" start end)
                        (callback start end))))
 
 (defn link-component [^js/Draft.DraftDecoratorComponentProps props]
@@ -99,9 +97,82 @@
 (defn remove-entities-from-selection [editor-state]
   (set-entity-in-selection editor-state nil))
 
+(rum/defc link-editor < rum/reactive [on-change]
+  (let [{:keys [^js/Draft.EditorState editor-state
+                link-text]} (rum/react app-state)
+        bye #(swap! app-state assoc :editing-link? false :link-text "")
+        apply-link #(do (bye)
+                        (on-change (add-entity-to-selection
+                                    editor-state
+                                    "LINK"
+                                    "MUTABLE"
+                                    {:url link-text})))]
+    [:div
+     "URL:"
+     [:input {:type "text"
+              :placeholder "Entra o URL da ligaçom e preme ENTER"
+              :value (or link-text "")
+              :on-key-down (fn [e]
+                             (case (.-key e)
+                               "Enter" (do
+                                         (.preventDefault e)
+                                         (apply-link))
+                               "Escape" (do
+                                          (.preventDefault e)
+                                          (bye))
+                               nil))
+              :on-change (fn [e]
+                           (swap! app-state assoc :link-text (.-value (.-target e))))}]
+     [:button {:on-click apply-link} "Ligar"]
+     [:button {:on-click bye} "Cancelar"]]))
+
+(rum/defc toolbar [editor-state on-change current-style]
+  [:div
+   [:span {:style (cond-> {:border "1px solid black"
+                           :padding "0 4px 0 4px"
+                           :cursor "pointer"}
+                    (current-style "BOLD")
+                    (assoc :background-color "orange"))
+           :on-mouse-down (fn [e]
+                            ;; Don't steal focus from main editor.
+                            (.preventDefault e))
+           :on-click (fn [e]
+                       (on-change
+                        (toggle-inline-style editor-state
+                                             "BOLD"))
+                       (.preventDefault e))}
+    [:b "B"]]
+   [:span {:style {:border "1px solid black"
+                   :padding "0 4px 0 4px"
+                   :cursor "pointer"}
+           :on-mouse-down (fn [e]
+                            ;; Don't steal focus from main editor.
+                            (.preventDefault e))
+           :on-click (fn [e]
+                       #_(on-change (add-entity-to-selection
+                                     editor-state
+                                     "LINK"
+                                     "MUTABLE"
+                                     {:url "https://www.google.com"}))
+                       (swap! app-state assoc :editing-link? true))}
+    "8"]
+   [:span {:style {:border "1px solid black"
+                   :padding "0 4px 0 4px"
+                   :cursor "pointer"}
+           :on-mouse-down (fn [e]
+                            ;; Don't steal focus from main editor.
+                            (.preventDefault e))
+           :on-click (fn [e]
+                       (on-change (remove-entities-from-selection
+                                   editor-state)))}
+    "3"]])
+
 (rum/defcs editor < rum/reactive
   [state]
-  (let [{:keys [doc-name ^js/Draft.EditorState editor-state]} (rum/react app-state)
+  (let [{:keys [doc-name
+                ^js/Draft.EditorState editor-state
+                editing-link?
+                link-text]} (rum/react app-state)
         add-image (fn [editor-state blob]
                     ;; XXX: factor out insert-entity-block or something
                     (let [content-state (.getCurrentContent editor-state)
@@ -116,44 +187,9 @@
         current-style (set (array-seq (.toArray (.getCurrentInlineStyle editor-state))))]
     [:div
      [:div {:style {:margin-bottom "4px"}}
-      [:span {:style (cond-> {:border "1px solid black"
-                              :padding "0 4px 0 4px"
-                              :cursor "pointer"}
-                       (do (prn current-style)
-                           (current-style "BOLD"))
-                       (assoc :background-color "orange"))
-              :on-mouse-down (fn [e]
-                               ;; Don't steal focus from main editor.
-                               (.preventDefault e))
-              :on-click (fn [e]
-                          (on-change
-                           (toggle-inline-style editor-state
-                                                "BOLD"))
-                          (.preventDefault e))}
-       [:b "B"]]
-      [:span {:style {:border "1px solid black"
-                      :padding "0 4px 0 4px"
-                      :cursor "pointer"}
-              :on-mouse-down (fn [e]
-                               ;; Don't steal focus from main editor.
-                               (.preventDefault e))
-              :on-click (fn [e]
-                          (on-change (add-entity-to-selection
-                                      editor-state
-                                      "LINK"
-                                      "MUTABLE"
-                                      {:url "https://www.google.com"})))}
-       "8"]
-      [:span {:style {:border "1px solid black"
-                      :padding "0 4px 0 4px"
-                      :cursor "pointer"}
-              :on-mouse-down (fn [e]
-                               ;; Don't steal focus from main editor.
-                               (.preventDefault e))
-              :on-click (fn [e]
-                          (on-change (remove-entities-from-selection
-                                      editor-state)))}
-       "3"]]
+      (if editing-link?
+        (link-editor on-change)
+        (toolbar editor-state on-change current-style))]
      [:div {:style {:border "1px solid black"}}
       (js/React.createElement
        js/Draft.Editor
@@ -166,7 +202,6 @@
                                                          editor-state
                                                          command)]
                                        (do
-                                         (println "RESETTING")
                                          (on-change new-state)
                                          "handled")
                                        "not-handled"))
