@@ -133,10 +133,16 @@
         (render-entity-range text start end data)
         (render-style-range text start end data)))))
 
+(def text-block-tags
+  {"unstyled" :p
+   "header-one" :h1
+   "header-two" :h2
+   "header-three" :h3})
+
 (defn content-state->hiccup [content-state]
   (for [b (content-state "blocks")]
-    (if (= (b "type") "unstyled")
-      [:p {:key (b "key")} (render-block b (content-state "entityMap"))]
+    (if-let [tag (text-block-tags (b "type"))]
+      [tag (render-block b (content-state "entityMap"))]
       [:pre {:key (b "key")} (with-out-str (clojure.pprint/pprint b))])))
 
 (rum/defc view-page [contents]
