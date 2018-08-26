@@ -72,7 +72,7 @@
                       (fn [result [start end data]]
                         (vswap! inside conj [start end data])
                         result))
-               (maybe (max end input-start)
+               (maybe (max e-end input-start)
                       input-end
                       input-data
                       (fn [result [start end data]]
@@ -88,7 +88,12 @@
   (def spans [[0 4 [:a]] [4 8 [:b]] [8 10 [:c]] [10 20 [:d]] [20 30 [:e]]])
   (def start 2)
   (def end 15)
-  (def entity-data :entity-data)
+  (def entity-data {:abc "def"})
+  (def spans [[0 2 [:a]] [2 15 {:abc "def", :children [[2 4 [:a]] [4 8 [:b]] [8 10 [:c]] [10 15 [:d]]]}] [15 20 [:d]] [20 30 [:e]]])
+  (def start 18)
+  (def end 22)
+  (def entity-data {:hhh "vvv"})
+
   )
 
 (def block-style->tag
