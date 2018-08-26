@@ -135,8 +135,27 @@
      [:button {:on-click apply-link} "Ligar"]
      [:button {:on-click bye} "Cancelar"]]))
 
+(def header-cycle
+  {"unstyled" "header-one"
+   "header-one" "header-two"
+   "header-two" "header-three"
+   "header-three" "unstyled"})
 (rum/defc toolbar [editor-state on-change current-style]
   [:div
+   [:span {:style {:border "1px solid black"
+                   :padding "0 4px 0 4px"
+                   :cursor "pointer"}
+           :on-mouse-down (fn [e]
+                            ;; Don't steal focus from main editor.
+                            (.preventDefault e))
+           :on-click (fn [e]
+                       (on-change (js/Draft.RichUtils.toggleBlockType
+                                   editor-state
+                                   (get header-cycle
+                                        (js/Draft.RichUtils.getCurrentBlockType editor-state)
+                                        "header-one")))
+                       (.preventDefault e))}
+    "H"]
    [:span {:style (cond-> {:border "1px solid black"
                            :padding "0 4px 0 4px"
                            :cursor "pointer"}
