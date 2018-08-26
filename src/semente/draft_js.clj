@@ -49,7 +49,7 @@
 
 (defn merge-entity [e-start e-end e]
   (fn [xf]
-    (let [inside (atom [])]
+    (let [inside (volatile! [])]
       (fn
         ([] (xf))
         ([result] (xf (cond-> result
@@ -70,7 +70,7 @@
                       (min e-end input-end)
                       input-data
                       (fn [result [start end data]]
-                        (swap! inside conj [start end data])
+                        (vswap! inside conj [start end data])
                         result))
                (maybe (max end input-start)
                       input-end
@@ -79,7 +79,7 @@
                         (let [children @inside]
                           (cond-> result
                             (seq children)
-                            (xf (do (reset! inside nil) [e-start e-end (assoc e :children children)]))
+                            (xf (do (vreset! inside nil) [e-start e-end (assoc e :children children)]))
                             true
                             (xf [start end data]))))))))))))
 
