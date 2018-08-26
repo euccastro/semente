@@ -47,7 +47,8 @@
 (def url->blob (atom {}))
 
 (defn save-doc [name contents]
-  (let [blob-uris (for [m (array-seq (js/Object.values (gobj/get contents "entityMap")))]
+  (let [blob-uris (for [m (array-seq (js/Object.values (gobj/get contents "entityMap")))
+                        :when (= (gobj/get m "type") "IMAGE")]
                     (dget m "data" "uri"))
         u->b @url->blob
         blobs (for [uri blob-uris
@@ -226,7 +227,7 @@
                                       (clj->js {:component native-image
                                                 :editable false})))}))]
      [:div {:style {:padding 12}}
-      [:button {:on-click (fn [_] (save-doc name raw-contents))} "Guardar"]]
+      [:button {:on-click (fn [_] (save-doc doc-name raw-contents))} "Guardar"]]
      #_[:div {:style {:padding 12}}
       [:pre (.stringify js/JSON
                         (.getCurrentInlineStyle @editor-state-atom)

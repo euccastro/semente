@@ -47,28 +47,97 @@
                        input-end
                        input-styles)))))))
 
+(defn merge-entity [e-start e-end e]
+  (fn [xf]
+    (let [inside (atom [])]
+      (fn
+        ([] (xf))
+        ([result] (xf (cond-> result
+                        (seq @inside)
+                        (xf [e-start e-end (assoc e :children @inside)]))))
+        ([result [input-start input-end input-data]]
+         (let [maybe
+               (fn [result start end data f]
+                 (if (< start end)
+                   (f result [start end data])
+                   result))]
+           (-> result
+               (maybe input-start
+                      (min e-start input-end)
+                      input-data
+                      xf)
+               (maybe (max e-start input-start)
+                      (min e-end input-end)
+                      input-data
+                      (fn [result [start end data]]
+                        (swap! inside conj [start end data])
+                        result))
+               (maybe (max end input-start)
+                      input-end
+                      input-data
+                      (fn [result [start end data]]
+                        (let [children @inside]
+                          (cond-> result
+                            (seq children)
+                            (xf (do (reset! inside nil) [e-start e-end (assoc e :children children)]))
+                            true
+                            (xf [start end data]))))))))))))
+
+(comment
+
+  (def spans [[0 4 [:a]] [4 8 [:b]] [8 10 [:c]] [10 20 [:d]] [20 30 [:e]]])
+  (def start 2)
+  (def end 15)
+  (def entity-data :entity-data)
+  )
+
 (def block-style->tag
   {"BOLD" :strong
    "ITALIC" :em})
 
-(defn add-span [spans next]
-  (let [start (:offset next)
-        end (+ start (:length next))
-        style (-> next :style block-style->tag)]
+(defn add-style-range [spans next]
+  (let [start (next "offset")
+        end (+ start (next "length"))
+        style (-> "style" next block-style->tag)]
     (into [] (merge-style start end style) spans)))
 
-(defn render-text [{:keys [text] :as block}]
-  (let [spans (reduce add-span
-                      [[0 (.length text) []]]
-                      (:inlineStyleRanges block))]
-    (for [[start end styles] spans]
-      (reduce (fn [x style] [style x]) (subs text start end) styles))))
+(defn add-entity [spans e]
+  (println "adding entity" (pr-str e))
+  (let [start (e "offset")
+        end (+ start (e "length"))
+        ;; only LINK supported so far
+        entity-data {:type :link
+                     :url (get-in e ["data" "url"])}]
+    (into [] (merge-entity start end entity-data) spans)))
+
+(defn render-entity-range [text start end data]
+  ;; only links implemented so far
+  [:a {:href (:url data)} (map (partial apply render-style-range text) (:children data))])
+
+(defn render-style-range [text start end data]
+  (reduce (fn [x style] [style x]) (subs text start end) data))
+
+(defn render-block [block entity-map]
+  (println "render block" (pr-str entity-map))
+  (let [text (block "text")
+        style-spans (reduce add-style-range
+                            [[0 (.length text) []]]
+                            (block "inlineStyleRanges"))
+        entity-spans (reduce add-entity
+                             style-spans
+                             (map (fn [range]
+                                    (merge range (entity-map (str (range "key")))))
+                                  (block "entityRanges")))]
+    (for [[start end data] entity-spans]
+      (if (map? data)
+        (render-entity-range text start end data)
+        (render-style-range text start end data)))))
 
 (defn content-state->hiccup [content-state]
-  (for [b (:blocks content-state)]
-    (if (= (:type b) "unstyled")
-      [:p {:key (:key b)} (render-text b)]
-      [:pre {:key (:key b)} (with-out-str (clojure.pprint/pprint b))])))
+  (for [b (content-state "blocks")]
+    (if (= (b "type") "unstyled")
+      [:p {:key (b "key")} (render-block b (content-state "entityMap"))]
+      [:pre {:key (b "key")} (with-out-str (clojure.pprint/pprint b))])))
 
 (rum/defc view-page [contents]
   [:html
@@ -89,7 +158,7 @@
                  blobs))
     (es/save-doc name {:contents (->> contents
                                       json/read-str
-                                      (sp/transform ["entityMap" sp/MAP-VALS "data" "url"]
+                                      (sp/transform ["entityMap" sp/MAP-VALS #(= (% "type") "IMAGE") "data" "url"]
                                                    #(str "https://datomique.icbink.org/res/" (filenames %)))
                                       json/write-str)})))
 
@@ -101,6 +170,6 @@
   (some-> id
           es/load-doc
           (get "contents")
-          (json/read-str :key-fn keyword)
+          json/read-str
           view-page
           rum/render-static-markup))
