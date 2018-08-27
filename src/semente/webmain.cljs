@@ -49,12 +49,13 @@
 (defn save-doc [name contents]
   (let [blob-uris (for [m (array-seq (js/Object.values (gobj/get contents "entityMap")))
                         :when (= (gobj/get m "type") "IMAGE")]
-                    (dget m "data" "uri"))
+                    (dget m "data" "url"))
         u->b @url->blob
         blobs (for [uri blob-uris
                     :let [blob (u->b uri)]
                     :when blob]
                 [uri blob])]
+    (println "blobs si" (pr-str blobs))
     (go (println (<! (http/post "/guarda"
                                 {:multipart-params
                                  (into [["name" name]
@@ -135,6 +136,14 @@
      [:button {:on-click apply-link} "Ligar"]
      [:button {:on-click bye} "Cancelar"]]))
 
+(defn add-image [editor-state blob]
+  ;; XXX: factor out insert-entity-block or something
+  (let [content-state (.getCurrentContent editor-state)
+        cs-with-entity (.createEntity content-state "IMAGE" "IMMUTABLE" (clj->js {:url (register-blob blob)}))
+        entity-key (.getLastCreatedEntityKey cs-with-entity)
+        es-with-entity (js/Draft.EditorState.set editor-state (clj->js {:currentContent cs-with-entity}))]
+    (js/Draft.AtomicBlockUtils.insertAtomicBlock es-with-entity entity-key " ")))
+
 (def header-cycle
   {"unstyled" "header-one"
    "header-one" "header-two"
@@ -193,7 +202,22 @@
            :on-click (fn [e]
                        (on-change (remove-entities-from-selection
                                    editor-state)))}
-    "3"]])
+    "3"]
+   [:label
+    [:input#aidi {:type "file"
+                  :accept "image/png, image/jpeg"
+                  :name "nome"
+                  :style {:display "none"}
+                  :multiple true
+                  :on-change (fn [e]
+                               (println "change" (pr-str e))
+                               (on-change (reduce add-image editor-state (array-seq (.-files (.-target e)))))
+                               (.preventDefault e))
+                  :on-input (fn [e] (println "input" (pr-str e)))}]
+    [:span {:style {:border "1px solid black"
+                    :padding "0 4px 0 4px"
+                    :cursor "pointer"}}
+     "^"]]])
 
 (rum/defcs editor < rum/reactive
   [state]
@@ -201,13 +225,6 @@
                 ^js/Draft.EditorState editor-state
                 editing-link?
                 link-text]} (rum/react app-state)
-        add-image (fn [editor-state blob]
-                    ;; XXX: factor out insert-entity-block or something
-                    (let [content-state (.getCurrentContent editor-state)
-                          cs-with-entity (.createEntity content-state "IMAGE" "IMMUTABLE" (clj->js {:url (register-blob blob)}))
-                          entity-key (.getLastCreatedEntityKey cs-with-entity)
-                          es-with-entity (js/Draft.EditorState.set editor-state (clj->js {:currentContent cs-with-entity}))]
-                      (js/Draft.AtomicBlockUtils.insertAtomicBlock es-with-entity entity-key " ")))
         on-change (fn [editor-state]
                     (swap! app-state assoc :editor-state editor-state)
                     (.forceUpdate (:rum/react-component state)))

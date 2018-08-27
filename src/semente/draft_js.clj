@@ -169,7 +169,7 @@
                  blobs))
     (es/save-doc name {:contents (->> contents
                                       json/read-str
-                                      (sp/transform ["entityMap" sp/MAP-VALS #(= (% "type") "IMAGE") "data" "url"]
+                                      (sp/transform ["entityMap" sp/MAP-VALS #(= (% "type") "IMAGE") "data" "url" filenames]
                                                    #(str "https://datomique.icbink.org/res/" (filenames %)))
                                       json/write-str)})))
 
