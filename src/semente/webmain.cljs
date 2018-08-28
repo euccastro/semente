@@ -220,7 +220,19 @@
     [:span {:style {:border "1px solid black"
                     :padding "0 4px 0 4px"
                     :cursor "pointer"}}
-     "^"]]])
+     "^"]]
+   [:span {:style {:border "1px solid black"
+                   :padding "0 4px 0 4px"
+                   :cursor "pointer"}
+           :on-mouse-down (fn [e]
+                            ;; Don't steal focus from main editor.
+                            (.preventDefault e))
+           :on-click (fn [e]
+                       (on-change (js/Draft.RichUtils.toggleBlockType
+                                   editor-state
+                                   "unordered-list-item"))
+                       (.preventDefault e))}
+    "•"]])
 
 (rum/defcs editor < rum/reactive
   [state]

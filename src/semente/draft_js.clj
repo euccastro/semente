@@ -132,16 +132,23 @@
    "header-three" :h3})
 
 (defn content-state->hiccup [content-state]
-  (let [entity-map (content-state "entityMap")]
-    (for [b (content-state "blocks")]
-      (if-let [tag (text-block-tags (b "type"))]
-        [tag (render-block b entity-map)]
-        (if (= (b "type") "atomic")
-          [:img {:src (get-in entity-map
-                              [(str (get-in b ["entityRanges" 0 "key"]))
-                               "data"
-                               "url"])}]
-          [:pre {:key (b "key")} (with-out-str (clojure.pprint/pprint b))])))))
+  (let [entity-map (content-state "entityMap")
+        is-list-item? #(= (% "type") "unordered-list-item")]
+    (for [b-run (partition-by is-list-item?
+                              (content-state "blocks"))]
+      (if (is-list-item? (first b-run))
+        [:ul
+         (for [b b-run]
+           [:li (render-block b entity-map)])]
+        (for [b b-run]
+          (if-let [tag (text-block-tags (b "type"))]
+            [tag (render-block b entity-map)]
+            (if (= (b "type") "atomic")
+              [:img {:src (get-in entity-map
+                                  [(str (get-in b ["entityRanges" 0 "key"]))
+                                   "data"
+                                   "url"])}]
+              [:pre {:key (b "key")} (with-out-str (clojure.pprint/pprint b))])))))))
 
 (rum/defc view-page [contents]
   [:html
