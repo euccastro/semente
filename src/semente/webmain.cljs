@@ -251,11 +251,9 @@
                                          "handled")
                                        "not-handled"))
                  :handleDroppedFiles (fn [selection-state files]
-                                       (println "got dropped files!")
-                                       (js/console.log selection-state)
-                                       (js/console.log files))
+                                       (on-change (reduce add-image editor-state (array-seq files)))
+                                       "handled")
                  :handlePastedFiles (fn [blobs]
-                                      (println "got pasted FILES!" (.-length blobs))
                                       (on-change (reduce add-image editor-state (array-seq blobs)))
                                       "handled")
                  :blockRendererFn (fn [block]
