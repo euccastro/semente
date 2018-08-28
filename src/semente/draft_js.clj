@@ -83,19 +83,6 @@
                             true
                             (xf [start end data]))))))))))))
 
-(comment
-
-  (def spans [[0 4 [:a]] [4 8 [:b]] [8 10 [:c]] [10 20 [:d]] [20 30 [:e]]])
-  (def start 2)
-  (def end 15)
-  (def entity-data {:abc "def"})
-  (def spans [[0 2 [:a]] [2 15 {:abc "def", :children [[2 4 [:a]] [4 8 [:b]] [8 10 [:c]] [10 15 [:d]]]}] [15 20 [:d]] [20 30 [:e]]])
-  (def start 18)
-  (def end 22)
-  (def entity-data {:hhh "vvv"})
-
-  )
-
 (def block-style->tag
   {"BOLD" :strong
    "ITALIC" :em})
@@ -145,10 +132,16 @@
    "header-three" :h3})
 
 (defn content-state->hiccup [content-state]
-  (for [b (content-state "blocks")]
-    (if-let [tag (text-block-tags (b "type"))]
-      [tag (render-block b (content-state "entityMap"))]
-      [:pre {:key (b "key")} (with-out-str (clojure.pprint/pprint b))])))
+  (let [entity-map (content-state "entityMap")]
+    (for [b (content-state "blocks")]
+      (if-let [tag (text-block-tags (b "type"))]
+        [tag (render-block b entity-map)]
+        (if (= (b "type") "atomic")
+          [:img {:src (get-in entity-map
+                              [(str (get-in b ["entityRanges" 0 "key"]))
+                               "data"
+                               "url"])}]
+          [:pre {:key (b "key")} (with-out-str (clojure.pprint/pprint b))])))))
 
 (rum/defc view-page [contents]
   [:html
