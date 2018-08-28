@@ -129,7 +129,8 @@
   {"unstyled" :p
    "header-one" :h1
    "header-two" :h2
-   "header-three" :h3})
+   "header-three" :h3
+   "blockquote" :blockquote})
 
 (defn content-state->hiccup [content-state]
   (let [entity-map (content-state "entityMap")
