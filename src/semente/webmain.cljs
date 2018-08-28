@@ -221,9 +221,11 @@
                     :padding "0 4px 0 4px"
                     :cursor "pointer"}}
      "^"]]
-   [:span {:style {:border "1px solid black"
-                   :padding "0 4px 0 4px"
-                   :cursor "pointer"}
+   [:span {:style (cond-> {:border "1px solid black"
+                           :padding "0 4px 0 4px"
+                           :cursor "pointer"}
+                    (=  (js/Draft.RichUtils.getCurrentBlockType editor-state) "unordered-list-item")
+                    (assoc :background-color "orange"))
            :on-mouse-down (fn [e]
                             ;; Don't steal focus from main editor.
                             (.preventDefault e))
@@ -233,9 +235,11 @@
                                    "unordered-list-item"))
                        (.preventDefault e))}
     "•"]
-   [:span {:style {:border "1px solid black"
-                   :padding "0 4px 0 4px"
-                   :cursor "pointer"}
+   [:span {:style (cond-> {:border "1px solid black"
+                           :padding "0 4px 0 4px"
+                           :cursor "pointer"}
+                    (=  (js/Draft.RichUtils.getCurrentBlockType editor-state) "blockquote")
+                    (assoc :background-color "orange"))
            :on-mouse-down (fn [e]
                             ;; Don't steal focus from main editor.
                             (.preventDefault e))
