@@ -102,12 +102,12 @@
                      :url (get-in e ["data" "url"])}]
     (into [] (merge-entity start end entity-data) spans)))
 
+(defn render-style-range [text start end data]
+  (reduce (fn [x style] [style x]) (subs text start end) data))
+
 (defn render-entity-range [text start end data]
   ;; only links implemented so far
   [:a {:href (:url data)} (map (partial apply render-style-range text) (:children data))])
-
-(defn render-style-range [text start end data]
-  (reduce (fn [x style] [style x]) (subs text start end) data))
 
 (defn render-block [block entity-map]
   (println "render block" (pr-str entity-map))

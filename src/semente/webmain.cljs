@@ -29,7 +29,7 @@
                      (fn [start end]
                        (callback start end))))
 
-(defn link-component [^js/Draft.DraftDecoratorComponentProps props]
+(defn link-component [props]
   (let [^js/Draft.ContentState content-state  (gobj/get props "contentState")
         ^js/Draft.DraftEntityInstance entity (.getEntity content-state (gobj/get props "entityKey"))]
     (link (gobj/get (.getData entity) "url")
@@ -55,6 +55,9 @@
                     :let [blob (u->b uri)]
                     :when blob]
                 [uri blob])]
+    (println "name si" name)
+    (println "contents si:")
+    (js/console.log contents)
     (println "blobs si" (pr-str blobs))
     (go (println (<! (http/post "/guarda"
                                 {:multipart-params
@@ -78,9 +81,9 @@
 (rum/defc image [url]
   [:img {:src url}])
 
-(defn native-image [^js/Draft.DraftDecoratorComponentProps props]
-  (let [block ^js/Draft.ContentBlock (.-block props)
-        content-state ^js/Draft.ContentState (.-contentState props)
+(defn native-image [props]
+  (let [^js/Draft.ContentBlock block (gobj/get props "block")
+        ^js/Draft.ContentState content-state (gobj/get props "contentState")
         entity (.getEntity content-state (.getEntityAt block 0))
         url (gobj/get (.getData entity) "url")]
     (image url)))
@@ -256,7 +259,7 @@
                  :handlePastedFiles (fn [blobs]
                                       (on-change (reduce add-image editor-state (array-seq blobs)))
                                       "handled")
-                 :blockRendererFn (fn [block]
+                 :blockRendererFn (fn [^js/Draft.ContentBlock block]
                                     (if (= (.getType block) "atomic")
                                       (clj->js {:component native-image
                                                 :editable false})))}))]

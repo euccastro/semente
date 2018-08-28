@@ -1,3 +1,5 @@
 {:main semente.webmain
  :optimizations :advanced
+ :pretty-print true
+ :pseudo-names true
  :output-to "target/s3/js/main.js"}

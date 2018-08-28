@@ -35,7 +35,9 @@
    "/admin" []
    (friend/wrap-authorize admin-routes #{:permission.privilege/admin}))
   (POST "/guarda" [name contents & etc]
-        (apply draft-js/save name contents etc))
+        (try
+          (apply draft-js/save name contents etc)
+          (catch Exception e (str "EXCEPTION:" (pr-str e)))))
   (GET auth/login-uri [erro utente]
        (auth/login erro utente))
   (GET "/prova-css" [] (rum/render-static-markup (prova-css)))
