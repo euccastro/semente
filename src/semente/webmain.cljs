@@ -1,13 +1,14 @@
 (ns ^:figwheel-hooks semente.webmain
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [semente.style :as style])
   (:require cljsjs.draft-js
-            [rum.core :as rum]
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
-            [goog.object :as gobj]))
+            [goog.object :as gobj]
+            [rum.core :as rum]
+            [semente.style :as style]))
 
 (set! *warn-on-infer* true)
-
 
 (defn dget [o & attrs]
   (reduce gobj/get o attrs))
@@ -25,7 +26,7 @@
                         (some-> (.getEntity cmd)
                                 (#(.getEntity content-state %))
                                 (.getType)
-                                (=  "LINK"))))
+                                (= "LINK"))))
                      (fn [start end]
                        (callback start end))))
 
@@ -147,19 +148,28 @@
         es-with-entity (js/Draft.EditorState.set editor-state (clj->js {:currentContent cs-with-entity}))]
     (js/Draft.AtomicBlockUtils.insertAtomicBlock es-with-entity entity-key " ")))
 
-(rum/defc toolbar-button [caption on-click & [highlight?]]
-  [:span {:style (cond-> {:border "1px solid black"
-                          :padding "0 4px 0 4px"
-                          :cursor "pointer"}
-                   highlight?
-                   (assoc :background-color "orange"))
-          :on-mouse-down (fn [e]
-                           ;; Don't steal focus from main editor.
-                           (.preventDefault e))
-          :on-click (fn [e]
-                      (on-click e)
-                      (.preventDefault e))}
-   caption])
+(rum/defc button-group [& children]
+  (into
+   [:span {:style {:padding-right "16px"}}]
+   children))
+
+(rum/defc toolbar-button [icon & [on-click highlight?]]
+  [:i.material-icons
+   (cond->
+       {:key icon
+        :style (cond-> {:cursor "pointer"
+                        :color style/azul-semente}
+                 highlight?
+                 (assoc :background-color "orange"))
+        :on-mouse-down (fn [e]
+                         ;; Don't steal focus from main editor.
+                         (.preventDefault e))}
+     on-click
+     (assoc
+      :on-click (fn [e]
+                  (on-click e)
+                  (.preventDefault e))))
+   icon])
 
 (def header-cycle
   {"unstyled" "header-one"
@@ -169,54 +179,57 @@
 
 (rum/defc toolbar [editor-state on-change current-style]
   [:div
-   (toolbar-button "H"
-                   #(on-change
-                     (js/Draft.RichUtils.toggleBlockType
-                      editor-state
-                      (get header-cycle
-                           (js/Draft.RichUtils.getCurrentBlockType editor-state)
-                           "header-one"))))
-   (toolbar-button [:b "B"]
-                   #(on-change
-                     (toggle-inline-style editor-state
-                                          "BOLD"))
-                   (current-style "BOLD"))
-   (toolbar-button "8"
-                   #(swap! app-state assoc :editing-link? true))
-   (toolbar-button "3"
-                   #(on-change (remove-entities-from-selection
-                                editor-state)))
-   [:label
-    [:input
-     {:type "file"
-      :accept "image/png, image/jpeg"
-      :name "nome"
-      :style {:display "none"}
-      :multiple true
-      :on-change (fn [e]
-                   (println "change" (pr-str e))
-                   (on-change (reduce add-image editor-state (array-seq (.-files (.-target e)))))
-                   (.preventDefault e))
-      :on-input (fn [e] (println "input" (pr-str e)))}]
-    [:span {:style {:border "1px solid black"
-                    :padding "0 4px 0 4px"
-                    :cursor "pointer"}}
-     "^"]]
-   (toolbar-button "•"
-                   #(on-change (js/Draft.RichUtils.toggleBlockType
-                                editor-state
-                                "unordered-list-item"))
-                   (=  (js/Draft.RichUtils.getCurrentBlockType editor-state)
-                       "unordered-list-item"))
-   (toolbar-button ">"
-                   #(on-change (js/Draft.RichUtils.toggleBlockType
-                                editor-state
-                                "blockquote"))
-                   (=  (js/Draft.RichUtils.getCurrentBlockType editor-state) "blockquote"))
-   (toolbar-button "U"
-                   #(on-change (js/Draft.EditorState.undo editor-state)))
-   (toolbar-button "R"
-                   #(on-change (js/Draft.EditorState.redo editor-state)))])
+   (button-group
+    (toolbar-button "line_weight"
+                    #(on-change
+                      (js/Draft.RichUtils.toggleBlockType
+                       editor-state
+                       (get header-cycle
+                            (js/Draft.RichUtils.getCurrentBlockType editor-state)
+                            "header-one"))))
+    (toolbar-button "format_list_bulleted"
+                    #(on-change (js/Draft.RichUtils.toggleBlockType
+                                 editor-state
+                                 "unordered-list-item"))
+                    (=  (js/Draft.RichUtils.getCurrentBlockType editor-state)
+                        "unordered-list-item"))
+    (toolbar-button "format_quote"
+                    #(on-change (js/Draft.RichUtils.toggleBlockType
+                                 editor-state
+                                 "blockquote"))
+                    (=  (js/Draft.RichUtils.getCurrentBlockType editor-state) "blockquote"))
+    (toolbar-button "format_bold"
+                    #(on-change
+                      (toggle-inline-style editor-state
+                                           "BOLD"))
+                    (current-style "BOLD")))
+
+   (button-group
+    (toolbar-button "link"
+                    #(swap! app-state assoc :editing-link? true))
+    (toolbar-button "link_off"
+                    #(on-change (remove-entities-from-selection
+                                 editor-state)))
+    [:label
+     {:key "insert_photo"}
+     [:input
+      {:type "file"
+       :accept "image/png, image/jpeg"
+       :name "nome"
+       :style {:display "none"}
+       :multiple true
+       :on-change (fn [e]
+                    (println "change" (pr-str e))
+                    (on-change (reduce add-image editor-state (array-seq (.-files (.-target e)))))
+                    (.preventDefault e))
+       :on-input (fn [e] (println "input" (pr-str e)))}]
+     (toolbar-button "insert_photo")])
+
+   (button-group
+    (toolbar-button "undo"
+                    #(on-change (js/Draft.EditorState.undo editor-state)))
+    (toolbar-button "redo"
+                    #(on-change (js/Draft.EditorState.redo editor-state))))])
 
 (rum/defcs editor < rum/reactive
   [state]

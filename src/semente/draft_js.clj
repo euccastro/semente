@@ -12,7 +12,8 @@
    [:head
     [:meta {:charset "UTF-8"}]
     [:link {:rel "stylesheet" :type "text/css" :href "/res/css/Draft.css"}]
-    [:link {:rel "stylesheet" :type "text/css" :href "/res/css/fonts.css"}]
+    [:link {:rel "stylesheet" :type "text/css" :href "/res/css/font.css"}]
+    [:link {:rel "stylesheet" :type "text/css" :href "/res/css/icon.css"}]
     [:link {:rel "stylesheet" :type "text/css" :href "/res/css/garden.css"}]]
    [:body
     [:#app "Aqui iriam as tuas movidorras."]
