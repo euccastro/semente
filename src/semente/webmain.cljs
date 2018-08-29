@@ -147,128 +147,76 @@
         es-with-entity (js/Draft.EditorState.set editor-state (clj->js {:currentContent cs-with-entity}))]
     (js/Draft.AtomicBlockUtils.insertAtomicBlock es-with-entity entity-key " ")))
 
+(rum/defc toolbar-button [caption on-click & [highlight?]]
+  [:span {:style (cond-> {:border "1px solid black"
+                          :padding "0 4px 0 4px"
+                          :cursor "pointer"}
+                   highlight?
+                   (assoc :background-color "orange"))
+          :on-mouse-down (fn [e]
+                           ;; Don't steal focus from main editor.
+                           (.preventDefault e))
+          :on-click (fn [e]
+                      (on-click e)
+                      (.preventDefault e))}
+   caption])
+
 (def header-cycle
   {"unstyled" "header-one"
    "header-one" "header-two"
    "header-two" "header-three"
    "header-three" "unstyled"})
+
 (rum/defc toolbar [editor-state on-change current-style]
   [:div
-   [:span {:style {:border "1px solid black"
-                   :padding "0 4px 0 4px"
-                   :cursor "pointer"}
-           :on-mouse-down (fn [e]
-                            ;; Don't steal focus from main editor.
-                            (.preventDefault e))
-           :on-click (fn [e]
-                       (on-change (js/Draft.RichUtils.toggleBlockType
-                                   editor-state
-                                   (get header-cycle
-                                        (js/Draft.RichUtils.getCurrentBlockType editor-state)
-                                        "header-one")))
-                       (.preventDefault e))}
-    "H"]
-   [:span {:style (cond-> {:border "1px solid black"
-                           :padding "0 4px 0 4px"
-                           :cursor "pointer"}
-                    (current-style "BOLD")
-                    (assoc :background-color "orange"))
-           :on-mouse-down (fn [e]
-                            ;; Don't steal focus from main editor.
-                            (.preventDefault e))
-           :on-click (fn [e]
-                       (on-change
-                        (toggle-inline-style editor-state
-                                             "BOLD"))
-                       (.preventDefault e))}
-    [:b "B"]]
-   [:span {:style {:border "1px solid black"
-                   :padding "0 4px 0 4px"
-                   :cursor "pointer"}
-           :on-mouse-down (fn [e]
-                            ;; Don't steal focus from main editor.
-                            (.preventDefault e))
-           :on-click (fn [e]
-                       #_(on-change (add-entity-to-selection
-                                     editor-state
-                                     "LINK"
-                                     "MUTABLE"
-                                     {:url "https://www.google.com"}))
-                       (swap! app-state assoc :editing-link? true))}
-    "8"]
-   [:span {:style {:border "1px solid black"
-                   :padding "0 4px 0 4px"
-                   :cursor "pointer"}
-           :on-mouse-down (fn [e]
-                            ;; Don't steal focus from main editor.
-                            (.preventDefault e))
-           :on-click (fn [e]
-                       (on-change (remove-entities-from-selection
-                                   editor-state)))}
-    "3"]
+   (toolbar-button "H"
+                   #(on-change
+                     (js/Draft.RichUtils.toggleBlockType
+                      editor-state
+                      (get header-cycle
+                           (js/Draft.RichUtils.getCurrentBlockType editor-state)
+                           "header-one"))))
+   (toolbar-button [:b "B"]
+                   #(on-change
+                     (toggle-inline-style editor-state
+                                          "BOLD"))
+                   (current-style "BOLD"))
+   (toolbar-button "8"
+                   #(swap! app-state assoc :editing-link? true))
+   (toolbar-button "3"
+                   #(on-change (remove-entities-from-selection
+                                editor-state)))
    [:label
-    [:input#aidi {:type "file"
-                  :accept "image/png, image/jpeg"
-                  :name "nome"
-                  :style {:display "none"}
-                  :multiple true
-                  :on-change (fn [e]
-                               (println "change" (pr-str e))
-                               (on-change (reduce add-image editor-state (array-seq (.-files (.-target e)))))
-                               (.preventDefault e))
-                  :on-input (fn [e] (println "input" (pr-str e)))}]
+    [:input
+     {:type "file"
+      :accept "image/png, image/jpeg"
+      :name "nome"
+      :style {:display "none"}
+      :multiple true
+      :on-change (fn [e]
+                   (println "change" (pr-str e))
+                   (on-change (reduce add-image editor-state (array-seq (.-files (.-target e)))))
+                   (.preventDefault e))
+      :on-input (fn [e] (println "input" (pr-str e)))}]
     [:span {:style {:border "1px solid black"
                     :padding "0 4px 0 4px"
                     :cursor "pointer"}}
      "^"]]
-   [:span {:style (cond-> {:border "1px solid black"
-                           :padding "0 4px 0 4px"
-                           :cursor "pointer"}
-                    (=  (js/Draft.RichUtils.getCurrentBlockType editor-state) "unordered-list-item")
-                    (assoc :background-color "orange"))
-           :on-mouse-down (fn [e]
-                            ;; Don't steal focus from main editor.
-                            (.preventDefault e))
-           :on-click (fn [e]
-                       (on-change (js/Draft.RichUtils.toggleBlockType
-                                   editor-state
-                                   "unordered-list-item"))
-                       (.preventDefault e))}
-    "•"]
-   [:span {:style (cond-> {:border "1px solid black"
-                           :padding "0 4px 0 4px"
-                           :cursor "pointer"}
-                    (=  (js/Draft.RichUtils.getCurrentBlockType editor-state) "blockquote")
-                    (assoc :background-color "orange"))
-           :on-mouse-down (fn [e]
-                            ;; Don't steal focus from main editor.
-                            (.preventDefault e))
-           :on-click (fn [e]
-                       (on-change (js/Draft.RichUtils.toggleBlockType
-                                   editor-state
-                                   "blockquote"))
-                       (.preventDefault e))}
-    ">"]
-   [:span {:style {:border "1px solid black"
-                   :padding "0 4px 0 4px"
-                   :cursor "pointer"}
-           :on-mouse-down (fn [e]
-                            ;; Don't steal focus from main editor.
-                            (.preventDefault e))
-           :on-click (fn [e]
-                       (on-change (js/Draft.EditorState.undo editor-state))
-                       (.preventDefault e))}
-    "U"]
-   [:span {:style {:border "1px solid black"
-                   :padding "0 4px 0 4px"
-                   :cursor "pointer"}
-           :on-mouse-down (fn [e]
-                            ;; Don't steal focus from main editor.
-                            (.preventDefault e))
-           :on-click (fn [e]
-                       (on-change (js/Draft.EditorState.redo editor-state))
-                       (.preventDefault e))}
-    "R"]])
+   (toolbar-button "•"
+                   #(on-change (js/Draft.RichUtils.toggleBlockType
+                                editor-state
+                                "unordered-list-item"))
+                   (=  (js/Draft.RichUtils.getCurrentBlockType editor-state)
+                       "unordered-list-item"))
+   (toolbar-button ">"
+                   #(on-change (js/Draft.RichUtils.toggleBlockType
+                                editor-state
+                                "blockquote"))
+                   (=  (js/Draft.RichUtils.getCurrentBlockType editor-state) "blockquote"))
+   (toolbar-button "U"
+                   #(on-change (js/Draft.EditorState.undo editor-state)))
+   (toolbar-button "R"
+                   #(on-change (js/Draft.EditorState.redo editor-state)))])
 
 (rum/defcs editor < rum/reactive
   [state]
