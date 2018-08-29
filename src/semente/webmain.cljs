@@ -221,6 +221,7 @@
        :on-change (fn [e]
                     (println "change" (pr-str e))
                     (on-change (reduce add-image editor-state (array-seq (.-files (.-target e)))))
+                    (set! (.-value (.-target e)) nil)
                     (.preventDefault e))
        :on-input (fn [e] (println "input" (pr-str e)))}]
      (toolbar-button "insert_photo")])
