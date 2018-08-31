@@ -153,7 +153,7 @@
    [:span {:style {:padding-right "16px"}}]
    children))
 
-(rum/defc toolbar-button [icon & [on-click highlight?]]
+(rum/defc toolbar-button [icon tooltip & [on-click highlight?]]
   [:i.material-icons.draft-icon
    (cond->
        {:key icon
@@ -167,7 +167,8 @@
       :on-click (fn [e]
                   (on-click e)
                   (.preventDefault e))))
-   icon])
+   icon
+   [:span.tooltip tooltip]])
 
 (def header-cycle
   {"unstyled" "header-one"
@@ -179,6 +180,7 @@
   [:div
    (button-group
     (toolbar-button "line_weight"
+                    "Cabeçalho"
                     #(on-change
                       (js/Draft.RichUtils.toggleBlockType
                        editor-state
@@ -186,17 +188,20 @@
                             (js/Draft.RichUtils.getCurrentBlockType editor-state)
                             "header-one"))))
     (toolbar-button "format_list_bulleted"
+                    "Lista"
                     #(on-change (js/Draft.RichUtils.toggleBlockType
                                  editor-state
                                  "unordered-list-item"))
                     (=  (js/Draft.RichUtils.getCurrentBlockType editor-state)
                         "unordered-list-item"))
     (toolbar-button "format_quote"
+                    "Cita"
                     #(on-change (js/Draft.RichUtils.toggleBlockType
                                  editor-state
                                  "blockquote"))
                     (=  (js/Draft.RichUtils.getCurrentBlockType editor-state) "blockquote"))
     (toolbar-button "format_bold"
+                    "Negrita (Ctrl+B)"
                     #(on-change
                       (toggle-inline-style editor-state
                                            "BOLD"))
@@ -204,8 +209,10 @@
 
    (button-group
     (toolbar-button "link"
+                    "Ligaçom"
                     #(swap! app-state assoc :editing-link? true))
     (toolbar-button "link_off"
+                    "Desligar"
                     #(on-change (remove-entities-from-selection
                                  editor-state)))
     [:label
@@ -222,12 +229,14 @@
                     (set! (.-value (.-target e)) nil)
                     (.preventDefault e))
        :on-input (fn [e] (println "input" (pr-str e)))}]
-     (toolbar-button "insert_photo")])
+     (toolbar-button "insert_photo" "Imagem")])
 
    (button-group
     (toolbar-button "undo"
+                    "Desfazer (Ctrl+Z)"
                     #(on-change (js/Draft.EditorState.undo editor-state)))
     (toolbar-button "redo"
+                    "Refazer (Maiúsc+Ctrl+Z)"
                     #(on-change (js/Draft.EditorState.redo editor-state))))])
 
 (rum/defcs editor < rum/reactive
