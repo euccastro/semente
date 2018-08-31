@@ -154,16 +154,14 @@
    children))
 
 (rum/defc toolbar-button [icon & [on-click highlight?]]
-  [:i.material-icons
+  [:i.material-icons.draft-icon
    (cond->
        {:key icon
-        :style (cond-> {:cursor "pointer"
-                        :color style/azul-semente}
-                 highlight?
-                 (assoc :background-color "orange"))
         :on-mouse-down (fn [e]
                          ;; Don't steal focus from main editor.
                          (.preventDefault e))}
+     highlight?
+     (assoc :class "applied")
      on-click
      (assoc
       :on-click (fn [e]
