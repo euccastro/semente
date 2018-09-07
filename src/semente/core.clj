@@ -30,10 +30,22 @@
     (when (not= stage :production)
      [:script {:src "/res/js/main.js" :type "text/javascript"}])]])
 
+(defroutes national-edit-routes
+  (GET "/quem-somos" [] "Seica podes!"))
+
+(defroutes edit-routes
+  (compojure/context "/nacional" []
+                     (friend/wrap-authorize
+                      national-edit-routes
+                      #{:permission/national-editor})))
+
 (defroutes ring-handler
   (compojure/context
    "/admin" []
    (friend/wrap-authorize admin-routes #{:permission.privilege/admin}))
+  (compojure/context
+   "/editar" []
+   edit-routes)
   (POST "/guarda" [name contents & etc]
         (try
           (apply draft-js/save name contents etc)

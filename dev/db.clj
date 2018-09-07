@@ -83,22 +83,33 @@
     :db/doc "Centros deste âmbito"}])
 
 (def bootstrap-data
-  [{:db/ident :scope/national
+  [{:db/id "national"
+    :db/ident :scope/national
     :scope/display-name "nacional"
     :permission/display-name "permisso de âmbito nacional"}
    {:db/ident :permission.privilege/unobtainium
     :permission/display-name "encher água com umha peneira"}
-   {:db/ident :permission.privilege/admin
-    :permission/display-name "privilégio de administraçom"}])
+   {:db/id "admin"
+    :db/ident :permission.privilege/admin
+    :permission/display-name "privilégio de administraçom"}
+   {:db/id "edit"
+    :db/ident :permission.privilege/edit
+    :permission/display-name "privilégio de ediçom"}
+   {:db/ident :permission/national-editor
+    :permission/display-name "permisso de ediçom de conteúdos nacionais"
+    :permission/scope "national"
+    :permission/privilege "edit"}
+   {:db/ident :permission/national-admin
+    :permission/display-name "permisso de administraçom nacional"
+    :permission/scope "national"
+    :permission/privilege "admin"}])
 
 
 (def eu [{:user/name "estevo"
           :user/email "euccastro@gmail.com"
           :user/password-hash (creds/hash-bcrypt "abcd")
-          :user/permission [{:db/ident :permission/national-admin
-                             :permission/display-name "permisso de administraçom nacional"
-                             :permission/scope :scope/national
-                             :permission/privilege :permission.privilege/admin}]}])
+          :user/permission [:permission/national-admin
+                            :permission/national-editor]}])
 
 (defn init []
   (let [conn (sd/conn*)]
@@ -112,6 +123,8 @@
   (init))
 
 (comment
+  (def client (sd/client))
+  (def conn (sd/conn*))
   (reset)
   (init)
   )
