@@ -14,7 +14,8 @@
             [rum.core :as rum]
             [semente.auth :as auth]
             [semente.draft-js :as draft-js]
-            [semente.stage :refer (stage)]))
+            [semente.stage :refer (stage)]
+            [semente.template :as comum]))
 
 (defroutes admin-routes
   (GET "/" [] "parabéns admin!"))
@@ -40,6 +41,22 @@
                       national-edit-routes
                       #{:permission/national-editor})))
 
+(rum/defc quem-somos [hiccup]
+  (comum/pagina
+   "/nacional/quem-somos"
+   hiccup))
+
+(rum/defc principios []
+  (comum/pagina
+   "/nacional/principios"
+   [:div
+    [:h1 "Princípios"]
+    [:ol
+     [:li "Semos malos"]
+     [:li "Semos duros"]
+     [:li "Semos los mas cojonudos"]
+     [:strong "Semos SEMENTE!"]]]))
+
 (defroutes ring-handler
   (compojure/context
    "/admin" []
@@ -52,15 +69,19 @@
         [:html
          [:head
           [:meta {:charset "UTF-8"}]
-          [:link {:rel "stylesheet" :type "text/css" :href "/res/css/Draft.css"}]
           [:link {:rel "stylesheet" :type "text/css" :href "/res/css/font.css"}]
           [:link {:rel "stylesheet" :type "text/css" :href "/res/css/icon.css"}]
           [:link {:rel "stylesheet" :type "text/css" :href "/res/css/garden.css"}]]
          [:body
-          (draft-js/id->hiccup "nacional_quem-somos")
-          (if (friend/authorized? #{:permission/national-editor}
-                                  friend/*identity*)
-            [:a {:href "/editar/nacional/quem-somos"} "Editar"])]]))
+          (quem-somos
+           [:div
+            (draft-js/id->hiccup "nacional_quem-somos")
+            (if (friend/authorized? #{:permission/national-editor}
+                                    friend/*identity*)
+              [:a {:href "/editar/nacional/quem-somos"} "Editar"])])
+          ;; for CSS reloading...
+          (when (not= stage :production)
+            [:script {:src "/res/js/main.js" :type "text/javascript"}])]]))
   (POST "/guarda" [name contents & etc]
         (try
           (apply draft-js/save name contents etc)
