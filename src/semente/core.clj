@@ -31,7 +31,8 @@
      [:script {:src "/res/js/main.js" :type "text/javascript"}])]])
 
 (defroutes national-edit-routes
-  (GET "/quem-somos" [] "Seica podes!"))
+  (GET "/quem-somos" []
+       (draft-js/edit "nacional_quem-somos")))
 
 (defroutes edit-routes
   (compojure/context "/nacional" []
@@ -46,6 +47,20 @@
   (compojure/context
    "/editar" []
    edit-routes)
+  (GET "/nacional/quem-somos" []
+       (rum/render-static-markup
+        [:html
+         [:head
+          [:meta {:charset "UTF-8"}]
+          [:link {:rel "stylesheet" :type "text/css" :href "/res/css/Draft.css"}]
+          [:link {:rel "stylesheet" :type "text/css" :href "/res/css/font.css"}]
+          [:link {:rel "stylesheet" :type "text/css" :href "/res/css/icon.css"}]
+          [:link {:rel "stylesheet" :type "text/css" :href "/res/css/garden.css"}]]
+         [:body
+          (draft-js/id->hiccup "nacional_quem-somos")
+          (if (friend/authorized? #{:permission/national-editor}
+                                  friend/*identity*)
+            [:a {:href "/editar/nacional/quem-somos"} "Editar"])]]))
   (POST "/guarda" [name contents & etc]
         (try
           (apply draft-js/save name contents etc)

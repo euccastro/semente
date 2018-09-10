@@ -16,7 +16,7 @@
     [:link {:rel "stylesheet" :type "text/css" :href "/res/css/icon.css"}]
     [:link {:rel "stylesheet" :type "text/css" :href "/res/css/garden.css"}]]
    [:body
-    [:#app "Aqui iriam as tuas movidorras."]
+    [:#app "Carregando editor..."]
     [:script {:src "/res/js/main.js" :type "text/javascript"}]
     [:script {:type "text/javascript"
               :dangerouslySetInnerHTML {:__html
@@ -156,7 +156,7 @@
   [:html
    [:head
     [:meta {:charset "UTF-8"}]]
-   [:body (content-state->hiccup contents)]])
+   [:body contents]])
 
 
 (defn save [name contents & etc]
@@ -179,10 +179,15 @@
   (rum/render-static-markup
    (edit-page id (get (es/load-doc id) "contents"))))
 
-(defn view [id]
+(defn id->hiccup [id]
   (some-> id
           es/load-doc
           (get "contents")
           json/read-str
+          content-state->hiccup))
+
+(defn view [id]
+  (some-> id
+          id->hiccup
           view-page
           rum/render-static-markup))

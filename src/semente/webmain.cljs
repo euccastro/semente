@@ -287,11 +287,11 @@
                         (.getCurrentInlineStyle @editor-state-atom)
                         nil
                         2)]]
-     [:div {:style {:padding 12}}
-      [:pre (.stringify js/JSON
-                        raw-contents
-                        nil
-                        2)]]]))
+     (comment [:div {:style {:padding 12}}
+               [:pre (.stringify js/JSON
+                                 raw-contents
+                                 nil
+                                 2)]])]))
 
 
 
