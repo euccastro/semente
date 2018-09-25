@@ -198,7 +198,7 @@ O texto está no id <association-slug>_quemsomos_<revisom>"}
                           :user/email email
                           :user/password-hash (creds/hash-bcrypt senha)
                           :team/_members [:team/slug equipa]}
-                         [:db/add "datomic.tx" :txn/comment (str "cria-utente " nome)]]}))
+                         [:db/add "datomic.tx" :txn/doc (str "cria-utente " nome)]]}))
 
 
 (defn init []
@@ -219,4 +219,5 @@ O texto está no id <association-slug>_quemsomos_<revisom>"}
   (reset)
   (init)
   (cria-utente "Badú" "badusinho@gmail.com" "senhadebadu" "comissom-geral")
+  (cria-utente "Jesús" "oficinasemente@gmail.com" "senhadejesus" "comissom-geral")
   )
