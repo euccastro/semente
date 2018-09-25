@@ -86,6 +86,39 @@
      [:div
       [:input {:type "submit"}]]]]])
 
+(rum/defc get-muda-senha [erro utente]
+  (rum/render-static-markup
+   [:html
+    [:head [:meta {:charset "UTF-8"}]]
+    [:body
+     [:h1 "Mudar senha"]
+     (if erro
+       ;; XXX: estilo
+       [:div.erro {:style {:color :red}} "Nom conheço " [:em utente] " ou a senha velha nom quadra."]
+       [:div "Entra a senha que tés e a que queres."])
+     [:form {:action "/mudar-senha" :method "post"}
+      [:div
+       [:div "utente"]
+       [:input {:type "text" :name "username" :value utente}]]
+      [:div
+       [:div "senha velha"]
+       [:input {:type "password" :name "old-password"}]]
+      [:div
+       [:div "senha nova"]
+       [:input {:type "password" :name "new-password"}]]
+      [:div
+       [:div "confirma a senha nova"]
+       [:input {:type "password" :name "new-password-confirmation"}]]
+      [:div
+       [:input {:type "submit"}]]]]]))
+
+(rum/defc post-muda-senha [username old-password new-password new-password-confirmation]
+  (if-let [error
+           (cond
+             (not= new-password new-password-confirmation)
+             "A senha nova nom quadra coa confirmaçom."
+             ())]))
+
 (comment
   ;; to set a password:
   (d/transact (conn) {:tx-data [[:db/add [:user/name "estevo"] :user/password-hash (creds/hash-bcrypt "abcd")]]})

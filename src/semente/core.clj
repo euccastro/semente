@@ -64,6 +64,8 @@
   (compojure/context
    "/editar" []
    edit-routes)
+  (GET "/mudar-senha" [erro utente]
+       (auth/muda-senha erro utente))
   (GET "/nacional/quem-somos" []
        (rum/render-static-markup
         [:html
