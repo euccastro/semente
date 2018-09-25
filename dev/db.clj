@@ -24,107 +24,199 @@
     :db/cardinality :db.cardinality/one
     :db/doc "Endereço de email"}
 
-   {:db/ident :user/permission
+   {:db/ident :user/permissions
     :db/valueType :db.type/ref
     :db/cardinality :db.cardinality/many}
 
-   {:db/ident :permission/scope
-    :db/valueType :db.type/ref
-    :db/cardinality :db.cardinality/one
-    :db/doc "Âmbito no que tem efecto este permisso"}
+   ;; permisso
 
-   {:db/ident :permission/privilege
-    :db/valueType :db.type/ref
+   {:db/ident :permission/key
+    :db/unique :db.unique/identity
+    :db/valueType :db.type/keyword
     :db/cardinality :db.cardinality/one
-    :db/doc "Privilégio que confer este permisso"}
+    :db/doc "Chave para identificar este permisso"}
 
    {:db/ident :permission/display-name
     :db/valueType :db.type/string
     :db/cardinality :db.cardinality/one
     :db/doc "Nome deste permisso para consumo humano, em minúsculas"}
 
-   ;; âmbito
+   ;; associaçom
 
-   {:db/ident :scope/display-name
+   {:db/ident :association/slug
     :db/unique :db.unique/identity
     :db/valueType :db.type/string
     :db/cardinality :db.cardinality/one
-    :db/doc "Nome do âmbito para mostrar, em minúsculas"}
+    :db/doc "Nome curto da associaçom para URLs etc."}
 
-   {:db/ident :scope/about
+   {:db/ident :association/display-name
+    :db/unique :db.unique/identity
     :db/valueType :db.type/string
     :db/cardinality :db.cardinality/one
-    :db/doc "ID do elemento elasticsearch onde está o texto da secçom de Quem Somos para este âmbito"}
+    :db/doc "Nome da associaçom para mostrar, em minúsculas"}
 
-   {:db/ident :scope/logo-uri
+   {:db/ident :association/about-revision
+    :db/valueType :db.type/long
+    :db/cardinality :db.cardinality/one
+    :db/doc "Número de série do elemento elasticsearch onde está o texto atual da secçom de Quem Somos para esta associaçom.
+
+O texto está no id <association-slug>_quemsomos_<revisom>"}
+
+   {:db/ident :association/logo-uri
     :db/valueType :db.type/string
     :db/cardinality :db.cardinality/one
-    :db/doc "ID do URI onde está o logo do âmbito"}
+    :db/doc "ID do URI onde está o logo da associaçom"}
 
-   {:db/ident :scope/facebook-uri
+   {:db/ident :association/facebook-uri
     :db/valueType :db.type/string
     :db/cardinality :db.cardinality/one
-    :db/doc "URI da página de Facebook deste âmbito, se houver"}
+    :db/doc "URI da página de Facebook desta associaçom, se houver"}
 
-   {:db/ident :scope/youtube-url
+   {:db/ident :association/youtube-url
     :db/valueType :db.type/string
     :db/cardinality :db.cardinality/one
-    :db/doc "URI do canal de YouTube deste âmbito, se houver"}
+    :db/doc "URI do canal de YouTube desta associaçom, se houver"}
 
-   {:db/ident :scope/twitter-uri
+   {:db/ident :association/twitter-uri
     :db/valueType :db.type/string
     :db/cardinality :db.cardinality/one
-    :db/doc "URI da página de Twitter deste âmbito, se houver"}
+    :db/doc "URI da página de Twitter desta associaçom, se houver"}
 
-   {:db/ident :scope/centers
+   {:db/ident :association/centers
     :db/valueType :db.type/ref
     :db/cardinality :db.cardinality/many
     :db/isComponent true
-    :db/doc "Centros deste âmbito"}])
+    :db/doc "Centros deste âmbito"}
+
+   ;; revisom de elementos editáveis
+
+   {:db/ident :editable/revision
+    :db/valueType :db.type/long
+    :db/cardinality :db.cardinality/one
+    :db/doc "Número de série da última revisom deste conteúdo"}
+
+   ;; tarefa
+   ;; (o título vai em elasticsearch, coa chave task-<datomic-id>)
+
+   {:db/ident :task/assignee
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/one
+    :db/doc "A utente que tem esta tarefa assignada"}
+
+   ;; comentário
+   ;; (os conteúdos vam em elasticsearch, coa chave comment-<datomic-id>)
+
+   {:db/ident :comment/author
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/one
+    :db/doc "A autora deste comentário"}
+
+   {:db/ident :subject/comments
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/many
+    :db/isComponent true
+    :db/doc "Comentários associados a isto"}
+
+   ;; equipa
+
+   {:db/ident :team/name
+    :db/valueType :db.type/string
+    :db/cardinality :db.cardinality/one
+    :db/doc "Nome da equipa"}
+
+   {:db/ident :team/slug
+    :db/unique :db.unique/identity
+    :db/valueType :db.type/string
+    :db/cardinality :db.cardinality/one
+    :db/doc "Nome curto da equipa para URLs etc"}
+
+   {:db/ident :team/members
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/many
+    :db/doc "Gente que fai parte da equipa"}
+
+   ;; Nestes momentos um id de equipa também é o id dumha lista de tarefas, mas
+   ;; podemos mudar isto no futuro.
+   {:db/ident :task-list/tasks
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/many
+    :db/doc "Tarefas que componhem esta lista"}
+
+   ;; votos
+
+   {:db/ident :task-vote/voter
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/one
+    :db/doc "Pessoa que emitiu este voto"}
+
+   {:db/ident :task-vote/task-list
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/one
+    :db/doc "Lista de tarefas na qual é feito este voto"}
+
+   {:db/ident :task-vote/task
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/one
+    :db/doc "Tarefa votada"}
+
+   {:db/ident :task-vote/score
+    :db/valueType :db.type/long
+    :db/cardinality :db.cardinality/one
+    :db/doc "Pontuaçom deste voto"}
+
+   ;; transaçom (meta)
+   {:db/ident :txn/doc
+    :db/valueType :db.type/string
+    :db/cardinality :db.cardinality/one
+    :db/doc "documentaçom da transaçom"}
+
+   ])
 
 (def bootstrap-data
   [{:db/id "national"
-    :db/ident :scope/national
-    :scope/display-name "nacional"
-    :permission/display-name "permisso de âmbito nacional"}
-   {:db/ident :permission.privilege/unobtainium
-    :permission/display-name "encher água com umha peneira"}
-   {:db/id "admin"
-    :db/ident :permission.privilege/admin
-    :permission/display-name "privilégio de administraçom"}
-   {:db/id "edit"
-    :db/ident :permission.privilege/edit
-    :permission/display-name "privilégio de ediçom"}
-   {:db/ident :permission/national-editor
-    :permission/display-name "permisso de ediçom de conteúdos nacionais"
-    :permission/scope "national"
-    :permission/privilege "edit"}
-   {:db/ident :permission/national-admin
-    :permission/display-name "permisso de administraçom nacional"
-    :permission/scope "national"
-    :permission/privilege "admin"}])
+    :association/slug "nacional"}
+   {:db/id "national-editor-permission"
+    :permission/key :permission/national-editor
+    :permission/display-name "permisso de ediçom de conteúdos nacionais"}
+   {:db/id "national-admin-permission"
+    :permission/key :permission/national-admin
+    :permission/display-name "permisso de administraçom nacional"}
+   {:db/id "comi-geral"
+    :team/slug "comissom-geral"}
+   {:db/id "estevo"
+    :user/name "estevo"
+    :user/email "euccastro@gmail.com"
+    :user/password-hash (creds/hash-bcrypt "abcd")
+    :user/permissions [{:db/id "national-admin-permission"}
+                       {:db/id "national-editor-permission"}]
+    :team/_members "comi-geral"}
+   ])
 
+(defn cria-utente [nome email senha equipa]
+  (d/transact (sd/conn*)
+              {:tx-data [{:user/name nome
+                          :user/email email
+                          :user/password-hash (creds/hash-bcrypt senha)
+                          :team/_members [:team/slug equipa]}
+                         [:db/add "datomic.tx" :txn/comment (str "cria-utente " nome)]]}))
 
-(def eu [{:user/name "estevo"
-          :user/email "euccastro@gmail.com"
-          :user/password-hash (creds/hash-bcrypt "abcd")
-          :user/permission [:permission/national-admin
-                            :permission/national-editor]}])
 
 (defn init []
   (let [conn (sd/conn*)]
-    (doseq [data [schema bootstrap-data eu]]
+    (doseq [data [schema bootstrap-data]]
       (d/transact conn {:tx-data data}))))
 
+;; apagar assi que a db semente esteja live;
 (defn reset []
   (let [client (sd/client)]
     (d/delete-database client {:db-name "semente"})
-    (d/create-database client {:db-name "semente"}))
-  (init))
+    (d/create-database client {:db-name "semente"})))
 
 (comment
   (def client (sd/client))
   (def conn (sd/conn*))
+  (def data bootstrap-data)
   (reset)
   (init)
+  (cria-utente "Badú" "badusinho@gmail.com" "senhadebadu" "comissom-geral")
   )
