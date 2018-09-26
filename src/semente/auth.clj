@@ -1,5 +1,6 @@
 (ns semente.auth
-  (:require [datomic.client.api :as d]
+  (:require [cemerick.friend.credentials :as creds]
+            [datomic.client.api :as d]
             ring.util.response
             [rum.core :as rum]
             [semente.datomic :refer (conn)]))
@@ -92,9 +93,13 @@
     [:head [:meta {:charset "UTF-8"}]]
     [:body
      [:h1 "Mudar senha"]
-     (if erro
+     (case erro
        ;; XXX: estilo
+       "senha-nova-nom-quadra"
+       [:div.erro {:style {:color :red}} "A senha nova nom quadra com a confirmaçom"]
+       "senha-velha-nom-quadra"
        [:div.erro {:style {:color :red}} "Nom conheço " [:em utente] " ou a senha velha nom quadra."]
+       nil
        [:div "Entra a senha que tés e a que queres."])
      [:form {:action "/mudar-senha" :method "post"}
       [:div
@@ -116,12 +121,29 @@
   (if-let [error
            (cond
              (not= new-password new-password-confirmation)
-             "A senha nova nom quadra coa confirmaçom."
-             ())]))
+             "senha-nova-nom-quadra"
+             (not (creds/bcrypt-verify
+                   old-password
+                   (:password (load-credentials username))))
+             "senha-velha-nom-quadra"
+             :else nil)]
+    (ring.util.response/redirect
+     (str "/mudar-senha?erro=" error "&utente="
+          (java.net.URLEncoder/encode username)))
+    (do
+      (d/transact (conn)
+                  {:tx-data [[:db/add [:user/name username]
+                              :user/password-hash (creds/hash-bcrypt new-password)]]})
+      (rum/render-static-markup
+       [:html
+        [:head [:meta {:charset "UTF-8"}]]
+        [:body
+         [:div "Senha mudada!"]]]))))
 
 (comment
   ;; to set a password:
   (d/transact (conn) {:tx-data [[:db/add [:user/name "estevo"] :user/password-hash (creds/hash-bcrypt "abcd")]]})
+  (creds/bcrypt-verify "ab cd" "$2a$10$y23.gdkHPwRsH.6hMtmQ6OWqhi.BW2x/gBE3XHuGsQSWKj0g4uhsi")
   )
 
 (defn login [erro utente]

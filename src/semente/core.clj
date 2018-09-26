@@ -65,7 +65,9 @@
    "/editar" []
    edit-routes)
   (GET "/mudar-senha" [erro utente]
-       (auth/muda-senha erro utente))
+       (auth/get-muda-senha erro utente))
+  (POST "/mudar-senha" [username old-password new-password new-password-confirmation]
+        (auth/post-muda-senha username old-password new-password new-password-confirmation))
   (GET "/nacional/quem-somos" []
        (rum/render-static-markup
         [:html
