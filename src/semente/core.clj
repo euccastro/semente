@@ -15,6 +15,7 @@
             [semente.auth :as auth]
             [semente.draft-js :as draft-js]
             [semente.stage :refer (stage)]
+            [semente.tarefas :as tarefas]
             [semente.template :as comum]))
 
 (defroutes admin-routes
@@ -64,6 +65,9 @@
   (compojure/context
    "/editar" []
    edit-routes)
+  (GET "/tarefas/:equipa/nova" [equipa]
+       (friend/authorize #{(keyword "permission.team-member" equipa)}
+                         (tarefas/formulario-nova equipa)))
   (GET "/mudar-senha" [erro utente]
        (auth/get-muda-senha erro utente))
   (POST "/mudar-senha" [username old-password new-password new-password-confirmation]

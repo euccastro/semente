@@ -7,29 +7,20 @@
 
 (def login-uri "/entra")
 
-(def init-permission-hierarchy
-  (memoize
-   (fn [p]
-     (let [m (d/pull (d/db (conn))
-                     '[{:permission/privilege [:db/ident]}
-                       {:permission/scope [:db/ident]}]
-                     p)]
-       (derive p :permission/any)
-       (some->> (get-in m [:permission/privilege :db/ident]) (derive p))
-       (some->> (get-in m [:permission/scope :db/ident]) (derive p))))))
-
-(defn init-permission-hierarchies [ps]
-  (dorun (map init-permission-hierarchy ps)))
-
 (defn load-credentials [username]
   (let [m (d/pull (d/db (conn))
-                  '[:user/password-hash {:user/permission [:db/ident]}]
+                  '[:user/password-hash
+                    {:user/permissions [:permission/key]}
+                    {:team/_members [:team/slug]}]
                   [:user/name username])]
     (when (not-empty m)
       {:username username
        :password (:user/password-hash m)
-       :roles (doto (into #{} (map :db/ident (:user/permission m)))
-                init-permission-hierarchies)})))
+       :roles (into #{:permission/any}
+                    (concat
+                     (map :permission/key (:user/permissions m))
+                     (map #(keyword "permission.team-member" (:team/slug %))
+                          (:team/_members m))))})))
 
 (defn- username
   [form-params params]
@@ -43,11 +34,14 @@
 
 (defn unauthorized-handler [{{:keys [cemerick.friend/required-roles]} :cemerick.friend/authorization-failure
                              :as req}]
+  ;; XXX: mirar nomes de :permission.team-member/...
   (let [required-permission-names
         (map first
              (d/q '[:find ?n
-                    :in $ [?r ...]
-                    :where [?r :permission/display-name ?n]]
+                    :in $ [?k ...]
+                    :where
+                    [?p :permission/key ?k]
+                    [?p :permission/display-name ?n]]
                   (d/db (conn))
                   required-roles))]
     {:status 200
@@ -144,6 +138,7 @@
   ;; to set a password:
   (d/transact (conn) {:tx-data [[:db/add [:user/name "estevo"] :user/password-hash (creds/hash-bcrypt "abcd")]]})
   (creds/bcrypt-verify "ab cd" "$2a$10$y23.gdkHPwRsH.6hMtmQ6OWqhi.BW2x/gBE3XHuGsQSWKj0g4uhsi")
+  (load-credentials "estevo")
   )
 
 (defn login [erro utente]

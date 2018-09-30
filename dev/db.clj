@@ -135,9 +135,9 @@ O texto está no id <association-slug>_quemsomos_<revisom>"}
     :db/cardinality :db.cardinality/many
     :db/doc "Gente que fai parte da equipa"}
 
-   ;; Nestes momentos um id de equipa também é o id dumha lista de tarefas, mas
+   ;; Nestes momentos um id de equipa também é o id dumha liga de tarefas, mas
    ;; podemos mudar isto no futuro.
-   {:db/ident :task-list/tasks
+   {:db/ident :task-league/tasks
     :db/valueType :db.type/ref
     :db/cardinality :db.cardinality/many
     :db/doc "Tarefas que componhem esta lista"}
@@ -149,10 +149,10 @@ O texto está no id <association-slug>_quemsomos_<revisom>"}
     :db/cardinality :db.cardinality/one
     :db/doc "Pessoa que emitiu este voto"}
 
-   {:db/ident :task-vote/task-list
+   {:db/ident :task-vote/task-league
     :db/valueType :db.type/ref
     :db/cardinality :db.cardinality/one
-    :db/doc "Lista de tarefas na qual é feito este voto"}
+    :db/doc "Liga de tarefas na qual é feito este voto"}
 
    {:db/ident :task-vote/task
     :db/valueType :db.type/ref
@@ -218,6 +218,8 @@ O texto está no id <association-slug>_quemsomos_<revisom>"}
   (def data bootstrap-data)
   (reset)
   (init)
+  (d/q '[:find ?n :where [_ :user/name ?n]] (d/db (sd/conn)))
+  (d/pull (d/db (sd/conn)) '[{:team/members [:user/name]}] [:team/slug "comissom-geral"])
   (cria-utente "Badú" "badusinho@gmail.com" "senhadebadu" "comissom-geral")
   (cria-utente "Jesús" "oficinasemente@gmail.com" "senhadejesus" "comissom-geral")
   )
