@@ -182,7 +182,11 @@ O texto está no id <association-slug>_quemsomos_<revisom>"}
     :permission/key :permission/national-admin
     :permission/display-name "permisso de administraçom nacional"}
    {:db/id "comi-geral"
-    :team/slug "comissom-geral"}
+    :team/slug "comissom-geral"
+    :team/name "comissom geral"}
+   {:db/id "comi-pedagogica"
+    :team/slug "comissom-pedagogica"
+    :team/name "comissom pedagógica"}
    {:db/id "estevo"
     :user/name "estevo"
     :user/email "euccastro@gmail.com"

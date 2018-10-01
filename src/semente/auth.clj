@@ -32,18 +32,33 @@
    (str login-uri "?erro=nom-quadra&utente="
         (java.net.URLEncoder/encode (username form-params params)))))
 
+(defn permission-key->display-name [k]
+  (if (= (namespace k) "permission.team-member")
+    (let [team-slug (name k)
+          team-name (ffirst
+                     (d/q '[:find ?n
+                            :in $ ?s
+                            :where
+                            [?t :team/slug ?s]
+                            [?t :team/name ?n]]
+                          (d/db (conn))
+                          team-slug))]
+      (str "pertença à equipa \"" team-name "\""))
+    (str "o permisso "
+         (ffirst
+          (d/q '[:find ?n
+                 :in $ ?k
+                 :where
+                 [?p :permission/key ?k]
+                 [?p :permission/display-name ?n]]
+               (d/db (conn))
+               k)))))
+
 (defn unauthorized-handler [{{:keys [cemerick.friend/required-roles]} :cemerick.friend/authorization-failure
                              :as req}]
   ;; XXX: mirar nomes de :permission.team-member/...
   (let [required-permission-names
-        (map first
-             (d/q '[:find ?n
-                    :in $ [?k ...]
-                    :where
-                    [?p :permission/key ?k]
-                    [?p :permission/display-name ?n]]
-                  (d/db (conn))
-                  required-roles))]
+        (map permission-key->display-name required-roles)]
     {:status 200
      :headers {"Content-Type" "text/html"}
      :body (rum/render-static-markup
@@ -54,13 +69,13 @@
              [:body
               [:h1 "Erro de autorizaçom"]
               (if (= (count required-permission-names) 1)
-                [:div "Esta página requer o permisso "
-                 [:strong (first required-permission-names)]
+                [:div "Esta página requer "
+                 (first required-permission-names)
                  "."]
-                [:div "Esta página requer os permissos:"
+                [:div "Esta página requer:"
                  [:ul
                   (for [p required-permission-names]
-                    [:li [:strong p]])]])]])}))
+                    [:li p])]])]])}))
 
 (rum/defc login-form [erro utente]
   [:html
