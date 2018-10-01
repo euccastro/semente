@@ -1,4 +1,4 @@
 (ns semente.tarefas)
 
-(defn formulario-nova [& args]
-  (str "Agora faria um formulário de nova tarefa com argumentos: " (pr-str args)))
+(defn lista [equipa]
+  (str "Agora mostraria umha lista coas tarefas da equipa " (pr-str equipa)))

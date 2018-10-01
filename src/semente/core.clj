@@ -65,9 +65,9 @@
   (compojure/context
    "/editar" []
    edit-routes)
-  (GET "/tarefas/:equipa/nova" [equipa]
+  (GET "/tarefas/:equipa" [equipa]
        (friend/authorize #{(keyword "permission.team-member" equipa)}
-                         (tarefas/formulario-nova equipa)))
+                         (tarefas/lista equipa)))
   (GET "/mudar-senha" [erro utente]
        (auth/get-muda-senha erro utente))
   (POST "/mudar-senha" [username old-password new-password new-password-confirmation]
