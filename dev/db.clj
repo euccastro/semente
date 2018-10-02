@@ -96,12 +96,22 @@ O texto está no id <association-slug>_quemsomos_<revisom>"}
     :db/doc "Número de série da última revisom deste conteúdo"}
 
    ;; tarefa
-   ;; (o título vai em elasticsearch, coa chave task-<datomic-id>)
+   ;; (o título vai *tambem* em elasticsearch, coa chave task-<datomic-id>)
+
+   {:db/ident :task/author
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/one
+    :db/doc "A utente que criou esta tarefa"}
 
    {:db/ident :task/assignee
     :db/valueType :db.type/ref
     :db/cardinality :db.cardinality/one
     :db/doc "A utente que tem esta tarefa assignada"}
+
+   {:db/ident :task/title
+    :db/valueType :db.type/string
+    :db/cardinality :db.cardinality/one
+    :db/doc "O título desta tarefa"}
 
    ;; comentário
    ;; (os conteúdos vam em elasticsearch, coa chave comment-<datomic-id>)

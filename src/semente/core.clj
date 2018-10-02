@@ -68,6 +68,9 @@
   (GET "/tarefas/:equipa" [equipa]
        (friend/authorize #{(keyword "permission.team-member" equipa)}
                          (tarefas/lista equipa)))
+  (POST "/tarefas/:equipa/acrescenta" [equipa titulo]
+       (friend/authorize #{(keyword "permission.team-member" equipa)}
+                         (tarefas/acrescenta-tarefa equipa titulo)))
   (GET "/mudar-senha" [erro utente]
        (auth/get-muda-senha erro utente))
   (POST "/mudar-senha" [username old-password new-password new-password-confirmation]
