@@ -2,7 +2,8 @@
   (:require [cemerick.friend :as friend]
             [datomic.client.api :as d]
             [rum.core :as rum]
-            [semente.datomic :as sd]))
+            [semente.datomic :as sd]
+            [semente.elasticsearch :as es]))
 
 (defn lista [slug-equipa]
   (rum/render-static-markup
@@ -30,12 +31,17 @@
         [:input {:type "submit" :value "Acrescenta Tarefa"}]]]])))
 
 (defn acrescenta-tarefa [slug-equipa titulo]
-  (println (pr-str friend/*identity*))
-  (d/transact (sd/conn)
-              {:tx-data [{:task/title titulo
-                          :task/author [:user/name (:current friend/*identity*)]
-                          :task-league/_tasks [:team/slug slug-equipa]}
-                         [:db/add "datomic.tx" :db/doc "tarefas/acrescenta-tarefa"]]})
+  (let [tid
+        (get-in
+         (d/transact (sd/conn)
+                     {:tx-data [{:db/id "nova-tarefa"
+                                 :task/title titulo
+                                 :task/author [:user/name (:current friend/*identity*)]
+                                 :task-league/_tasks [:team/slug slug-equipa]}
+                                [:db/add "datomic.tx" :db/doc "tarefas/acrescenta-tarefa"]]})
+         [:tempids "nova-tarefa"])]
+    ;; XXX: job to check integrity
+    (es/save-doc "tarefas" tid {:titulo titulo}))
   (ring.util.response/redirect (str "/tarefas/" slug-equipa)))
 
 
@@ -44,4 +50,13 @@
   (def txn (ffirst (d/q '[:find ?t :where [_ :user/name "Badú" ?t]] (d/db (sd/conn)))))
   (d/pull (d/db (sd/conn)) '[*] txn)
   (def slug-equipa "comissom-geral")
+  (def titulo "Fazer algumha outra cousa mais")
+  (def ret
+    (d/transact (sd/conn)
+                {:tx-data [{:db/id "nova-tarefa"
+                            :task/title titulo
+                            :task/author [:user/name "estevo"]
+                            :task-league/_tasks [:team/slug slug-equipa]}
+                           [:db/add "datomic.tx" :db/doc "tarefas/acrescenta-tarefa"]]}))
+  (:tempids ret)
   )

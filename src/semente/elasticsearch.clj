@@ -4,18 +4,17 @@
 
 (def endpoint "https://vpc-es-deitomique-a7235usfbeatgjhiba5f4y32za.eu-central-1.es.amazonaws.com")
 
-(defn doc-url [name]
-  (str endpoint "/edits/_doc/" name))
+(defn doc-url [index name]
+  (str endpoint "/" index "/_doc/" name))
 
-(defn save-doc [name contents]
-  (http/put (doc-url name)
+(defn save-doc [index name contents]
+  (http/put (doc-url index name)
             {:body (json/write-str contents)
              :content-type "application/json"}))
 
-(defn load-doc [name]
+(defn load-doc [index name]
   (try
-    (-> name
-        doc-url
+    (-> (doc-url index name)
         http/get
         :body
         json/read-str
@@ -25,7 +24,7 @@
 (comment
 
   (def resp (http/delete (str endpoint "/edits?pretty")))
-  (def resp (http/put (str endpoint "/prova?pretty")
+  (def resp (http/put (str endpoint "/tarefas?pretty")
                       {:body (json/write-str {:settings {:analysis {:analyzer {:default {:type "galician"}}}}})
                        :content-type "application/json"}))
   (def resp (http/put (str endpoint "/prova/_doc/1?pretty")
