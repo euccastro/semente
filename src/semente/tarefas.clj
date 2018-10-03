@@ -5,7 +5,7 @@
             [semente.datomic :as sd]
             [semente.elasticsearch :as es]))
 
-(defn lista [slug-equipa]
+(defn tarefas-da-equipa [slug-equipa]
   (rum/render-static-markup
    (let [tasks (d/q '[:find ?tid ?title ?author-name ?date-created
                       :in $ ?slug-equipa

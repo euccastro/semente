@@ -67,7 +67,7 @@
    edit-routes)
   (GET "/tarefas/:equipa" [equipa]
        (friend/authorize #{(keyword "permission.team-member" equipa)}
-                         (tarefas/lista equipa)))
+                         (tarefas/tarefas-da-equipa equipa)))
   (POST "/tarefas/:equipa/acrescenta" [equipa titulo]
        (friend/authorize #{(keyword "permission.team-member" equipa)}
                          (tarefas/acrescenta-tarefa equipa titulo)))
