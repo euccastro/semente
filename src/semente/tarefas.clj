@@ -59,4 +59,9 @@
                             :task-league/_tasks [:team/slug slug-equipa]}
                            [:db/add "datomic.tx" :db/doc "tarefas/acrescenta-tarefa"]]}))
   (:tempids ret)
+  (d/q '[:find ?id ?title
+         :in $
+         :where [?id :task/title ?title]]
+       (d/db (sd/conn)))
+  (print *1)
   )

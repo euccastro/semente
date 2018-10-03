@@ -5,7 +5,7 @@
 (def endpoint "https://vpc-es-deitomique-a7235usfbeatgjhiba5f4y32za.eu-central-1.es.amazonaws.com")
 
 (defn doc-url [index name]
-  (str endpoint "/" index "/_doc/" name))
+  (format "%s/%s/_doc/%s" endpoint index name))
 
 (defn save-doc [index name contents]
   (http/put (doc-url index name)
@@ -20,6 +20,11 @@
         json/read-str
         (get "_source"))
     (catch Exception e nil)))
+
+(defn add-index [index]
+  (http/put (format "%s/%s?pretty" endpoint index)
+            {:body (json/write-str {:settings {:analysis {:analyzer {:default {:type "galician"}}}}})
+             :content-type "application/json"}))
 
 (comment
 
@@ -49,5 +54,7 @@
   (load-doc "xyzzy")
 
   (load-doc "not-there")
+
+  (load-doc "tarefas" 17363487625838697)
 
   )
