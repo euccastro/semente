@@ -34,7 +34,8 @@
 
 (defroutes national-edit-routes
   (GET "/quem-somos" []
-       (draft-js/edit "nacional_quem-somos")))
+       (comment (draft-js/edit "nacional_quem-somos"))
+       "nacional_quem-somos"))
 
 (defroutes edit-routes
   (compojure/context "/nacional" []
@@ -69,8 +70,11 @@
        (friend/authorize #{(keyword "permission.team-member" equipa)}
                          (tarefas/tarefas-da-equipa equipa)))
   (POST "/tarefas/:equipa/acrescenta" [equipa titulo]
+        (friend/authorize #{(keyword "permission.team-member" equipa)}
+                          (tarefas/acrescenta-tarefa equipa titulo)))
+  (GET "/tarefa/:equipa/:id-tarefa" [equipa id-tarefa]
        (friend/authorize #{(keyword "permission.team-member" equipa)}
-                         (tarefas/acrescenta-tarefa equipa titulo)))
+                         (tarefas/historial-tarefa equipa id-tarefa)))
   (GET "/mudar-senha" [erro utente]
        (auth/get-muda-senha erro utente))
   (POST "/mudar-senha" [username old-password new-password new-password-confirmation]
@@ -103,8 +107,8 @@
   (GET "/prova" [] (friend/authorize #{:permission.privilege/admin} "Olá!"))
   (GET "/pravo" [] (friend/authorize #{:permission.privilege/unobtainium} "Alô!"))
   (GET "/privo" [] (friend/authorize #{:scope/national} "Ei!"))
-  (GET "/edit/:id" [id]
-       (draft-js/edit id))
+  (comment (GET "/edit/:id" [id]
+                (draft-js/edit id)))
   (GET "/view/:id" [id]
        (draft-js/view id))
   (friend/logout (GET "/abur" [] "OK, tás fora."))

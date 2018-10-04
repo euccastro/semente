@@ -241,7 +241,8 @@
 
 (rum/defcs editor < rum/reactive
   [state]
-  (let [{:keys [doc-name
+  (let [{:keys [index
+                doc-name
                 ^js/Draft.EditorState editor-state
                 editing-link?
                 link-text]} (rum/react app-state)
@@ -281,7 +282,7 @@
                                       (clj->js {:component native-image
                                                 :editable false})))}))]
      [:div {:style {:padding 12}}
-      [:button {:on-click (fn [_] (save-doc doc-name raw-contents))} "Guardar"]]
+      [:button {:on-click (fn [_] (save-doc index doc-name raw-contents))} "Guardar"]]
      #_[:div {:style {:padding 12}}
       [:pre (.stringify js/JSON
                         (.getCurrentInlineStyle @editor-state-atom)
@@ -298,8 +299,9 @@
 (defn ^:after-load reload []
   (rum/mount (editor) (.getElementById js/document "app")))
 
-(defn ^:export main [doc-name contents]
+(defn ^:export main [index doc-name contents]
   (swap! app-state assoc
+         :index index
          :doc-name doc-name
          :editor-state
          (if contents

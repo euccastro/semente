@@ -7,7 +7,7 @@
             [semente.elasticsearch :as es]
             [semente.s3 :as s3]))
 
-(rum/defc edit-page [doc-name contents]
+(rum/defc edit-page [index doc-name page-body editor-contents]
   [:html
    [:head
     [:meta {:charset "UTF-8"}]
@@ -16,15 +16,16 @@
     [:link {:rel "stylesheet" :type "text/css" :href "/res/css/icon.css"}]
     [:link {:rel "stylesheet" :type "text/css" :href "/res/css/garden.css"}]]
    [:body
+    page-body
     [:#app "Carregando editor..."]
     [:script {:src "/res/js/main.js" :type "text/javascript"}]
     [:script {:type "text/javascript"
-              :dangerouslySetInnerHTML {:__html
-                                        (str "semente.webmain.main("
-                                             (pr-str doc-name)
-                                             ", "
-                                             (or contents "null")
-                                             ");")}}]]])
+              :dangerouslySetInnerHTML
+              {:__html
+               (format "semente.webmain.main(%s, %s, %s);"
+                       (pr-str index)
+                       (pr-str doc-name)
+                       (or editor-contents "null"))}}]]])
 
 (defn merge-style [start end style]
   (fn [xf]
@@ -175,9 +176,10 @@
                                                    #(str "https://datomique.icbink.org/res/" (filenames %)))
                                       json/write-str)})))
 
-(defn edit [id]
-  (rum/render-static-markup
-   (edit-page id (get (es/load-doc id) "contents"))))
+(comment
+  (defn edit [id]
+    (rum/render-static-markup
+     (edit-page id (get (es/load-doc id) "contents")))))
 
 (defn id->hiccup [id]
   (some-> id

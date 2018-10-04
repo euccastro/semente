@@ -3,7 +3,9 @@
             [datomic.client.api :as d]
             [rum.core :as rum]
             [semente.datomic :as sd]
+            [semente.draft-js :as draft-js]
             [semente.elasticsearch :as es]))
+
 
 (defn tarefas-da-equipa [slug-equipa]
   (rum/render-static-markup
@@ -23,12 +25,15 @@
         [:div "Esta equipa nom tem tarefas em curso."]
         [:ul
          (for [[id titulo autora data] tasks]
-           [:li {:key id} titulo [:p [:small (str "Criado por " autora " em " data)]]])])
+           [:li {:key id}
+            [:a {:href (format "/tarefa/%s/%s" slug-equipa id)} titulo]
+            [:p [:small (str "Criado por " autora " em " data)]]])])
       [:form {:action (str "/tarefas/" slug-equipa "/acrescenta") :method "post"}
        [:div
         [:div "Título"]
         [:input {:type "text" :name "titulo" :value ""}]
         [:input {:type "submit" :value "Acrescenta Tarefa"}]]]])))
+
 
 (defn acrescenta-tarefa [slug-equipa titulo]
   (let [tid
@@ -43,6 +48,15 @@
     ;; XXX: job to check integrity
     (es/save-doc "tarefas" tid {:titulo titulo}))
   (ring.util.response/redirect (str "/tarefas/" slug-equipa)))
+
+
+(defn historial-tarefa [equipa id-tarefa]
+  (rum/render-static-markup
+   (draft-js/edit-page "comentario-tarefa"
+                       (format "%s-%s" equipa id-tarefa)
+                       [:div
+                        (format "Agora mostraria o historial da tarefa com ID %s dentro do contexto da equipa '%s'." id-tarefa equipa)]
+                       nil)))
 
 
 (comment
