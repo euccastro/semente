@@ -60,12 +60,13 @@
      [:strong "Semos SEMENTE!"]]]))
 
 (defroutes ring-handler
-  (compojure/context
-   "/admin" []
-   (friend/wrap-authorize admin-routes #{:permission.privilege/admin}))
-  (compojure/context
-   "/editar" []
-   edit-routes)
+  #_(comment
+    (compojure/context
+     "/admin" []
+     (friend/wrap-authorize admin-routes #{:permission.privilege/admin}))
+    (compojure/context
+     "/editar" []
+     edit-routes))
   (GET "/tarefas/:equipa" [equipa]
        (friend/authorize #{(keyword "permission.team-member" equipa)}
                          (tarefas/tarefas-da-equipa equipa)))
@@ -79,38 +80,40 @@
        (auth/get-muda-senha erro utente))
   (POST "/mudar-senha" [username old-password new-password new-password-confirmation]
         (auth/post-muda-senha username old-password new-password new-password-confirmation))
-  (GET "/nacional/quem-somos" []
-       (rum/render-static-markup
-        [:html
-         [:head
-          [:meta {:charset "UTF-8"}]
-          [:link {:rel "stylesheet" :type "text/css" :href "/res/css/font.css"}]
-          [:link {:rel "stylesheet" :type "text/css" :href "/res/css/icon.css"}]
-          [:link {:rel "stylesheet" :type "text/css" :href "/res/css/garden.css"}]]
-         [:body
-          (quem-somos
-           [:div
-            (draft-js/id->hiccup "nacional_quem-somos")
-            (if (friend/authorized? #{:permission/national-editor}
-                                    friend/*identity*)
-              [:a {:href "/editar/nacional/quem-somos"} "Editar"])])
-          ;; for CSS reloading...
-          (when (not= stage :production)
-            [:script {:src "/res/js/main.js" :type "text/javascript"}])]]))
-  (POST "/guarda" [name contents & etc]
-        (try
-          (apply draft-js/save name contents etc)
-          (catch Exception e (str "EXCEPTION:" (pr-str e)))))
+  #_(comment
+    (GET "/nacional/quem-somos" []
+         (rum/render-static-markup
+          [:html
+           [:head
+            [:meta {:charset "UTF-8"}]
+            [:link {:rel "stylesheet" :type "text/css" :href "/res/css/font.css"}]
+            [:link {:rel "stylesheet" :type "text/css" :href "/res/css/icon.css"}]
+            [:link {:rel "stylesheet" :type "text/css" :href "/res/css/garden.css"}]]
+           [:body
+            (quem-somos
+             [:div
+              (draft-js/id->hiccup "nacional_quem-somos")
+              (if (friend/authorized? #{:permission/national-editor}
+                                      friend/*identity*)
+                [:a {:href "/editar/nacional/quem-somos"} "Editar"])])
+            ;; for CSS reloading...
+            (when (not= stage :production)
+              [:script {:src "/res/js/main.js" :type "text/javascript"}])]]))
+    (POST "/guarda" [name contents & etc]
+          (try
+            (apply draft-js/save name contents etc)
+            (catch Exception e (str "EXCEPTION:" (pr-str e))))))
   (GET auth/login-uri [erro utente]
        (auth/login erro utente))
-  (GET "/prova-css" [] (rum/render-static-markup (prova-css)))
-  (GET "/prova" [] (friend/authorize #{:permission.privilege/admin} "Olá!"))
-  (GET "/pravo" [] (friend/authorize #{:permission.privilege/unobtainium} "Alô!"))
-  (GET "/privo" [] (friend/authorize #{:scope/national} "Ei!"))
-  (comment (GET "/edit/:id" [id]
-                (draft-js/edit id)))
-  (GET "/view/:id" [id]
-       (draft-js/view id))
+  #_(comment
+    (GET "/prova-css" [] (rum/render-static-markup (prova-css)))
+    (GET "/prova" [] (friend/authorize #{:permission.privilege/admin} "Olá!"))
+    (GET "/pravo" [] (friend/authorize #{:permission.privilege/unobtainium} "Alô!"))
+    (GET "/privo" [] (friend/authorize #{:scope/national} "Ei!"))
+    (comment (GET "/edit/:id" [id]
+                  (draft-js/edit id)))
+    (GET "/view/:id" [id]
+         (draft-js/view id)))
   (friend/logout (GET "/abur" [] "OK, tás fora."))
   (GET "/esperta" [] "Tou!")
   (resources "/")
