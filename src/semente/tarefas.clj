@@ -52,11 +52,17 @@
 
 (defn historial-tarefa [equipa id-tarefa]
   (rum/render-static-markup
-   (draft-js/edit-page "comentario-tarefa"
-                       (format "%s-%s" equipa id-tarefa)
-                       [:div
+   (draft-js/edit-page [:div
                         (format "Agora mostraria o historial da tarefa com ID %s dentro do contexto da equipa '%s'." id-tarefa equipa)]
+                       (format "/tarefa/%s/%s/comentario" equipa id-tarefa)
                        nil)))
+
+(defn acrescenta-comentario [equipa id-tarefa req]
+  (rum/render-static-markup
+   [:div
+    (format "Agora acrescentaria um comentário na tarefa %s-%s, com conteúdos:" equipa id-tarefa)
+    [:div
+     [:pre (with-out-str (clojure.pprint/pprint req))]]]))
 
 
 (comment

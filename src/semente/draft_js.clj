@@ -7,7 +7,7 @@
             [semente.elasticsearch :as es]
             [semente.s3 :as s3]))
 
-(rum/defc edit-page [index doc-name page-body editor-contents]
+(rum/defc edit-page [page-body callback-url editor-contents]
   [:html
    [:head
     [:meta {:charset "UTF-8"}]
@@ -22,9 +22,8 @@
     [:script {:type "text/javascript"
               :dangerouslySetInnerHTML
               {:__html
-               (format "semente.webmain.main(%s, %s, %s);"
-                       (pr-str index)
-                       (pr-str doc-name)
+               (format "semente.webmain.main(%s, %s);"
+                       (pr-str callback-url)
                        (or editor-contents "null"))}}]]])
 
 (defn merge-style [start end style]
