@@ -6,6 +6,17 @@
             [semente.draft-js :as draft-js]
             [semente.elasticsearch :as es]))
 
+(defn webmain [utente]
+  (let [equipas (d/q '[:find ?team-id ?team-slug ?team-name
+                       :in $ ?user-name
+                       :where
+                       [?user :user/name ?user-name]
+                       [?team-id :team/members ?user]
+                       [?team-id :team/slug ?team-slug]
+                       [?team-id :team/name ?team-name]]
+                     (d/db (sd/conn))
+                     utente)]
+    (format "Olá %s, agora mostraria as equipas %s!" utente (pr-str equipas))))
 
 (defn tarefas-da-equipa [slug-equipa]
   (rum/render-static-markup

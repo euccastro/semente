@@ -12,6 +12,7 @@
                                     :exclusions [joda-time]}
         com.cemerick/friend {:mvn/version "0.2.3"}
         com.cognitect/transit-clj {:mvn/version "0.8.285"}
+        com.cognitect/transit-cljs {:mvn/version "0.8.256"}
         com.cognitect/transit-java {:mvn/version "0.8.311"}
         com.datomic/ion {:mvn/version "0.9.16"}
         com.fasterxml.jackson.core/jackson-core {:mvn/version "2.9.5"}

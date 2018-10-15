@@ -67,6 +67,9 @@
     (compojure/context
      "/editar" []
      edit-routes))
+  (GET "/tarefas" []
+       (friend/authorize #{:permission/any}
+                         (tarefas/webmain (:current friend/*identity*))))
   (GET "/tarefas/:equipa" [equipa]
        (friend/authorize #{(keyword "permission.team-member" equipa)}
                          (tarefas/tarefas-da-equipa equipa)))
