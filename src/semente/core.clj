@@ -79,6 +79,9 @@
   (GET "/tarefa/:equipa/:id-tarefa" [equipa id-tarefa]
        (friend/authorize #{(keyword "permission.team-member" equipa)}
                          (tarefas/historial-tarefa equipa id-tarefa)))
+  (POST "/tarefa/:equipa/:id-tarefa/comentario" [equipa id-tarefa :as req]
+       (friend/authorize #{(keyword "permission.team-member" equipa)}
+                         (tarefas/acrescenta-comentario equipa id-tarefa req)))
   (GET "/mudar-senha" [erro utente]
        (auth/get-muda-senha erro utente))
   (POST "/mudar-senha" [username old-password new-password new-password-confirmation]
