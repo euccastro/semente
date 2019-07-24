@@ -1,0 +1,3 @@
+{:lint-as {compojure.core/defroutes clojure.core/def
+           rum.core/defc clojure.core/defn
+           rum.core/defcs clojure.core/defn}}

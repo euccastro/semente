@@ -3,3 +3,4 @@ target/*
 .cpcache/*
 out/*
 resources/public/cljs-out/
+.clj-kondo/.cache/*
