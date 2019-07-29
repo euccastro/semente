@@ -1,4 +1,4 @@
-(ns semente.core
+(ns semente.http-server
   (:require [aleph.http :as http]))
 
 (defn handler [_]
@@ -8,16 +8,25 @@
 
 (defonce server (atom nil))
 
-(defn restart-server! []
+(defn swap-server! [thunk]
   (swap! server
          (fn [old]
            (when old
              (.close old)
              (.wait-for-close old))
-           (http/start-server #'handler {:port 8080}))))
+           (thunk))))
+
+(defn stop-server! []
+  (swap-server! (fn [] nil)))
+
+(defn restart-server! []
+  (swap-server! #(http/start-server #'handler {:port 8080})))
+
+(defn -main []
+  (restart-server!))
 
 (comment
-
+  (stop-server!)
   (restart-server!)
   )
 ;; => nil
