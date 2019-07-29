@@ -5,12 +5,12 @@
 
 (defn handler [_]
   {:status 200
-   :headers {"content/type" "text/html"}
+   :headers {"content-type" "text/html"}
    :body "Olo!!"})
 
 (defn handler2 [_]
   {:status 200
-   :headers {"content/type" "text/html"}
+   :headers {"content-type" "text/html"}
    :body "OlA!!"})
 
 (defn not-found [_]
@@ -22,9 +22,14 @@
   (rring/router [["/olo" {:get handler}]
                  ["/ola" {:get handler2}]]))
 
+(def not-found-handler
+  (rring/create-default-handler {:not-found (constantly {:status 404
+                                                         :headers {"content-type" "text/html"}
+                                                         :body "Nom encontrado."})}))
+
 (def rhandler (rring/ring-handler
                router
-               (rring/create-default-handler {:not-found (constantly {:status 404 :body "Nom encontrado."})})
+               not-found-handler
                {:middleware [[ring-defaults/wrap-defaults
                               (assoc ring-defaults/site-defaults :static {:resources "pub"})]]}))
 
@@ -45,11 +50,13 @@
   (swap-server! #(http/start-server #'rhandler {:port 62000})))
 
 (defn -main []
+  (println "Arrancando Aleph...")
   (restart-server!)
   (println "Escoitando no porto 62000 (redirigido desde 80)"))
 
 (comment
   (stop-server!)
   (restart-server!)
-  (rhandler {:request-method :get :uri "/provasntese"})
+  (not-found-handler {:request-method :get :uri "heheheh"})
+  (rhandler {:request-method :get :uri "/olo"})
   )
