@@ -4,7 +4,7 @@
 (defn handler [_]
   {:status 200
    :headers {"content/type" "text/plain"}
-   :body "Olu!!"})
+   :body "Olo!!"})
 
 (defonce server (atom nil))
 
@@ -20,7 +20,7 @@
   (swap-server! (fn [] nil)))
 
 (defn restart-server! []
-  (swap-server! #(http/start-server #'handler {:port 8080})))
+  (swap-server! #(http/start-server #'handler {:port 62000})))
 
 (defn -main []
   (restart-server!))
