@@ -5,12 +5,12 @@
 
 (defn handler [_]
   {:status 200
-   :headers {"content/type" "text/plain"}
+   :headers {"content/type" "text/html"}
    :body "Olo!!"})
 
 (defn handler2 [_]
   {:status 200
-   :headers {"content/type" "text/plain"}
+   :headers {"content/type" "text/html"}
    :body "OlA!!"})
 
 (defn not-found [_]
@@ -30,10 +30,6 @@
 
 (defonce server (atom nil))
 
-(def hnd (rring/create-resource-handler {:path "/"
-                                         :not-found-handler
-                                         (constantly {:status 404 :body "Nara"})}))
-
 (defn swap-server! [thunk]
   (swap! server
          (fn [old]
@@ -43,18 +39,17 @@
            (thunk))))
 
 (defn stop-server! []
-  (swap-server! (fn [] nil)))
+  (swap-server! (constantly nil)))
 
 (defn restart-server! []
   (swap-server! #(http/start-server #'rhandler {:port 62000})))
 
 (defn -main []
-  (restart-server!))
+  (restart-server!)
+  (println "Escoitando no porto 62000 (redirigido desde 80)"))
 
 (comment
   (stop-server!)
   (restart-server!)
   (rhandler {:request-method :get :uri "/provasntese"})
-
-  (hnd {:request-method :get :uri "prova"})
   )
