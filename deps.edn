@@ -1,7 +1,8 @@
 {:paths ["src" "res"]
  :deps
  {aleph {:mvn/version "0.4.6"}
-  io.netty/netty-tcnative-boringssl-static {:mvn/version "2.0.25.Final"}
+  ;; Versions 2.0.24.Final and 2.0.25.Final cause crashes.
+  io.netty/netty-tcnative-boringssl-static {:mvn/version "2.0.23.Final"}
   metosin/reitit-ring {:mvn/version "0.3.9"}
   org.clojure/clojure {:mvn/version "1.10.1"}
   ring/ring-defaults {:mvn/version "0.3.2"}}}
