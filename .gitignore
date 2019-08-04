@@ -1,0 +1,4 @@
+.cpcache/*
+.clj-kondo/.cache/*
+.nrepl-port
+node_modules/*
