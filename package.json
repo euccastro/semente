@@ -1,0 +1,19 @@
+{
+  "name": "semente",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "shadow-cljs": "^2.8.42"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "semente@semente.gal:src/semente"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,7 @@
+{:deps {:aliases [:dev]}
+ :builds
+ {}
+ #_{:app {:target :browser
+        :output-dir "res/public/js"
+        :asset-path "/js"
+        :modules {:main {:entries [my.app]}}}}}
