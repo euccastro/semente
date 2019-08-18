@@ -1,6 +1,13 @@
 {:deps {:aliases [:dev]}
+ :dev-http {8080 "public"}
  :builds
- {}
+ {:prova {:target :browser
+          :modules {:main
+                    {:init-fn semente.prova/init}}
+          :release {:output-dir "dist/"
+                    :module-hash-names 8
+                    :build-options {:manifest-name "assets.edn"}}}}
+
  #_{:app {:target :browser
         :output-dir "res/public/js"
         :asset-path "/js"
