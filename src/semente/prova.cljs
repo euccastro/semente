@@ -6,29 +6,26 @@
             ["draft-js-hashtag-plugin" :default createHashtagPlugin]
             ["draft-js-linkify-plugin" :default createLinkifyPlugin]))
 
-(defn some-component []
-  [:div
-   [:h3 "I am a component!"]
-   [:p.someclass
-    "I have " [:strong "bold"]
-    [:span {:style {:color "red"}} " and red"]
-    " text."]])
 
 (def htp (createHashtagPlugin))
 (def lp (createLinkifyPlugin))
 
-(def es (draft-js/EditorState.createEmpty))
+(def es (r/atom (draft-js/EditorState.createEmpty)))
 
 (def plugins #js [lp htp])
 
-(defn on-change [_]
-  nil)
-
-(def editor (Editor. #js {"editorState" es
-                          "onChange" on-change
-                          "plugins" plugins}))
-
-(println "e isto entauXm?" editor)
+(defn some-component []
+  [:div
+   [:div
+    [:h3 "I am a component!"]
+    [:p.someclass
+     "I have " [:strong "bold"]
+     [:span {:style {:color "red"}} " and red"]
+     " text."]]
+   [:> Editor
+    {:editorState @es
+     :onChange #(reset! es %)
+     :plugins plugins}]])
 
 (defn mountit []
   (r/render [some-component]
