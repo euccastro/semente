@@ -3,16 +3,29 @@
             ["react" :as react :default React]
             ["draft-js" :as draft-js]
             ["draft-js-plugins-editor" :default Editor]
-            ["draft-js-hashtag-plugin" :default createHashtagPlugin]
-            ["draft-js-linkify-plugin" :default createLinkifyPlugin]))
+            ["draft-js-inline-toolbar-plugin" :default createInlineToolbarPlugin]
+            ["draft-js-buttons" :as draft-buttons]))
 
 
-(def htp (createHashtagPlugin))
-(def lp (createLinkifyPlugin))
+(def inline-toolbar-plugin
+  (createInlineToolbarPlugin))
+
+(def InlineToolbar
+  (.-InlineToolbar inline-toolbar-plugin))
 
 (def es (r/atom (draft-js/EditorState.createEmpty)))
 
-(def plugins #js [lp htp])
+(def plugins #js [inline-toolbar-plugin])
+
+(defn toolbar [buttons]
+  (let [this (r/current-component)]
+    [:> InlineToolbar
+     (fn [props]
+       [(apply r/create-element
+               "div"
+               #js {}
+               (for [b buttons]
+                 (r/create-element b props)))])]))
 
 (defn some-component []
   [:div
@@ -22,15 +35,19 @@
      "I have " [:strong "bold"]
      [:span {:style {:color "red"}} " and red"]
      " text."]]
-   [:> Editor
-    {:editorState @es
-     :onChange #(reset! es %)
-     :plugins plugins}]])
+   [:div.editor
+    [:> Editor
+     {:editorState @es
+      :onChange (fn [state]
+                  (println "changing to" state)
+                  (reset! es state))
+      :plugins plugins}]
+    [toolbar [draft-buttons/ItalicButton
+              draft-buttons/HeadlineOneButton]]]])
 
 (defn mountit []
   (r/render [some-component]
             (.getElementById js/document "root")))
 
 (defn init []
-  (mountit)
-  (println "Prova superaderrima!" htp lp))
+  (mountit))
