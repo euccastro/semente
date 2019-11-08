@@ -34,6 +34,7 @@
   (db/create-user db/crux username (auth/hash-password password)))
 
 (comment
+  (start-app [])
   (restart)
   (create-user "utente-prova" "senhaboa")
   (def up (db/user-entity db/crux "utente-prova"))
