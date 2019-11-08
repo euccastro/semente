@@ -17,7 +17,22 @@
            crux)
   :stop (.close crux))
 
+(defn- username->crux-id [username]
+  (keyword "user.id" username))
+
+(defn create-user [crux username hashed-password]
+  ;; XXX validar, quando exponhamos esta funcionalidade a utentes.
+  (crux/submit-tx
+   crux
+   [[:crux.tx/cas
+     nil
+     {:crux.db/id (username->crux-id username)
+      :user/username username
+      :user/pass-hash hashed-password}]]))
+
+(defn user-entity [crux username]
+  (crux/entity (crux/db crux) (username->crux-id username)))
+
 (comment
   (some-> env :crux-initial-data-path)
-  (crux/entity (crux/db crux) :prova/id)
  )
