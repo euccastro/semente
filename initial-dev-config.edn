@@ -6,10 +6,9 @@
  :port 3000
  ;; when :nrepl-port is set the application starts the nREPL server on load
  :nrepl-port 7000
- 
- ; set your dev database connection URL here
- ; :database-url "datomic:free://localhost:4334/semente_dev"
 
- ; alternatively, you can use the datomic mem db for development:
- ; :database-url "datomic:mem://semente_datomic_dev"
-}
+ :crux-config "{:crux.node/topology :crux.standalone/topology
+                :crux.node/kv-store \"crux.kv.memdb/kv\"
+                :crux.kv/db-dir \"data/db-dir-1\"
+                :crux.standalone/event-log-dir \"data/eventlog-1\"
+                :crux.standalone/event-log-kv-store \"crux.kv.memdb/kv\"}"}

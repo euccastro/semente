@@ -1,0 +1,4 @@
+[[:crux.tx/put
+  {:crux.db/id :prova/id
+   :nome "Lua"
+   :nai "Chu"}]]

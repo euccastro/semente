@@ -3,6 +3,8 @@
 ;; This file is listed in .gitignore and will be excluded from version control by Git.
 
 {:port 3000
- ; set your test database connection URL here
- ; :database-url "datomic:free://localhost:4334/semente_test"
-}
+ :crux-config "{:crux.node/topology :crux.standalone/topology
+                :crux.node/kv-store \"crux.kv.memdb/kv\"
+                :crux.kv/db-dir \"data/db-dir-1\"
+                :crux.standalone/event-log-dir \"data/eventlog-1\"
+                :crux.standalone/event-log-kv-store \"crux.kv.memdb/kv\"}"}

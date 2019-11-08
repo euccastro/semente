@@ -1,11 +1,12 @@
 (ns user
   "Userspace functions you can run by default in your local REPL."
   (:require
-    [semente.config :refer [env]]
-    [clojure.spec.alpha :as s]
-    [expound.alpha :as expound]
-    [mount.core :as mount]
-    [semente.core :refer [start-app]]))
+   [clojure.spec.alpha :as s]
+   [expound.alpha :as expound]
+   [mount.core :as mount]
+   [semente.config :refer [env]]
+   [semente.core :refer [start-app]]
+   [semente.db.core :as db]))
 
 (alter-var-root #'s/*explain-out* (constantly expound/printer))
 
@@ -28,4 +29,6 @@
   (stop)
   (start))
 
-
+(comment
+  (restart)
+  )
