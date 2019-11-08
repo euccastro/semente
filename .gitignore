@@ -16,3 +16,4 @@ package.json
 shadow-cljs.edn
 /node_modules
 /log
+/.clj-kondo
