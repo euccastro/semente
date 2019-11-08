@@ -1,1 +1,0 @@
-{:require [semente.core adzerk.boot-reload.public$.js.main adzerk.boot-cljs-repl], :compiler-options {:asset-path "js/main.out"}}
