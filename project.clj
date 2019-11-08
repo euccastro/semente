@@ -51,7 +51,8 @@
   :target-path "target/%s/"
   :main ^:skip-aot semente.core
 
-  :plugins [[lein-shadow "0.1.5"]]
+  :plugins [[lein-garden "0.3.0"]
+            [lein-shadow "0.1.5"]]
   :clean-targets ^{:protect false}
   [:target-path "target/cljsbuild"]
   :shadow-cljs
@@ -91,6 +92,7 @@
    :project/dev  {:jvm-opts ["-Dconf=dev-config.edn"]
                   :dependencies [[binaryage/devtools "0.9.10"]
                                  [cider/piggieback "0.4.1"]
+                                 [garden "1.3.9"]
                                  [pjstadig/humane-test-output "0.9.0"]
                                  [prone "2019-07-08"]
                                  [re-frisk "0.5.4.1"]
@@ -107,4 +109,10 @@
    :project/test {:jvm-opts ["-Dconf=test-config.edn"]
                   :resource-paths ["env/test/resources"]}
    :profiles/dev {}
-   :profiles/test {}})
+   :profiles/test {}}
+
+  :garden {:builds [{:id "jardim"
+                     :source-paths ["env/dev/clj" "src/clj" "src/cljc"]
+                     :stylesheet semente.garden.core/jardim
+                     :compiler {:output-to "resources/public/css/jardim.css"
+                                :pretty-print? true}}]})
