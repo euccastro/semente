@@ -11,18 +11,18 @@
 
 (add-tap (bound-fn* clojure.pprint/pprint))
 
-(defn start 
+(defn start
   "Starts application.
   You'll usually want to run this on startup."
   []
   (mount/start-without #'semente.core/repl-server))
 
-(defn stop 
+(defn stop
   "Stops application."
   []
   (mount/stop-except #'semente.core/repl-server))
 
-(defn restart 
+(defn restart
   "Restarts application."
   []
   (stop)
