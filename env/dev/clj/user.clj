@@ -7,7 +7,8 @@
    [semente.auth :as auth]
    [semente.config :refer [env]]
    [semente.core :refer [start-app]]
-   [semente.db.core :as db]))
+   [semente.db.core :as db]
+   [semente.garden.core]))
 
 (alter-var-root #'s/*explain-out* (constantly expound/printer))
 

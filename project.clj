@@ -17,6 +17,9 @@
                  [funcool/struct "1.4.0"]
                  [juxt/crux-core "19.09-1.5.0-alpha"]
                  [kee-frame "0.3.3" :exclusions [metosin/reitit-core org.clojure/core.async]]
+                 ; XXX: restaurar quando funcione
+                 ;[lambdaisland/garden-watcher "0.3.4"]
+                 [euccastro/garden-watcher "0.3.5"]
                  [luminus-aleph "0.1.6"]
                  [luminus-transit "0.1.1"]
                  [luminus/ring-ttl-session "0.3.3"]
@@ -51,8 +54,7 @@
   :target-path "target/%s/"
   :main ^:skip-aot semente.core
 
-  :plugins [[lein-garden "0.3.0"]
-            [lein-shadow "0.1.5"]]
+  :plugins [[lein-shadow "0.1.5"]]
   :clean-targets ^{:protect false}
   [:target-path "target/cljsbuild"]
   :shadow-cljs
