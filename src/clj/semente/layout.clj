@@ -67,3 +67,7 @@
      (when (:dev env)
        ;; para recarregar css
        [:script {:type "text/javascript" :src "js/app.js"}])]]))
+
+(defn nacional
+  []
+  (ok "Si, estás em nacional!"))
