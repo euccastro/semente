@@ -4,7 +4,7 @@
    [semente.middleware :as middleware]))
 
 
-(defn home-routes []
+(defn nacional-routes []
   [""
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
