@@ -31,7 +31,7 @@
      ;; https://github.com/necolas/normalize.css
      (include-css "css/normalize.css"
                   "css/semente.css")]
-    [:body
+    [:body.fondo-nacional
      [:header
       [:div
        (image "img/logo-nacional.svg")
