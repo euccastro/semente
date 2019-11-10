@@ -48,6 +48,10 @@
    :headers {"Content-Type" "text/html; charset=utf-8"}
    :body    (parser/render-file "error.html" error-details)})
 
+(defn recarrega-css []
+  (when (:dev env)
+    [:script {:type "text/javascript" :src "js/app.js"}]))
+
 (defn login-page
   []
   (ok-hiccup
@@ -64,10 +68,53 @@
       (form/text-field {:placeholder "utente"} "username")
       (form/password-field {:placeholder "senha"} "password")
       (form/submit-button "login"))
-     (when (:dev env)
-       ;; para recarregar css
-       [:script {:type "text/javascript" :src "js/app.js"}])]]))
+     (recarrega-css)]]))
 
 (defn nacional
   []
-  (ok "Si, estás em nacional!"))
+  (ok-hiccup
+   [:html
+    [:head
+     [:title "Projeto Educativo Semente"]
+     (include-css "css/semente.css")]
+    [:body
+     [:header
+      [:div
+       [:span "Aqui iria o logo"]
+       [:span "Aqui iriam as ligaçons sociais"]]
+      [:div "Aqui iria, opcionalmente, o elemento forte."]]
+     [:nav
+      [:ul
+       [:li "Projeto"]
+       [:li "Pedagogia"]
+       [:li "Sementes"]
+       [:li "Novas"]
+       [:li "Associa-te"]
+       [:li "Contato"]]]
+     [:main
+      [:article
+       [:h1 "Isto é o cabeçalho dum artigo"]
+       [:p "Este é o corpo do artigo"]
+       [:div "Aqui iria umha image ligada ao artigo"]]
+      [:article
+       [:h1 "Isto é o cabeçalho dum artigo"]
+       [:p "Este é o corpo do artigo"]
+       [:div "Aqui iria umha image ligada ao artigo"]]
+      [:article
+       [:h1 "Isto é o cabeçalho dum artigo"]
+       [:p "Este é o corpo do artigo"]
+       [:div "Aqui iria umha image ligada ao artigo"]]
+      [:article
+       [:h1 "Isto é o cabeçalho dum artigo"]
+       [:p "Este é o corpo do artigo"]
+       [:div "Aqui iria umha image ligada ao artigo"]]
+      [:article
+       [:h1 "Isto é o cabeçalho dum artigo"]
+       [:p "Este é o corpo do artigo"]
+       [:div "Aqui iria umha image ligada ao artigo"]]
+      [:article
+       [:h1 "Isto é o cabeçalho dum artigo"]
+       [:p "Este é o corpo do artigo"]
+       [:div "Aqui iria umha image ligada ao artigo"]]]
+     [:footer "Aqui iria o pé"]
+     (recarrega-css)]]))

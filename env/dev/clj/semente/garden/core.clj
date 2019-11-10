@@ -10,7 +10,7 @@
   :stop
   (gwatcher/stop-garden-watcher! watcher))
 
-(defstyles jardim
-  [:h1 {:color "orange"}]
+(defstyles semente
+  [:h1 {:color "red"}]
   [:h2 {:color "blue"}]
   [:h3 {:color "green"}])
