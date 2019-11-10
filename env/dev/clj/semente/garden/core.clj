@@ -12,12 +12,16 @@
   :stop
   (gwatcher/stop-garden-watcher! watcher))
 
+(def borde-externo (str "solid 1px " style/external-border-color))
+
 (defstyles semente
   [:.fondo-nacional {:background-color :green}]
   [:nav [:ul {:margin-top 0 :margin-bottom 0}]]
   [:h1:first-child {:margin-top 0}]
   [:header :nav :main :footer
    {:background-color :white
+    :border-left borde-externo
+    :border-right borde-externo
     :margin-top 0
     :margin-bottom 0
     :max-width (px 960)
