@@ -125,5 +125,6 @@
        [:h1 "Isto é o cabeçalho dum artigo"]
        [:p "Este é o corpo do artigo"]
        [:div "Aqui iria umha image ligada ao artigo"]]]
-     [:footer "Aqui iria o pé"]
+     [:footer "© 2019 Projeto Educativo Semente"
+      [:img {:src "img/ramalho.svg"}]]
      (recarrega-css)]]))
