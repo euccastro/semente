@@ -15,8 +15,6 @@
 (def borde-externo (str "solid 1px " style/external-border-color))
 
 (defstyles semente
-  [:nav [:ul {:margin-top 0 :margin-bottom 0}]]
-  [:h1:first-child {:margin-top 0}]
   [:#fondo-nacional {:background-color style/background-color-nacional}]
   [:header :nav :main :footer
    {:background-color :white
@@ -27,8 +25,6 @@
     :max-width (px 960)
     :margin-left :auto
     :margin-right :auto}]
-  ;; [:.fondo-nacional {:display :flex
-  ;;                    :flex-direction :column
-  ;;                    :align-items :center
-  ;;                    :background-color style/nacional-background-color}]
   [:h1 {:color :red}])
+  [:nav [:ul {:margin-top 0 :margin-bottom 0}]]
+  [:h1:first-child {:margin-top 0}]
