@@ -92,6 +92,8 @@
    [:html
     [:head
      [:title "Projeto Educativo Semente"]
+     ;; https://github.com/necolas/normalize.css
+     (include-css "css/normalize.css")
      (include-css "css/semente.css")]
     [:body
      [:header
