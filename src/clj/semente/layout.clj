@@ -6,6 +6,7 @@
    [selmer.parser :as parser]
    [selmer.filters :as filters]
    [semente.config :refer [env]]
+   [semente.style-constants :as style]
    [markdown.core :refer [md-to-html-string]]
    [ring.util.http-response :as response]
    [ring.util.anti-forgery :refer [anti-forgery-field]]
@@ -69,6 +70,12 @@
       (form/password-field {:placeholder "senha"} "password")
       (form/submit-button "login"))
      (recarrega-css)]]))
+
+(defn social-icon [url path]
+  [:a.social {:href url}
+   [:svg.socialsvg {:viewBox "0 0 24 24"}
+    [:path.socialpath {:fill style/semente-blue
+                       :d path}]]])
 
 (defn nacional
   []
