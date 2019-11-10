@@ -9,7 +9,9 @@
 
 (defn social-icon [url path]
   [:a.social {:href url}
-   [:svg.socialsvg {:viewBox "0 0 24 24"}
+   [:svg.socialsvg {:viewBox "0 0 24 24"
+                    :width 32
+                    :height 32}
     [:path.socialpath {:fill style/semente-blue
                        :d path}]]])
 
