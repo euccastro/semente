@@ -25,6 +25,13 @@
     :max-width (px 960)
     :margin-left :auto
     :margin-right :auto}]
-  [:h1 {:color :red}])
+  [:.logos {:display :flex
+            :justify-content :flex-end
+            :align-items :flex-end}]
+  [:.logos
+   [:img {:padding (px 12)
+          :margin-right :auto
+          :max-width (px 400)}]]
   [:nav [:ul {:margin-top 0 :margin-bottom 0}]]
   [:h1:first-child {:margin-top 0}]
+  [:a.social {:display :inline-block}])

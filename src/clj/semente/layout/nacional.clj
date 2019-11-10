@@ -35,7 +35,7 @@
                   "css/semente.css")]
     [:body#fondo-nacional
      [:header
-      [:div
+      [:div.logos
        (image "img/logo-nacional.svg")
        (social-icon "#twitter" style/twitter-path)
        (social-icon "#facebook" style/facebook-path)
