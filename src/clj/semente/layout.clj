@@ -87,9 +87,11 @@
     [:body
      [:header
       [:div
-       [:span "Aqui iria o logo"]
-       [:span "Aqui iriam as ligaçons sociais"]]
-      [:div "Aqui iria, opcionalmente, o elemento forte."]]
+       [:img {:src "img/logo-nacional.svg"}]
+       (social-icon "#twitter" style/twitter-path)
+       (social-icon "#facebook" style/facebook-path)
+       (social-icon "#youtube" style/youtube-path)]
+      [:div.destacado "Aqui iria, opcionalmente, o elemento forte."]]
      [:nav
       [:ul
        [:li "Projeto"]
