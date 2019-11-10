@@ -3,6 +3,7 @@
    hiccup.core
    [hiccup.form :as form]
    [hiccup.page :refer [include-css]]
+   [hiccup.element :refer [unordered-list image]]
    [selmer.parser :as parser]
    [selmer.filters :as filters]
    [semente.config :refer [env]]
@@ -24,7 +25,10 @@
 
 (defn ok-hiccup
   [h]
-  (ok (hiccup.core/html h)))
+  (ok (hiccup.core/html
+       {:mode :html}
+       (hiccup.page/doctype :html5)
+       h)))
 
 (defn render
   "renders the HTML template located relative to resources/html"
@@ -84,7 +88,7 @@
    [:p "Desfrutamos da luz, da maravilha das flores e do seu cheirar, das árvores tornando verdes, dos novos fruitos, da quenturinha do sol roçando a pele e do convite a estar mais tempo no quintal. Todo isto, imo-lo desfrutando juntas, mas na Semente a primavera também se deixou ver, com atividades mui gostosas e com muito ambiente."]
    [:p "A primeira celebraçom assi que chegou a primavera foi o 25 de abril, comemorando este dia com um concerto bem fermoso para toda a família da Semente. Guadi e a sua banda quigéron acompanhar-nos numha manhá lindíssima, cheia de vida e que nom vai ser doada de esquecer. Os bailes e as emoçons ali vividas fam-nos sentir mui afortunadas. E assim celebramos que somos a geraçom das 1000 primaveras mais."]
    [:p "25 de abril, sempre!"]
-   [:img {:src "img/artigo-prova.jpg"}]])
+   (image "img/artigo-prova.jpg")])
 
 (defn nacional
   []
@@ -93,24 +97,18 @@
     [:head
      [:title "Projeto Educativo Semente"]
      ;; https://github.com/necolas/normalize.css
-     (include-css "css/normalize.css")
-     (include-css "css/semente.css")]
+     (include-css "css/normalize.css"
+                  "css/semente.css")]
     [:body
      [:header
       [:div
-       [:img {:src "img/logo-nacional.svg"}]
+       (image "img/logo-nacional.svg")
        (social-icon "#twitter" style/twitter-path)
        (social-icon "#facebook" style/facebook-path)
        (social-icon "#youtube" style/youtube-path)]
       [:div.destacado "Aqui iria, opcionalmente, o elemento forte."]]
      [:nav
-      [:ul
-       [:li "Projeto"]
-       [:li "Pedagogia"]
-       [:li "Sementes"]
-       [:li "Novas"]
-       [:li "Associa-te"]
-       [:li "Contato"]]]
+      (unordered-list ["Projeto" "Pedagogia" "Sementes" "Novas" "Associa-te" "Contato"])]
      [:main
       (test-article)
       (test-article)
@@ -120,5 +118,5 @@
       (test-article)
       (test-article)]
      [:footer "© 2019 Projeto Educativo Semente"
-      [:img {:src "img/ramalho.svg"}]]
+      (image "img/ramalho.svg")]
      (recarrega-css)]]))
