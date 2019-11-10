@@ -1,6 +1,6 @@
 (ns semente.style-constants)
 
-(def nacional-background-color "#cfeeef")
+(def background-color-nacional "#cfeeef")
 
 (def external-border-color "#676868")
 
