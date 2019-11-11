@@ -2,6 +2,7 @@
   (:require
    [garden-watcher.core :as gwatcher]
    [garden-watcher.def :refer [defstyles]]
+   [garden.selectors :refer [& after]]
    [garden.units :refer [px]]
    [mount.core :as mount]
    [semente.style-constants :as style]))
@@ -18,13 +19,11 @@
 
 (defstyles semente
   [:#fondo-nacional {:background-color style/background-color-nacional}]
-  [:header :nav :main :footer
+  [:#page
    {:box-sizing :border-box
     :background-color :white
     :border-left borde-externo
     :border-right borde-externo
-    :margin-top 0
-    :margin-bottom 0
     :max-width (px 960)
     :margin-left :auto
     :margin-right :auto}]
@@ -49,8 +48,8 @@
           :padding-right (px 40)
           :max-width (px 400)}]
    [:.destacado {:display :block
-                 :margin (str "0px " horiz-padding)
-                 :padding "24px 24px"
+                 :margin (str "20px " horiz-padding)
+                 :padding [[(px 24) (px 24)]]
                  :color :white
                  :text-align :center
                  :text-decoration :none
@@ -58,7 +57,6 @@
                  :font-weight :bold
                  :background-color style/semente-blue}]]
   [:nav
-   {:padding "24px 0px"}
    [:ul {:background-color style/nav-grey
          :margin-top 0
          :margin-bottom 0

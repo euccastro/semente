@@ -34,28 +34,29 @@
      (include-css "css/normalize.css"
                   "css/semente.css")]
     [:body#fondo-nacional
-     [:header
-      ;; Liga comportamento do logo principal co dos logos sociais quando
-      ;; reduzimos o largo da tela.
-      [:div#logos
-       (image "img/logo-nacional.svg")
-       ;; Fai que todos os logos sociais saltem ao mesmo tempo embaixo do logo
-       ;; da Semente quando reduzimos a tela.
-       [:div#contedor-social
-        (social-icon "#twitter" style/twitter-path)
-        (social-icon "#facebook" style/facebook-path)
-        (social-icon "#youtube" style/youtube-path)]]
-      [:a.destacado {:href "#destacado"} "as nossas festas no calendário!"]]
-     [:nav
-      (unordered-list ["projeto" "pedagogia" "sementes" "novas" "associa-te" "contato"])]
-     [:main
-      (test-article)
-      (test-article)
-      (test-article)
-      (test-article)
-      (test-article)
-      (test-article)
-      (test-article)]
-     [:footer "© 2019 Projeto Educativo Semente"
-      (image "img/ramalho.svg")]
+     [:div#page
+      [:header
+       ;; Liga comportamento do logo principal co dos logos sociais quando
+       ;; reduzimos o largo da tela.
+       [:div#logos
+        (image "img/logo-nacional.svg")
+        ;; Fai que todos os logos sociais saltem ao mesmo tempo embaixo do logo
+        ;; da Semente quando reduzimos a tela.
+        [:div#contedor-social
+         (social-icon "#twitter" style/twitter-path)
+         (social-icon "#facebook" style/facebook-path)
+         (social-icon "#youtube" style/youtube-path)]]
+       #_[:a.destacado {:href "#destacado"} "as nossas festas no calendário!"]]
+      [:nav
+       (unordered-list ["projeto" "pedagogia" "sementes" "novas" "associa-te" "contato"])]
+      [:main
+       (test-article)
+       (test-article)
+       (test-article)
+       (test-article)
+       (test-article)
+       (test-article)
+       (test-article)]
+      [:footer "© 2019 Projeto Educativo Semente"
+       (image "img/ramalho.svg")]]
      (l/recarrega-css)]]))
