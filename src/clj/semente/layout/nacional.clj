@@ -60,6 +60,6 @@
        (test-article)
        (test-article)
        (test-article)]
-      [:footer "© 2019 Projeto Educativo Semente"
+      [:footer [:p "© 2019 Projeto Educativo Semente"]
        (image "img/ramalho.svg")]]
      (l/recarrega-css)]]))

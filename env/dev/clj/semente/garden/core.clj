@@ -17,7 +17,15 @@
 (def horiz-padding (px 32))
 
 (defstyles semente
-  [:body {:font-family "dejavu_serif, serif"}]
+  [:body {:font-family "dejavu_serif, serif"}
+   [:footer {:text-align :center
+             :display :flex
+             :align-items :center
+             :justify-content :flex-end
+             :font-size (px 14)
+             :color style/semente-blue
+             :background-color style/nav-grey}
+    [:p {:flex-grow 1}]]]
   [:#nacional-background {:background-color style/background-color-nacional}]
   [:#page
    {:box-sizing :border-box
@@ -25,6 +33,7 @@
     :border-left borde-externo
     :border-right borde-externo
     :max-width (px 960)
+    :border-bottom borde-externo
     :margin-left :auto
     :margin-right :auto}]
   [:#logos {:padding [[(px 24) horiz-padding]]
