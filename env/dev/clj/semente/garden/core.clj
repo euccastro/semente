@@ -18,7 +18,7 @@
 (def horiz-padding "32px")
 
 (defstyles semente
-  [:#fondo-nacional {:background-color style/background-color-nacional}]
+  [:#nacional-background {:background-color style/background-color-nacional}]
   [:#page
    {:box-sizing :border-box
     :background-color :white

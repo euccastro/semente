@@ -33,7 +33,7 @@
      ;; https://github.com/necolas/normalize.css
      (include-css "css/normalize.css"
                   "css/semente.css")]
-    [:body#fondo-nacional
+    [:body#nacional-background
      [:div#page
       [:header
        ;; Liga comportamento do logo principal co dos logos sociais quando
