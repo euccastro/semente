@@ -69,7 +69,8 @@
           :padding [[(px 12) (px 12)]]}
      [:a {:text-decoration :none
           :color style/semente-blue}]]]]
-  [:h1:first-child {:margin-top 0}]
   [:a.social {:display :inline-block}]
   [:main {:padding [[(px 12) horiz-padding]]}]
-  [:article {:overflow :hidden}])
+  [:article {:overflow :hidden}
+   [:h1 {:font-family "Ubuntu, sans-serif"
+         :color style/semente-blue}]])
