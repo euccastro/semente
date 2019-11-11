@@ -25,12 +25,14 @@
     :max-width (px 960)
     :margin-left :auto
     :margin-right :auto}]
-  [:#logos {:padding "12px 24px"
+  [:#logos {:padding (str "24px " horiz-padding)
             :display :flex
             :justify-content :space-between
             :align-items :flex-end
             :flex-wrap :wrap}]
-  [:#contedor-social {:margin-top (px 12)}]
+  [:#contedor-social {:padding-left (px 24)
+                      :padding-right (px 12)
+                      :margin-top (px 12)}]
   [:a.social {:margin-left (px 2)
               :border-radius "4px"
               :padding-top (px 3)
@@ -40,7 +42,7 @@
   [:a [:svg:hover [:path.socialpath {:fill style/semente-blue}]]]
   [:a [:svg:active [:path.socialpath {:fill :white}]]]
   [:header
-   [:img {:display :inline
+   [:img {:padding-left (px 24)
           :padding-right (px 40)
           :max-width (px 400)}]]
   [:nav [:ul {:margin-top 0 :margin-bottom 0}]]
