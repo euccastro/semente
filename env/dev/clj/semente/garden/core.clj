@@ -59,8 +59,8 @@
                  :background-color style/semente-blue}]]
   [:nav
    [:ul {:background-color style/nav-grey
-         :margin-top 0
-         :margin-bottom 0
+         :margin (px 0)
+         :padding (px 0)
          :display :flex
          :justify-content :space-around
          :align-items :stretch
