@@ -10,13 +10,13 @@
 (defn social-icon [url path]
   [:a.social {:href url}
    [:svg.socialsvg {:viewBox "0 0 24 24"
-                    :width 32
-                    :height 32}
-    [:path.socialpath {:fill style/semente-blue
+                    :width 24
+                    :height 24}
+    [:path.socialpath {:fill style/nav-grey
                        :d path}]]])
 
 (defn test-article []
-  [:article
+  [:article.frontpage
    [:h1 "Primavera generosa"]
    [:p "Muito celebramos a chegada da primavera, porque é muito o que a natureza nos dá neste mudar estacional."]
    [:p "Desfrutamos da luz, da maravilha das flores e do seu cheirar, das árvores tornando verdes, dos novos fruitos, da quenturinha do sol roçando a pele e do convite a estar mais tempo no quintal. Todo isto, imo-lo desfrutando juntas, mas na Semente a primavera também se deixou ver, com atividades mui gostosas e com muito ambiente."]
@@ -35,11 +35,16 @@
                   "css/semente.css")]
     [:body#fondo-nacional
      [:header
-      [:div.logos
+      ;; Liga comportamento do logo principal co dos logos sociais quando
+      ;; reduzimos o largo da tela.
+      [:div#logos
        (image "img/logo-nacional.svg")
-       (social-icon "#twitter" style/twitter-path)
-       (social-icon "#facebook" style/facebook-path)
-       (social-icon "#youtube" style/youtube-path)]
+       ;; Fai que todos os logos sociais saltem ao mesmo tempo embaixo do logo
+       ;; da Semente quando reduzimos a tela.
+       [:div#contedor-social
+        (social-icon "#twitter" style/twitter-path)
+        (social-icon "#facebook" style/facebook-path)
+        (social-icon "#youtube" style/youtube-path)]]
       [:div.destacado "Aqui iria, opcionalmente, o elemento forte."]]
      [:nav
       (unordered-list ["Projeto" "Pedagogia" "Sementes" "Novas" "Associa-te" "Contato"])]
