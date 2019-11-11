@@ -18,6 +18,7 @@
 (def horiz-padding "32px")
 
 (defstyles semente
+  [:body {:font-family "dejavu_serif, serif"}]
   [:#nacional-background {:background-color style/background-color-nacional}]
   [:#page
    {:box-sizing :border-box

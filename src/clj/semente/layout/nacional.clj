@@ -32,6 +32,7 @@
      [:title "Projeto Educativo Semente"]
      ;; https://github.com/necolas/normalize.css
      (include-css "css/normalize.css"
+                  "css/font.css"
                   "css/semente.css")]
     [:body#nacional-background
      [:div#page
