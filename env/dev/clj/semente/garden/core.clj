@@ -23,9 +23,10 @@
              :align-items :center
              :justify-content :flex-end
              :font-size (px 14)
-             :color style/semente-blue
              :background-color style/nav-grey}
-    [:p {:flex-grow 1}]]]
+    [:p {:color :grey
+         :margin-left (px 50)
+         :flex-grow 1}]]]
   [:#nacional-background {:background-color style/background-color-nacional}]
   [:#page
    {:box-sizing :border-box

@@ -12,7 +12,7 @@
    [:svg.socialsvg {:viewBox "0 0 24 24"
                     :width 24
                     :height 24}
-    [:path.socialpath {:fill style/nav-grey
+    [:path.socialpath {:fill :lightgrey
                        :d path}]]])
 
 (defn test-article []
