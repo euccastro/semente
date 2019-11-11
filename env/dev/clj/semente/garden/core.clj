@@ -48,10 +48,12 @@
    [:img {:padding-left (px 24)
           :padding-right (px 40)
           :max-width (px 400)}]
-   [:.destacado {:margin (str "0px " horiz-padding)
+   [:.destacado {:display :block
+                 :margin (str "0px " horiz-padding)
                  :padding "24px 24px"
                  :color :white
                  :text-align :center
+                 :text-decoration :none
                  :font-size (px 48)
                  :font-weight :bold
                  :background-color style/semente-blue}]]

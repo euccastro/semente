@@ -45,7 +45,7 @@
         (social-icon "#twitter" style/twitter-path)
         (social-icon "#facebook" style/facebook-path)
         (social-icon "#youtube" style/youtube-path)]]
-      [:div.destacado "as nossas festas no calendário!"]]
+      [:a.destacado {:href "#destacado"} "as nossas festas no calendário!"]]
      [:nav
       (unordered-list ["projeto" "pedagogia" "sementes" "novas" "associa-te" "contato"])]
      [:main
