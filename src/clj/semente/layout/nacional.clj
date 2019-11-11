@@ -3,9 +3,7 @@
    [semente.layout :as l]
    [semente.style-constants :as style]
    [hiccup.page :refer [include-css]]
-   [hiccup.element :refer [image
-                           link-to
-                           unordered-list ]]))
+   [hiccup.element :refer [image link-to]]))
 
 ;; XXX provar CSRF
 
@@ -52,9 +50,8 @@
          (social-icon "#youtube" style/youtube-path)]]
        [:a.destacado {:href "#destacado"} "as nossas festas no calendário!"]]
       [:nav
-       (unordered-list
-        (for [caption ["projeto" "pedagogia" "sementes" "novas" "associa-te" "contato"]]
-          (link-to (str "#" caption) caption)))]
+       (for [caption ["projeto" "pedagogia" "sementes" "novas" "associa-te" "contato"]]
+         (link-to (str "#" caption) caption))]
       [:main
        (test-article)
        (test-article)

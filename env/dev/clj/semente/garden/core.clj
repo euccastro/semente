@@ -58,17 +58,27 @@
                  :font-weight :bold
                  :background-color style/semente-blue}]]
   [:nav
-   [:ul {:background-color style/nav-grey
-         :margin (px 0)
-         :padding (px 0)
-         :display :flex
-         :justify-content :space-around
-         :align-items :stretch
-         :flex-wrap :wrap}
-    [:li {:list-style-type :none
-          :padding [[(px 12) (px 12)]]}
-     [:a {:text-decoration :none
-          :color style/semente-blue}]]]]
+   {:background-color style/nav-grey
+    :margin (px 0)
+    :padding (px 0)
+    :display :flex
+    :justify-content :space-around
+    :align-items :stretch
+    :flex-wrap :wrap}
+    [:a {:text-decoration :none
+         :flex-grow 1
+         :text-align :center
+         :padding [[(px 12) (px 12)]]}
+     [:&:link
+      {:color style/semente-blue}]
+     [:&:visited
+      {:color style/semente-blue}]
+     [:&:hover
+      {:color :white
+       :background-color style/semente-blue}]
+     [:&:active
+      {:color style/semente-blue
+       :background-color :white}]]]
   [:a.social {:display :inline-block}]
   [:main {:padding [[(px 12) horiz-padding]]}]
   [:article {:overflow :hidden}
