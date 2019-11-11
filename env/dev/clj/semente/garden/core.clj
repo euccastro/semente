@@ -2,7 +2,7 @@
   (:require
    [garden-watcher.core :as gwatcher]
    [garden-watcher.def :refer [defstyles]]
-   [garden.units :refer [px]]
+   [garden.units :refer [pc px]]
    [mount.core :as mount]
    [semente.style-constants :as style]))
 
@@ -91,5 +91,23 @@
   [:a.social {:display :inline-block}]
   [:main {:padding [[(px 12) horiz-padding]]}]
   [:article {:overflow :hidden}
-   [:h1 {:font-family "Ubuntu, sans-serif"
-         :color style/semente-blue}]])
+   [:&:first-child
+    [:img {:max-width (pc 100)
+           :min-width (pc 20)
+           :display :block
+           :max-height (px 400)}]]
+   [:h1 {:color style/semente-blue
+         :margin [[(px 6) (px 0)]]
+         :padding-top (px 0)}]
+   [:a.scope {:font-family "Ubuntu, sans-serif"
+              :text-decoration :none
+              :font-size (px 24)
+              :color style/semente-green
+              :margin-bottom (px 0)
+              :padding-bottom (px 0)}]
+   [:p.published {:font-family "Ubuntu, sans-serif"
+                  :margin-top (px 0)
+                  :padding-top (px 0)
+                  :color style/semente-green
+                  :font-size :small
+                  :font-style :italic}]])
