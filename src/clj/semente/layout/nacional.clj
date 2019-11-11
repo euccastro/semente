@@ -45,9 +45,9 @@
         (social-icon "#twitter" style/twitter-path)
         (social-icon "#facebook" style/facebook-path)
         (social-icon "#youtube" style/youtube-path)]]
-      [:div.destacado "Aqui iria, opcionalmente, o elemento forte."]]
+      [:div.destacado "as nossas festas no calendário!"]]
      [:nav
-      (unordered-list ["Projeto" "Pedagogia" "Sementes" "Novas" "Associa-te" "Contato"])]
+      (unordered-list ["projeto" "pedagogia" "sementes" "novas" "associa-te" "contato"])]
      [:main
       (test-article)
       (test-article)

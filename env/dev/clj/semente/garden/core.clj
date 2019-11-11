@@ -14,10 +14,13 @@
 
 (def borde-externo (str "solid 1px " style/external-border-color))
 
+(def horiz-padding "32px")
+
 (defstyles semente
   [:#fondo-nacional {:background-color style/background-color-nacional}]
   [:header :nav :main :footer
-   {:background-color :white
+   {:box-sizing :border-box
+    :background-color :white
     :border-left borde-externo
     :border-right borde-externo
     :margin-top 0
@@ -44,7 +47,25 @@
   [:header
    [:img {:padding-left (px 24)
           :padding-right (px 40)
-          :max-width (px 400)}]]
-  [:nav [:ul {:margin-top 0 :margin-bottom 0}]]
+          :max-width (px 400)}]
+   [:.destacado {:margin (str "0px " horiz-padding)
+                 :padding "24px 24px"
+                 :color :white
+                 :text-align :center
+                 :font-size (px 48)
+                 :font-weight :bold
+                 :background-color style/semente-blue}]]
+  [:nav
+   {:padding "24px 0px"}
+   [:ul {:background-color style/nav-grey
+         :margin-top 0
+         :margin-bottom 0
+         :padding (str "12px " horiz-padding)
+         :display :flex
+         :justify-content :space-between}
+    [:li {:list-style-type :none
+          :color style/semente-blue}]]]
   [:h1:first-child {:margin-top 0}]
-  [:a.social {:display :inline-block}])
+  [:a.social {:display :inline-block}]
+  [:main {:padding (str "12px " horiz-padding)}]
+  [:article {:overflow :hidden}])
