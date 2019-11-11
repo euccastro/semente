@@ -32,8 +32,8 @@
     :background-color :white
     :border-left borde-externo
     :border-right borde-externo
-    :max-width (px 960)
     :border-bottom borde-externo
+    :max-width (px 1200)
     :margin-left :auto
     :margin-right :auto}]
   [:#logos {:padding [[(px 24) horiz-padding]]
