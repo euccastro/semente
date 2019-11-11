@@ -90,12 +90,14 @@
        :background-color :white}]]]
   [:a.social {:display :inline-block}]
   [:main {:padding [[(px 12) horiz-padding]]}]
-  [:article {:overflow :hidden}
+  [:article
    [:&:first-child
-    [:img {:max-width (pc 100)
-           :min-width (pc 20)
-           :display :block
-           :max-height (px 400)}]]
+    [:.img-container
+     ;; Foi o único jeito que encontrei para que a image se ajustasse ao marco.
+     {:display :flex
+      :flex-direction :column}
+     [:img {:max-height (px 400)
+            :object-fit :cover}]]]
    [:h1 {:color style/semente-blue
          :margin [[(px 6) (px 0)]]
          :padding-top (px 0)}]

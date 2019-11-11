@@ -20,7 +20,8 @@
    [:a.scope {:href "/nacional"} "nacional"]
    [:h1 "Primavera generosa"]
    [:p.published "Publicado a 25 Abril, 2019"]
-   (image "img/artigo-prova.jpg")
+   [:div.img-container
+    [:img {:src "img/artigo-prova.jpg"}]]
    [:p "Muito celebramos a chegada da primavera, porque é muito o que a natureza nos dá neste mudar estacional."]
    [:p "Desfrutamos da luz, da maravilha das flores e do seu cheirar, das árvores tornando verdes, dos novos fruitos, da quenturinha do sol roçando a pele e do convite a estar mais tempo no quintal. Todo isto, imo-lo desfrutando juntas, mas na Semente a primavera também se deixou ver, com atividades mui gostosas e com muito ambiente."]
    [:p "A primeira celebraçom assi que chegou a primavera foi o 25 de abril, comemorando este dia com um concerto bem fermoso para toda a família da Semente. Guadi e a sua banda quigéron acompanhar-nos numha manhá lindíssima, cheia de vida e que nom vai ser doada de esquecer. Os bailes e as emoçons ali vividas fam-nos sentir mui afortunadas. E assim celebramos que somos a geraçom das 1000 primaveras mais."]
