@@ -15,7 +15,7 @@
 
 (def borde-externo (str "solid 1px " style/external-border-color))
 
-(def horiz-padding "32px")
+(def horiz-padding (px 32))
 
 (defstyles semente
   [:body {:font-family "dejavu_serif, serif"}]
@@ -28,7 +28,7 @@
     :max-width (px 960)
     :margin-left :auto
     :margin-right :auto}]
-  [:#logos {:padding (str "24px " horiz-padding)
+  [:#logos {:padding [[(px 24) horiz-padding]]
             :display :flex
             :justify-content :space-between
             :align-items :flex-end
@@ -37,7 +37,7 @@
                       :padding-right (px 12)
                       :margin-top (px 12)}]
   [:a.social {:margin-left (px 2)
-              :border-radius "4px"
+              :border-radius (px 4)
               :padding-top (px 3)
               :padding-left (px 4)
               :padding-right (px 3)}
@@ -49,7 +49,7 @@
           :padding-right (px 40)
           :max-width (px 400)}]
    [:.destacado {:display :block
-                 :margin (str "20px " horiz-padding)
+                 :margin [[(px 0) horiz-padding (px 18) horiz-padding]]
                  :padding [[(px 24) (px 24)]]
                  :color :white
                  :text-align :center
@@ -61,12 +61,15 @@
    [:ul {:background-color style/nav-grey
          :margin-top 0
          :margin-bottom 0
-         :padding (str "12px " horiz-padding)
          :display :flex
-         :justify-content :space-between}
+         :justify-content :space-around
+         :align-items :stretch
+         :flex-wrap :wrap}
     [:li {:list-style-type :none
-          :color style/semente-blue}]]]
+          :padding [[(px 12) (px 12)]]}
+     [:a {:text-decoration :none
+          :color style/semente-blue}]]]]
   [:h1:first-child {:margin-top 0}]
   [:a.social {:display :inline-block}]
-  [:main {:padding (str "12px " horiz-padding)}]
+  [:main {:padding [[(px 12) horiz-padding]]}]
   [:article {:overflow :hidden}])
