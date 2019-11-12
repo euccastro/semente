@@ -97,7 +97,7 @@
   [:a.social {:display :inline-block}]
 
   ;; conteúdo
-  [:main {:padding [[(px 12) horiz-padding]]}]
+  [:main {:padding [[(px 32) horiz-padding]]}]
   [:div#principal
    {:display :grid
     :grid-template-columns "repeat(auto-fit, minmax(260px, 1fr))"
