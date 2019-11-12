@@ -2,7 +2,7 @@
   (:require
    [garden-watcher.core :as gwatcher]
    [garden-watcher.def :refer [defstyles]]
-   [garden.units :refer [pc px]]
+   [garden.units :refer [em pc px]]
    [mount.core :as mount]
    [semente.style-constants :as style]))
 
@@ -116,9 +116,10 @@
               :margin-bottom (px 0)
               :padding-bottom (px 0)}]
    [:h1 {:font-size (px 24)
-         :color style/semente-blue
          :margin [[(px 6) (px 0)]]
-         :padding-top (px 0)}]
+         :padding-top (px 0)}
+    [:a {:text-decoration :none
+         :color style/semente-blue}]]
    [:p.published {:font-family "Ubuntu, sans-serif"
                   :margin-top (px 0)
                   :padding-top (px 0)
@@ -131,7 +132,13 @@
      :flex-direction :column}
     [:img {:max-height (px 200)
            :object-fit :cover}]]
-   [:p.prose {:font-size (px 14)}]
+   [:p.prose {:font-size (px 14)}
+    [:a.read-more {:margin-left (px 6)
+                   :font-family "Ubuntu, sans-serif"
+                   :text-decoration :none
+                   :color style/semente-green
+                   :font-style :italic
+                   :font-size (em 0.9)}]]
 
    ;; artigo destacado
    [:&:first-child {:grid-column-start 1

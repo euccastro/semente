@@ -16,14 +16,17 @@
                        :d path}]]])
 
 (defn test-article []
-  [:article.frontpage
-   [:a.scope {:href "/nacional"} "nacional"]
-   [:h1 "Primavera generosa"]
-   [:p.published "Publicado a 25 Abril, 2019"]
-   [:div.img-container
-    [:img {:src "img/artigo-prova.jpg"}]]
-   [:p.prose "Muito celebramos a chegada da primavera, porque é muito o que a natureza nos dá neste mudar estacional."]
-   [:p.prose "Desfrutamos da luz, da maravilha das flores e do seu cheirar, das árvores tornando verdes, dos novos fruitos, da quenturinha do sol roçando a pele..."]])
+  (let [target-url "#ler-mais"]
+    [:article.frontpage
+     [:a.scope {:href "/nacional"} "nacional"]
+     [:h1 (link-to target-url "Primavera generosa")]
+     [:p.published "Publicado a 25 Abril, 2019"]
+     (link-to
+      target-url
+      [:div.img-container
+       [:img {:src "img/artigo-prova.jpg"}]])
+     [:p.prose "Muito celebramos a chegada da primavera, porque é muito o que a natureza nos dá neste mudar estacional."]
+     [:p.prose "Desfrutamos da luz, da maravilha das flores e do seu cheirar, das árvores tornando verdes, dos novos fruitos, da quenturinha do sol roçando a pele..." [:a.read-more {:href "#ler-mais"} " [ lêr mais ]"]]]))
 
 (defn pagina-nacional
   []
