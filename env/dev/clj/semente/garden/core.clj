@@ -73,7 +73,12 @@
                  :text-decoration :none
                  :font-size (px 48)
                  :font-weight :bold
-                 :background-color style/semente-blue}]]
+                 :background-color style/semente-blue}]
+
+   (at-media {:max-width (px 400)}
+             [:.destacado {:margin [[(px 0) (px 16) (px 9) (px 16)]]
+                           :padding [[(px 8) (px 8)]]
+                           :font-size (px 32)}])]
 
   ;; navegaçom
   [:nav
