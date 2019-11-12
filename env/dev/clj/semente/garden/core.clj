@@ -100,13 +100,12 @@
   [:main {:padding [[(px 12) horiz-padding]]}]
   [:div#principal
    {:display :grid
-    :grid-template-columns "1fr 1fr 1fr"
+    :grid-template-columns "repeat(auto-fit, minmax(260px, 1fr))"
     :grid-column-gap (px 32)
     :grid-row-gap (px 32)
     :justify-items :stretch
     :align-items :stretch
     :grid-auto-flow :row}]
-
   ;; artigos
   [:article
    [:a.scope {:font-family "Ubuntu, sans-serif"
@@ -142,7 +141,7 @@
 
    ;; artigo destacado
    [:&:first-child {:grid-column-start 1
-                    :grid-column-end 4
+                    :grid-column-end -1
                     :grid-row-start 1
                     :grid-row-end 1}
     [:a.scope {:font-size (px 24)}]
