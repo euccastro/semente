@@ -34,6 +34,8 @@
    [:html
     [:head
      [:title "Projeto Educativo Semente"]
+     [:meta {:charset :utf-8}]
+     [:meta {:name :viewport :content "width=device-width,initial-scale=1"}]
      ;; https://github.com/necolas/normalize.css
      (include-css "css/normalize.css"
                   "https://fonts.googleapis.com/css?family=Ubuntu"
