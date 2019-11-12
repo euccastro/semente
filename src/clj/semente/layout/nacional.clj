@@ -26,7 +26,7 @@
       [:div.img-container
        [:img {:src "img/artigo-prova.jpg"}]])
      [:p.prose "Muito celebramos a chegada da primavera, porque é muito o que a natureza nos dá neste mudar estacional."]
-     [:p.prose "Desfrutamos da luz, da maravilha das flores e do seu cheirar, das árvores tornando verdes, dos novos fruitos, da quenturinha do sol roçando a pele..." [:a.read-more {:href "#ler-mais"} " [ lêr mais ]"]]]))
+     [:p.prose "Desfrutamos da luz, da maravilha das flores e do seu cheirar, das árvores tornando verdes, dos novos fruitos, da quenturinha do sol roçando a pele..." [:a.read-more {:href "#ler-mais"} " [&nbsp;lêr&nbsp;mais&nbsp;]"]]]))
 
 (defn pagina-nacional
   []
