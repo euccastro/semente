@@ -2,7 +2,8 @@
   (:require
    [garden-watcher.core :as gwatcher]
    [garden-watcher.def :refer [defstyles]]
-   [garden.units :refer [em pc px]]
+   [garden.stylesheet :refer [at-media]]
+   [garden.units :refer [em px]]
    [mount.core :as mount]
    [semente.style-constants :as style]))
 
@@ -46,6 +47,9 @@
             :justify-content :space-between
             :align-items :flex-end
             :flex-wrap :wrap}]
+  (at-media {:max-width (px 400)}
+            [:#logos
+             {:padding [[(px 24) (px 7)]]}])
   [:#contedor-social {:padding-left (px 24)
                       :padding-right (px 12)
                       :margin-top (px 12)}]
