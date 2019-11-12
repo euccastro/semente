@@ -17,6 +17,8 @@
 (def horiz-padding (px 32))
 
 (defstyles semente
+
+  ;; fondo e marco da página
   [:body {:font-family "dejavu_serif, serif"}
    [:footer {:text-align :center
              :display :flex
@@ -37,6 +39,8 @@
     :max-width (px 1200)
     :margin-left :auto
     :margin-right :auto}]
+
+  ;; logos
   [:#logos {:padding [[(px 24) horiz-padding]]
             :display :flex
             :justify-content :space-between
@@ -66,6 +70,8 @@
                  :font-size (px 48)
                  :font-weight :bold
                  :background-color style/semente-blue}]]
+
+  ;; navegaçom
   [:nav
    {:background-color style/nav-grey
     :margin (px 0)
@@ -89,27 +95,51 @@
       {:color style/semente-blue
        :background-color :white}]]]
   [:a.social {:display :inline-block}]
+
+  ;; conteúdo
   [:main {:padding [[(px 12) horiz-padding]]}]
+  [:div#principal
+   {:display :grid
+    :grid-template-columns "1fr 1fr 1fr"
+    :grid-column-gap (px 32)
+    :grid-row-gap (px 32)
+    :justify-items :stretch
+    :align-items :stretch
+    :grid-auto-flow :row}]
+
+  ;; artigos
   [:article
-   [:&:first-child
-    [:.img-container
-     ;; Foi o único jeito que encontrei para que a image se ajustasse ao marco.
-     {:display :flex
-      :flex-direction :column}
-     [:img {:max-height (px 400)
-            :object-fit :cover}]]]
-   [:h1 {:color style/semente-blue
-         :margin [[(px 6) (px 0)]]
-         :padding-top (px 0)}]
    [:a.scope {:font-family "Ubuntu, sans-serif"
               :text-decoration :none
-              :font-size (px 24)
+              :font-size (px 20)
               :color style/semente-green
               :margin-bottom (px 0)
               :padding-bottom (px 0)}]
+   [:h1 {:font-size (px 24)
+         :color style/semente-blue
+         :margin [[(px 6) (px 0)]]
+         :padding-top (px 0)}]
    [:p.published {:font-family "Ubuntu, sans-serif"
                   :margin-top (px 0)
                   :padding-top (px 0)
                   :color style/semente-green
-                  :font-size :small
-                  :font-style :italic}]])
+                  :font-size (px 12)
+                  :font-style :italic}]
+   [:.img-container
+    ;; Foi o único jeito que encontrei para que a image se ajustasse ao marco.
+    {:display :flex
+     :flex-direction :column}
+    [:img {:max-height (px 200)
+           :object-fit :cover}]]
+   [:p.prose {:font-size (px 14)}]
+
+   ;; artigo destacado
+   [:&:first-child {:grid-column-start 1
+                    :grid-column-end 4
+                    :grid-row-start 1
+                    :grid-row-end 1}
+    [:a.scope {:font-size (px 24)}]
+    [:h1 {:font-size (px 36)}]
+    [:p.published {:font-size (px 14)}]
+    [:.img-container [:img {:max-height (px 400)}]]
+    [:p.prose {:font-size (px 16)}]]])
