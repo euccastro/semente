@@ -100,6 +100,10 @@
                 :article/summary
                 :article/body]))
 
+;; utilidades
+
+(defn sample-articles [n]
+  (map first (take-last n (s/exercise :article/article (max n 20)))))
 
 (comment
 

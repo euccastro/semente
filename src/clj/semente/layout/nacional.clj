@@ -2,6 +2,7 @@
   (:require
    [semente.layout :as l]
    [semente.style-constants :as style]
+   [semente.model.article :as article-model]
    [hiccup.page :refer [include-css]]
    [hiccup.element :refer [image link-to]]))
 
@@ -58,6 +59,7 @@
   (require '[semente.model.article :as am])
   (require '[clojure.spec.alpha :as s])
 
+  (s/valid? :article/article (test-article))
   (s/explain :article/article (test-article))
   )
 
@@ -93,14 +95,14 @@
      (link-to
       url
       [:div.img-container
-       [:img {:src (str "conteudos/" (:image-id main-image) "." (:extension main-image))
+       [:img {:src (str "img/conteudo/" (:image/id main-image) "." (:image/extension main-image))
               :alt (:description main-image)}]])
-     [:p.prose summary [:a.read-more {:href "#ler-mais"} " [&nbsp;lêr&nbsp;mais&nbsp;]"]]]))
+     [:p.prose summary [:a.read-more {:href url} " [&nbsp;lêr&nbsp;mais&nbsp;]"]]]))
 
 (comment (article->summary-hiccup (test-article)))
 
-(defn pagina-nacional
-  []
+(defn artigos->pagina
+  [artigos]
   (l/ok-hiccup
    [:html
     [:head
@@ -131,18 +133,23 @@
          (link-to (str "#" caption) caption))]
       [:main
        [:div#principal
-        (map article->summary-hiccup
-             [(test-article)
-              (test-article)
-              (test-article)
-              (test-article)
-              (test-article)
-              (test-article)
-              (test-article)])]]
+        (map article->summary-hiccup artigos)]]
       [:footer [:p "© 2019 Projeto Educativo Semente"]
        (image "img/ramalho.svg")]]
      (l/recarrega-css)]]))
 
+(defn pagina-nacional
+  []
+  (artigos->pagina
+   [(test-article)
+    (test-article)
+    (test-article)
+    (test-article)
+    (test-article)
+    (test-article)
+    (test-article)]))
+
 (defn pagina-nacional-autogen
   []
-  (pagina-nacional))
+  (artigos->pagina
+   (into [(test-article)] (article-model/sample-articles 6))))
