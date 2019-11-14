@@ -75,9 +75,21 @@
   (scope->visible-name "amaia")
   )
 
-(defn inst->display-string [t]
-  ;; XXX
-  "25 de Abril, 2019")
+(def month->str
+  ["Janeiro" "Fevereiro" "Março" "Abril" "Maio" "Junho" "Julho" "Agosto" "Setembro" "Outubro" "Novembro" "Dezembro"])
+
+(defn inst->display-string [^java.util.Date t]
+  (str (.getDate t)
+       " de " (month->str (.getMonth t))
+       ", " (+ 1900 (.getYear t))))
+
+(comment
+  (def t #inst "2015-12-31T20:20:59.999-00:00")
+  (.getDate t)
+  (.getMonth t)
+  (.getYear t)
+  (inst->display-string t)
+  )
 
 (defn article->summary-hiccup
   [{:keys [article/id
