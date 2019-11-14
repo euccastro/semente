@@ -41,6 +41,7 @@
                         :scope/trasancos
                         :scope/vigo})
 
+(s/def :article/publish-time inst?)
 (s/def :article/title ::nonempty-string)
 
 (s/def :image/id uuid?)
@@ -76,14 +77,14 @@
 (s/def :article/strong-span (s/tuple #{:strong} ::nonempty-string))
 (s/def :article/em-span (s/tuple #{:em} ::nonempty-string))
 
-
 (s/def :article/paragraph
   (s/cat :p #{:p}
          :contents
-         (s/coll-of (s/or :plain-text ::nonempty-string
-                          :link :article/link
-                          :strong :article/strong-span
-                          :em :article/em-span))))
+         (s/+
+          (s/or :plain-text ::nonempty-string
+                :link :article/link
+                :strong :article/strong-span
+                :em :article/em-span))))
 
 (s/def :article/body
   (s/coll-of (s/or :p :article/paragraph
@@ -93,6 +94,7 @@
   (s/keys :req [:article/id
                 :article/type
                 :article/scope
+                :article/publish-time
                 :article/title
                 :article/main-image
                 :article/summary
@@ -106,6 +108,29 @@
   (first sample-images)
   (def ex (s/exercise uuid?))
 
+  (ffirst (s/exercise :article/publish-time 1))
+
+  (str #uuid "153a8ffd-b432-431f-87a6-34eaf34cb619")
+
+  (def body [[:p "Muito celebramos a chegada da primavera, porque é muito o que a natureza nos dá neste mudar "]
+                   [:p "Desfrutamos da luz, da maravilha das flores e do seu cheirar, das árvores tornando verdes, dos novos fruitos, da quenturinha do sol roçando a pele e do convite a estar mais tempo no quintal. Todo isto, imo-lo desfrutando juntas, mas na Semente a primavera também se deixou ver, com atividades mui gostosas e com muito ambiente.
+"]
+                   [:p "A primeira celebraçom assi que chegou a primavera foi o 25 de abril, comemorando este dia com um concerto bem fermoso para toda a família da Semente. Guadi e a sua banda quigéron acompanhar-nos numha manhá lindíssima, cheia de vida e que nom vai ser doada de esquecer. Os bailes e as emoçons ali vividas fam-nos sentir mui afortunadas. E assim celebramos que somos a geraçom das 1000 primaveras mais."]
+                   [:p "25 de abril, sempre!"]
+                   #:image{:id #uuid "447b0d5d-0813-4839-b135-467d04019b86"
+                           :extension "jpg"
+                           :name "Concerto primavera"
+                           :description "Concerto na Torreira"}
+                   #:image{:id #uuid "163e8d3a-6af6-4655-a9ba-a787a8277e78"
+                           :extension "jpg"
+                           :name "Concerto primavera 2"
+                           :description "Guadi usa ghafas de sol"}])
+
+  (s/explain :article/body body)
+
+  (def p [:p "25 de abril, sempre!"])
+
+  (s/explain :article/paragraph p)
 
   (s/valid?
    :article/article
