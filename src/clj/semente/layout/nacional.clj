@@ -42,13 +42,13 @@
 (defn article->summary-hiccup
   [{:keys [article/publish-time
            article/title
-           article/unix-paths
+           article/unix-names
            article/main-image
            article/summary]
     :as article}
    db]
   (let [scope (-> article :article/scope name)
-        url (str "/" scope "/artigo/" (last unix-paths))
+        url (str "/" scope "/artigo/" (last unix-names))
         image-map (db main-image)]
     [:article.frontpage
      [:a.scope {:href (str "/" scope)} (scope->visible-name scope)]
@@ -57,15 +57,15 @@
      (link-to
       url
       [:div.img-container
-       [:img {:src (str "img/conteudo/"
+       [:img {:src (str "/img/conteudo/"
                         (:image/src image-map)
                         "."
                         (:image/extension image-map))
               :alt (:description main-image)}]])
      [:p.prose summary [:a.read-more {:href url} " [&nbsp;lêr&nbsp;mais&nbsp;]"]]]))
 
-(defn pagina-nacional
-  [artigos db]
+(defn nacional-page
+  [contents]
   (l/ok-hiccup
    [:html
     [:head
@@ -73,17 +73,17 @@
      [:meta {:charset :utf-8}]
      [:meta {:name :viewport :content "width=device-width,initial-scale=1"}]
      ;; https://github.com/necolas/normalize.css
-     (include-css "css/normalize.css"
+     (include-css "/css/normalize.css"
                   "https://fonts.googleapis.com/css?family=Ubuntu"
-                  "css/font.css"
-                  "css/semente.css")]
+                  "/css/font.css"
+                  "/css/semente.css")]
     [:body#nacional-background
      [:div#page
       [:header
        ;; Liga comportamento do logo principal co dos logos sociais quando
        ;; reduzimos o largo da tela.
        [:div#logos
-        (image "img/logo-nacional.svg")
+        (image "/img/logo-nacional.svg")
         ;; Fai que todos os logos sociais saltem ao mesmo tempo embaixo do logo
         ;; da Semente quando reduzimos a tela.
         [:div#contedor-social
@@ -95,8 +95,16 @@
        (for [caption ["projeto" "pedagogia" "sementes" "novas" "associa-te" "contato"]]
          (link-to (str "#" caption) caption))]
       [:main
-       [:div#principal
-        (map #(article->summary-hiccup % db) artigos)]]
+       [:div#principal contents]]
       [:footer [:p "© 2019 Projeto Educativo Semente"]
-       (image "img/ramalho.svg")]]
+       (image "/img/ramalho.svg")]]
      (l/recarrega-css)]]))
+
+
+(defn article
+  [artigo db]
+  (nacional-page (article->summary-hiccup artigo db)))
+
+(defn frontpage
+  [artigos db]
+  (nacional-page (map #(article->summary-hiccup % db) artigos)))

@@ -21,7 +21,7 @@
 
 (s/def :article/publish-time inst?)
 (s/def :article/title :semente/nonempty-string)
-(s/def :article/unix-paths (s/coll-of (s/and string? #(re-matches #"[a-z0-9\-]+" %))))
+(s/def :article/unix-names (s/coll-of (s/and string? #(re-matches #"[a-z0-9\-]+" %))))
 
 ;; referência a umha imagem no corpo dum artigo
 (s/def :article.body/image
@@ -64,6 +64,7 @@
                 :article/scope
                 :article/publish-time
                 :article/title
+                :article/unix-names
                 :article/main-image
                 :article/summary
                 :article/body]))

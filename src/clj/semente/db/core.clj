@@ -47,7 +47,29 @@
                {:find ['id]
                 :where [['id :article/title]]})))
 
+(defn unix-name->article [crux scope unix-name]
+  (ffirst
+   (crux/q (crux/db crux)
+           {:find '[id]
+            :where '[[id :article/scope scope]
+                     [id :article/unix-names unix-name]]
+            :args [{'scope scope
+                    'unix-name unix-name}]})))
+
 (comment
+
+  (unix-name->article crux :scope/nacional "primavera-generosa")
+
+  (def scope :scope/nacional)
+  (def unix-name "primavera-generosa")
+
+  (crux/q (crux/db crux)
+          {:find '[id]
+           :where '[[id :article/scope scope]
+                    [id :article/unix-names unix-name]]
+           :args [{'scope scope
+                   'unix-name unix-name}]})
+
   (some-> env :crux-initial-data-path)
   (map first (crux/q (crux/db crux)
                      {:find ['id]
