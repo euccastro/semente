@@ -16,19 +16,6 @@
     [:path.socialpath {:fill :lightgrey
                        :d path}]]])
 
-#_(defn test-article []
-    (let [target-url "#ler-mais"]
-      [:article.frontpage
-       [:a.scope {:href "/nacional"} "nacional"]
-       [:h1 (link-to target-url "Primavera generosa")]
-       [:p.published "Publicado a 25 Abril, 2019"]
-       (link-to
-        target-url
-        [:div.img-container
-         [:img {:src "img/artigo-prova.jpg"}]])
-       [:p.prose "Muito celebramos a chegada da primavera, porque é muito o que a natureza nos dá neste mudar estacional."]
-       [:p.prose "Desfrutamos da luz, da maravilha das flores e do seu cheirar, das árvores tornando verdes, dos novos fruitos, da quenturinha do sol roçando a pele..." [:a.read-more {:href "#ler-mais"} " [&nbsp;lêr&nbsp;mais&nbsp;]"]]]))
-
 (defn test-article []
   #:article{:id #uuid "153a8ffd-b432-431f-87a6-34eaf34cb619"
             :type :article.type/nova
@@ -99,7 +86,7 @@
            article/summary]
     :as article}]
   (let [scope (-> article :article/scope name)
-        url (str "/" scope "/" id)]
+        url (str "/" scope "/artigo/" id)]
     [:article.frontpage
      [:a.scope {:href (str "/" scope)} (scope->visible-name scope)]
      [:h1 (link-to url title)]
