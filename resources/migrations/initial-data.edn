@@ -1,11 +1,13 @@
 [[:crux.tx/put
   {:crux.db/id #uuid "447b0d5d-0813-4839-b135-467d04019b86"
    :image/extension "jpg"
+   :image/src "8bdd04d3d0ea5a7d078abe0c3882341175b4798e"
    :image/name "Concerto primavera"
    :image/description "Concerto na Torreira"}]
  [:crux.tx/put
   {:crux.db/id #uuid "163e8d3a-6af6-4655-a9ba-a787a8277e78"
    :image/extension "jpg"
+   :image/src "cc6cde56e9e3beaf78c6da3fa695a7400fd29ca2"
    :image/name "Concerto primavera 2"
    :image/description "Guadi usa ghafas de sol"}]
  [:crux.tx/put

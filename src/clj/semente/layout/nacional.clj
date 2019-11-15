@@ -57,9 +57,8 @@
      (link-to
       url
       [:div.img-container
-       ;; XXX: quitar referência a crux
        [:img {:src (str "img/conteudo/"
-                        (:crux.db/id image-map)
+                        (:image/src image-map)
                         "."
                         (:image/extension image-map))
               :alt (:description main-image)}]])
