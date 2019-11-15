@@ -42,13 +42,13 @@
 (defn article->summary-hiccup
   [{:keys [article/publish-time
            article/title
+           article/unix-paths
            article/main-image
            article/summary]
     :as article}
    db]
-  (let [id (unixify title)
-        scope (-> article :article/scope name)
-        url (str "/" scope "/artigo/" id)
+  (let [scope (-> article :article/scope name)
+        url (str "/" scope "/artigo/" (last unix-paths))
         image-map (db main-image)]
     [:article.frontpage
      [:a.scope {:href (str "/" scope)} (scope->visible-name scope)]
