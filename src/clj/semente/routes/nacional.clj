@@ -1,7 +1,7 @@
 (ns semente.routes.nacional
   (:require
-   [semente.layout.nacional :refer (pagina-nacional
-                                    pagina-nacional-autogen)]
+   [semente.db.core :as db]
+   [semente.layout.nacional :refer (pagina-nacional)]
    [semente.middleware :as middleware]))
 
 
@@ -9,5 +9,5 @@
   [""
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
-   ["/nacional" {:get (fn [_] (pagina-nacional))}]
-   ["/nacional-autogen" {:get (fn [_] (pagina-nacional-autogen))}]])
+   ["/nacional" {:get (fn [_] (pagina-nacional (db/get-articles db/crux)
+                                               #(db/entity db/crux %)))}]])

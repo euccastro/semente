@@ -3,13 +3,18 @@
    [clojure.edn]
    [clojure.java.io :as io]
    [crux.api :as crux]
+   [crux.codec]
    [mount.core :refer [defstate]]
    [semente.config :refer [env]])
   (:import (crux.api ICruxAPI)))
 
 (defn initialize-test-data
   [path crux]
-  (->> path io/resource slurp clojure.edn/read-string (crux/submit-tx crux)))
+  (->> path
+       io/resource
+       slurp
+       (clojure.edn/read-string {:readers {'crux/id crux.codec/id-edn-reader}})
+       (crux/submit-tx crux)))
 
 (defstate ^crux.api.ICruxAPI crux
   :start (let [crux (-> env :crux-config clojure.edn/read-string crux/start-node)]
@@ -30,9 +35,25 @@
       :user/username username
       :user/pass-hash hashed-password}]]))
 
+(defn entity [crux id]
+  (crux/entity (crux/db crux) id))
+
 (defn user-entity [crux username]
-  (crux/entity (crux/db crux) (username->crux-id username)))
+  (entity crux (username->crux-id username)))
+
+(defn get-articles [crux]
+  (map (fn [[id]] (entity crux id))
+       (crux/q (crux/db crux)
+               {:find ['id]
+                :where [['id :article/title]]})))
 
 (comment
   (some-> env :crux-initial-data-path)
+  (map first (crux/q (crux/db crux)
+                     {:find ['id]
+                      :where [['id :article/title]]}))
+
+  (get-articles crux)
+
+
  )
