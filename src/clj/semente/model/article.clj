@@ -34,12 +34,10 @@
 (s/def :article/subheader (s/tuple #{:h2} :semente/nonempty-string))
 
 (s/def :article.link/url :semente/nonempty-string)
-(s/def :article.link/description :semente/nonempty-string)
 (s/def :article.link/body :semente/nonempty-string)
 
 (s/def :article/link
   (s/keys :req [:article.link/url
-                :article.link/description
                 :article.link/body]))
 
 (s/def :article/strong-span (s/tuple #{:strong} :semente/nonempty-string))
