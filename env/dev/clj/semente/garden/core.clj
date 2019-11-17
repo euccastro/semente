@@ -115,7 +115,12 @@
     :justify-items :stretch
     :align-items :stretch
     :grid-auto-flow :row}]
-  ;; artigos
+
+  ;; artigos vistos em detalhe
+  [:h1 :strong {:color style/semente-blue}]
+  [:.img-container {:margin [[ (px 16) (px 0)]]}]
+
+  ;; artigos em listagens
   [:article
    [:a.scope {:font-family "Ubuntu, sans-serif"
               :text-decoration :none
@@ -141,9 +146,10 @@
     [:img {:max-height (px 200)
            :object-fit :cover}]]
    [:p.prose {:font-size (px 14)}
+    [:a {:text-decoration :none
+         :color style/semente-green}]
     [:a.read-more {:margin-left (px 6)
                    :font-family "Ubuntu, sans-serif"
-                   :text-decoration :none
                    :color style/semente-green
                    :font-style :italic
                    :font-size (em 0.9)}]]

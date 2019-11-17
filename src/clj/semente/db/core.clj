@@ -60,6 +60,7 @@
 
   (unix-name->article crux :scope/nacional "primavera-generosa")
 
+  (get-articles crux)
   (def scope :scope/nacional)
   (def unix-name "primavera-generosa")
 
