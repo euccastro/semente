@@ -13,6 +13,7 @@ profiles.clj
 .nrepl-port
 /.shadow-cljs
 package.json
+package-lock.json
 shadow-cljs.edn
 /node_modules
 /log
