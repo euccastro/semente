@@ -155,8 +155,6 @@
   [:article.in-listing
    [:.img-container
     [:img
-     [:.img-container
-      ]
      {:max-height (px 200)}]]
 
    ;; artigo destacado
