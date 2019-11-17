@@ -51,7 +51,7 @@
    :body    (parser/render-file "error.html" error-details)})
 
 (defn js-app []
-  [:script {:type "text/javascript" :src "js/app.js"}])
+  [:script {:type "text/javascript" :src "/js/app.js"}])
 
 (defn recarrega-css []
   (when (:dev env) (js-app)))

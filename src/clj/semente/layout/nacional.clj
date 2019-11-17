@@ -82,7 +82,7 @@
    db]
   (let [scope (-> article :article/scope name)
         url (str "/" scope "/artigo/" (last unix-names))]
-    [:article.frontpage
+    [:article.frontpage.in-listing
      [:a.scope {:href (str "/" scope)} (scope->display-name scope)]
      [:h1 (link-to url title)]
      [:p.published (str "Publicado a " (inst->display-string publish-time))]
@@ -98,7 +98,7 @@
    db]
   (let [scope (-> article :article/scope name)
         art-type (-> article :article/type name)]
-    [:article.frontpage
+    [:article
      ;; renomear estilo a scope ou type
      [:a.scope {:href (str "/" scope "/" art-type)} (article-type->display-name art-type)]
      [:h1 title]
@@ -159,4 +159,5 @@
 
 (defn frontpage
   [artigos db]
-  (nacional-page (map #(article->summary-hiccup % db) artigos)))
+  (nacional-page #_(map #(article->summary-hiccup % db) artigos)
+                 (repeatedly 7 #(article->summary-hiccup (first artigos) db))))

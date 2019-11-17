@@ -89,20 +89,20 @@
     :justify-content :space-around
     :align-items :stretch
     :flex-wrap :wrap}
-    [:a {:text-decoration :none
-         :flex-grow 1
-         :text-align :center
-         :padding [[(px 12) (px 12)]]}
-     [:&:link
-      {:color style/semente-blue}]
-     [:&:visited
-      {:color style/semente-blue}]
-     [:&:hover
-      {:color :white
-       :background-color style/semente-blue}]
-     [:&:active
-      {:color style/semente-blue
-       :background-color :white}]]]
+   [:a {:text-decoration :none
+        :flex-grow 1
+        :text-align :center
+        :padding [[(px 12) (px 12)]]}
+    [:&:link
+     {:color style/semente-blue}]
+    [:&:visited
+     {:color style/semente-blue}]
+    [:&:hover
+     {:color :white
+      :background-color style/semente-blue}]
+    [:&:active
+     {:color style/semente-blue
+      :background-color :white}]]]
   [:a.social {:display :inline-block}]
 
   ;; conteúdo
@@ -116,11 +116,7 @@
     :align-items :stretch
     :grid-auto-flow :row}]
 
-  ;; artigos vistos em detalhe
-  [:h1 :strong {:color style/semente-blue}]
-  [:.img-container {:margin [[ (px 16) (px 0)]]}]
-
-  ;; artigos em listagens
+  ;; estilos comuns a todos os artigos
   [:article
    [:a.scope {:font-family "Ubuntu, sans-serif"
               :text-decoration :none
@@ -129,22 +125,23 @@
               :margin-bottom (px 0)
               :padding-bottom (px 0)}]
    [:h1 {:font-size (px 24)
+         :color style/semente-blue
          :margin [[(px 6) (px 0)]]
          :padding-top (px 0)}
     [:a {:text-decoration :none
          :color style/semente-blue}]]
+   [:strong {:color style/semente-blue}]
    [:p.published {:font-family "Ubuntu, sans-serif"
                   :margin-top (px 0)
                   :padding-top (px 0)
                   :color style/semente-green
                   :font-size (px 12)
                   :font-style :italic}]
-   [:.img-container
-    ;; Foi o único jeito que encontrei para que a image se ajustasse ao marco.
-    {:display :flex
-     :flex-direction :column}
-    [:img {:max-height (px 200)
-           :object-fit :cover}]]
+   ;; Foi o único jeito que encontrei para que a image se ajustasse ao marco.
+   [:.img-container {:margin [[(px 16) (px 0)]]
+                     :display :flex
+                     :flex-direction :column}
+    [:img {:object-fit :cover}]]
    [:p.prose {:font-size (px 14)}
     [:a {:text-decoration :none
          :color style/semente-green}]
@@ -152,7 +149,15 @@
                    :font-family "Ubuntu, sans-serif"
                    :color style/semente-green
                    :font-style :italic
-                   :font-size (em 0.9)}]]
+                   :font-size (em 0.9)}]]]
+
+  ;; artigos em listagens
+  [:article.in-listing
+   [:.img-container
+    [:img
+     [:.img-container
+      ]
+     {:max-height (px 200)}]]
 
    ;; artigo destacado
    [:&:first-child {:grid-column-start 1
