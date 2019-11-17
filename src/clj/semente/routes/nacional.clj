@@ -1,10 +1,14 @@
 (ns semente.routes.nacional
   (:require
    [semente.db.core :as db]
-   [semente.layout.nacional :as layout]
+   [semente.layout :refer (error-page)]
+   [semente.layout.nacional :refer (article frontpage)]
    [semente.middleware :as middleware]))
 
 (def db #(db/entity db/crux %))
+
+(defn- unix-name->article [unix-name]
+  (db/unix-name->article db/crux :scope/nacional unix-name))
 
 (defn nacional-routes []
   [""
@@ -12,10 +16,17 @@
                  middleware/wrap-formats]}
    ["/nacional"
     {:get (fn [_]
-            (layout/frontpage (db/get-articles db/crux) db))}]
+            (frontpage (db/get-articles db/crux) db))}]
    ["/nacional/artigo/:unix-name"
     {:get (fn [{{:keys [unix-name]} :path-params}]
-            (layout/article (db (db/unix-name->article db/crux :scope/nacional unix-name)) db))}]])
+            (let [article (some-> unix-name
+                                  unix-name->article
+                                  db
+                                  (article db))]
+              (or article (error-page
+                           {:status 404
+                            :title "Artigo nom encontrado"
+                            :message "Nom hai um artigo com esse URL."}))))}]])
 
 
 (comment
