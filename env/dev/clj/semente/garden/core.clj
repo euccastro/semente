@@ -168,4 +168,8 @@
     [:h1 {:font-size (px 36)}]
     [:p.published {:font-size (px 14)}]
     [:.img-container [:img {:max-height (px 400)}]]
-    [:p.prose {:font-size (px 16)}]]])
+    [:p.prose {:font-size (px 16)}]]]
+
+  ;; estilo estridente para marcar conteúdo num formato que nom entendo
+  [:.bad {:background-color :tomato
+          :color :lawngreen}])
