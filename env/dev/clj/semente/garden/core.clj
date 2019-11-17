@@ -76,7 +76,7 @@
                  :background-color style/semente-blue}]
 
    (at-media {:max-width (px 400)}
-             [:.destacado {:margin [[(px 0) (px 16) (px 9) (px 16)]]
+             [:.destacado {:margin [[(px 0) (px 12) (px 9) (px 12)]]
                            :padding [[(px 8) (px 8)]]
                            :font-size (px 32)}])]
 
@@ -107,6 +107,8 @@
 
   ;; conteúdo
   [:main {:padding [[(px 32) horiz-padding]]}]
+  (at-media {:max-width (px 400)}
+            [:main {:padding [[(px 16) (px 12)]]}])
   [:div#principal
    {:display :grid
     :grid-template-columns "repeat(auto-fit, minmax(260px, 1fr))"
