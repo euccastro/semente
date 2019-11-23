@@ -22,7 +22,9 @@
      (include-css "/css/normalize.css"
                   "https://fonts.googleapis.com/css?family=Ubuntu"
                   "/css/font.css"
-                  "/css/semente.css")]
+                  "/css/semente.css"
+                  "/css/prosemirror.css"
+                  "/css/prosemirror-gapcursor.css")]
     ;; extraer
     [:body#nacional-background
      [:div#page
