@@ -3,7 +3,7 @@
 Na forma atual, este projeto foi inicialmente autogerado usando
 [Luminus](http://luminusweb.net) 3.48, com o seguinte comando:
 
-`lein new luminus relembra +reitit +aleph +datomic +shadow-cljs +kee-frame +auth +kibit`
+`lein new luminus semente +reitit +aleph +datomic +shadow-cljs +kee-frame +auth +kibit`
 
 ## Lançar o entorno de desenvolvimento
 

@@ -75,7 +75,15 @@
   :npm-deps [[shadow-cljs "2.8.39"]
              [create-react-class "15.6.3"]
              [react "16.8.6"]
-             [react-dom "16.8.6"]]
+             [react-dom "16.8.6"]
+             [prosemirror-commands "1.1.2"]
+             [prosemirror-history "1.1.2"]
+             [prosemirror-keymap "1.1.3"]
+             [prosemirror-model "1.8.2"]
+             [prosemirror-schema-basic "1.1.2"]
+             [prosemirror-state "1.3.2"]
+             [prosemirror-transform "1.2.2"]
+             [prosemirror-view "1.13.4"]]
 
   :profiles
   {:uberjar {:omit-source true
