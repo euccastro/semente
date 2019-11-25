@@ -1,17 +1,31 @@
 (ns semente.prosemirror
   (:require
    [reagent.core :as r]
-   ["prosemirror-commands" :refer (baseKeymap)]
+   ["prosemirror-commands" :refer (baseKeymap toggleMark)]
+   ["prosemirror-example-setup" :refer (exampleSetup)]
    ["prosemirror-history" :refer (undo redo history)]
    ["prosemirror-keymap" :refer (keymap)]
    ["prosemirror-model" :refer (Schema)]
    ["prosemirror-schema-basic" :refer (schema)]
-;   ["prosemirror-schema-list" :refer (addListNodes)]
+   ["prosemirror-schema-list" :refer (addListNodes)]
    ["prosemirror-state" :refer (EditorState)]
    ["prosemirror-view" :refer (EditorView)]))
 
+(defn initial-schema []
+  (Schema.
+   (clj->js
+    {:nodes (-> (addListNodes (.-nodes (.-spec schema))
+                              "paragraph+"
+                              "block")
+                (.remove "horizontal_rule"))
+     :marks (.-marks (.-spec schema))})))
+
 (defn initial-state []
-  (.create EditorState #js{"schema" schema}))
+  (.create
+   EditorState
+   (let [is (initial-schema)]
+     #js {"schema" is
+          "plugins" (exampleSetup #js{"schema" is})})))
 
 (defn editor [initial-editor-state
               on-editor-state-change]

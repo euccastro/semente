@@ -24,7 +24,9 @@
                   "/css/font.css"
                   "/css/semente.css"
                   "/css/prosemirror.css"
-                  "/css/prosemirror-gapcursor.css")]
+                  "/css/prosemirror-gapcursor.css"
+                  "/css/prosemirror-menu.css"
+                  "/css/prosemirror-example-setup.css")]
     ;; extraer
     [:body#nacional-background
      [:div#page
