@@ -144,15 +144,15 @@
       (fn [e]
         (j/call e :preventDefault)
         (j/call e :stopPropagation)
-        (rf/dispatch [:toggle-mark :strong]))}
+        (rf/dispatch [:toggle-mark mark-id]))}
      icon-name]))
 
 (defn menubar [editor-state]
   [:div
-   [mark-menu-item :strong "format_bold"]])
+   [mark-menu-item :strong "format_bold"]
+   [mark-menu-item :em "format_italic"]])
 
 (defn editor-container []
-  (println "EEEUUU")
   (let [es @(rf/subscribe [:editor-state])]
     [:div
      [menubar es]
