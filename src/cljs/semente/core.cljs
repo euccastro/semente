@@ -12,12 +12,10 @@
 (defn ^:dev/after-load mount-components
   []
   (rf/clear-subscription-cache!)
-  (r/render [#'pm/editor
-             (pm/initial-state)
-             #(println "CHANGE: " (pr-str %))]
+  (r/render [#'pm/editor-container]
             (.getElementById js/document "app")))
 
 (defn init! [_]  ; argumento de debug, ignorado por enquanto
-  (rf/dispatch-sync [:initialize])
+  (rf/dispatch-sync [:editor-state-changed (pm/initial-state)])
   (ajax/load-interceptors!)
   (mount-components))

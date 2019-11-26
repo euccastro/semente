@@ -1,5 +1,7 @@
 (ns semente.prosemirror
   (:require
+   [applied-science.js-interop :as j]
+   [re-frame.core :as rf]
    [reagent.core :as r]
    ["prosemirror-commands" :refer (baseKeymap toggleMark)]
    ["prosemirror-example-setup" :refer (exampleSetup)]
@@ -11,26 +13,86 @@
    ["prosemirror-state" :refer (EditorState)]
    ["prosemirror-view" :refer (EditorView)]))
 
+(rf/reg-sub
+ :editor-state
+ (fn [db _]
+   (:editor-state db)))
+
+(defn mark-type [^EditorState editor-state mark-name]
+  (j/get-in editor-state [:schema :marks mark-name]))
+
+(rf/reg-sub
+ :mark-available
+ :<- [:editor-state]
+ (fn [^EditorState editor-state [_ mark-name]]
+   ((toggleMark (mark-type editor-state mark-name))
+    editor-state)))
+
+(rf/reg-sub
+ :mark-active
+ :<- [:editor-state]
+ (fn [^EditorState editor-state [_ mark-name]]
+   (let [mt (mark-type editor-state mark-name)
+         {:keys [from $from to empty]} (j/lookup (j/get editor-state :selection))]
+     (if empty
+       (boolean (j/call mt :isInSet (or (j/get editor-state :storedMarks)
+                                        (j/call $from :marks))))
+       (j/call-in editor-state [:doc :rangeHasMark] from to mt)))))
+
+(rf/reg-event-fx
+ :toggle-mark
+ (fn [{{:keys [editor-state]} :db} [_ mark-name]]
+   (let [mt (mark-type editor-state mark-name)
+         command (toggleMark mt)]
+     {:prosemirror-command [command editor-state]})))
+
+(rf/reg-fx
+ :prosemirror-command
+ (fn [[command editor-state]]
+   (command editor-state #(rf/dispatch [:prosemirror-txn %]))))
+
+(comment
+
+  @xxx
+  (def $from (second @xxx))
+  (.-marks $from)
+  (def editor-state (last @xxx))
+  (.rangeHasMark (.-doc es) from to )
+  (def editor-state (initial-state))
+  (def mark-name :strong)
+  (def mt (mark-type editor-state :strong))
+  )
+
 (defn initial-schema []
-  (Schema.
-   (clj->js
-    {:nodes (-> (addListNodes (.-nodes (.-spec schema))
-                              "paragraph+"
-                              "block")
-                (.remove "horizontal_rule"))
-     :marks (.-marks (.-spec schema))})))
+  (let [nodes (addListNodes (j/get-in schema [:spec :nodes])
+                            "paragraph+"
+                            "block")
+        image (j/call nodes :get "image")]
+    (Schema.
+     (clj->js
+      {:nodes (-> nodes
+               (j/call :remove "code_block")
+               (j/call :remove "horizontal_rule")
+               (j/call :update "image" (-> image
+                                           (js->clj :keywordize-keys true)
+                                           (assoc :inline false)
+                                           (assoc :group :block)
+                                           (assoc :marks "")
+                                           clj->js)))
+       :marks (-> (.-marks (.-spec schema))
+                  (.remove "code"))}))))
 
 (defn initial-state []
   (.create
    EditorState
    (let [is (initial-schema)]
      #js {"schema" is
-          "plugins" (exampleSetup #js{"schema" is})})))
+          "plugins" (exampleSetup #js{"schema" is
+                                      "menuBar" false})})))
 
-(defn editor [initial-editor-state
-              on-editor-state-change]
-  (let [editor-state (atom initial-editor-state)
-        editor-view (atom nil)]
+(defn editor [initial-editor-state]
+  (println "renderizando editor")
+  (let [editor-view (atom nil)]
     (r/create-class
      {:display-name "prosemirror-editor"
       :should-component-update (constantly false)
@@ -40,8 +102,7 @@
         (when-let [^EditorView ev @editor-view]
           (.destroy ev)))
       :reagent-render
-      (fn [initial-editor-state
-           on-editor-state-change]
+      (fn [initial-editor-state]
         [:div
          {:ref
           (fn [dom-el]
@@ -49,12 +110,25 @@
              editor-view
              (EditorView.
               dom-el
-              #js{"state" @editor-state
+              #js{"state" initial-editor-state
                   "dispatchTransaction"
                   (fn [tx]
-                    (let [^EditorState new-state (.apply @editor-state tx)
-                          ^EditorView ev @editor-view]
-                      (reset! editor-state new-state)
+                    (let [^EditorView ev @editor-view]
                       (when ev
-                        (.updateState ev new-state))
-                      (on-editor-state-change new-state)))})))}])})))
+                        (let [^EditorState new-state
+                              (j/call-in ev [:state :apply] tx)]
+                          (j/call ev :updateState new-state)
+                          (rf/dispatch [:editor-state-changed new-state])))))})))}])})))
+
+(defn menubar [editor-state]
+  [:div
+   {:on-click #(js/alert "si")}
+   [:p "Available si: " (pr-str @(rf/subscribe [:mark-available :strong]))]
+   [:p "Active si: " (pr-str @(rf/subscribe [:mark-active :strong]))]])
+
+(defn editor-container []
+  (println "EEEUUU")
+  (let [es @(rf/subscribe [:editor-state])]
+    [:div
+     [menubar es]
+     [editor es]]))
