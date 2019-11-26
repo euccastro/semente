@@ -173,3 +173,10 @@
   ;; estilo estridente para marcar conteúdo num formato que nom entendo
   [:.bad {:background-color :tomato
           :color :lawngreen}])
+
+
+(defstyles editor
+  [:.material-icons-round {:cursor :pointer}]
+  [:i.active {:color :black}]
+  [:i.available {:color :grey}]
+  [:i.unavailable {:color :lightgrey}])

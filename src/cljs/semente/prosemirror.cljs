@@ -132,16 +132,24 @@
             #js{"state" initial-editor-state
                 "dispatchTransaction" dispatch-prosemirror-transaction})))}])}))
 
+(defn mark-menu-item [mark-id icon-name]
+  (let [available @(rf/subscribe [:mark-available mark-id])
+        active @(rf/subscribe [:mark-active mark-id])]
+    [:i
+     {:class ["material-icons-round"
+              (cond active "active"
+                    available "available"
+                    :else "unavailable")]
+      :on-mouse-down
+      (fn [e]
+        (j/call e :preventDefault)
+        (j/call e :stopPropagation)
+        (rf/dispatch [:toggle-mark :strong]))}
+     icon-name]))
+
 (defn menubar [editor-state]
   [:div
-   {:on-mouse-down
-    (fn [e]
-      (j/call e :preventDefault)
-      (j/call e :stopPropagation)
-      (rf/dispatch [:toggle-mark :strong]))}
-   [:i.material-icons "format_bold"]
-   [:p "Available si: " (pr-str @(rf/subscribe [:mark-available :strong]))]
-   [:p "Active si: " (pr-str @(rf/subscribe [:mark-active :strong]))]])
+   [mark-menu-item :strong "format_bold"]])
 
 (defn editor-container []
   (println "EEEUUU")

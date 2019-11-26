@@ -19,3 +19,4 @@ shadow-cljs.edn
 /log
 /.clj-kondo
 resources/public/css/semente.css
+resources/public/css/editor.css

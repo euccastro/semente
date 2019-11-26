@@ -21,13 +21,14 @@
      ;; https://github.com/necolas/normalize.css
      (include-css "/css/normalize.css"
                   "https://fonts.googleapis.com/css?family=Ubuntu"
-                  "https://fonts.googleapis.com/icon?family=Material+Icons"
+                  "https://fonts.googleapis.com/icon?family=Material+Icons+Round"
                   "/css/font.css"
                   "/css/semente.css"
                   "/css/prosemirror.css"
                   "/css/prosemirror-gapcursor.css"
                   "/css/prosemirror-menu.css"
-                  "/css/prosemirror-example-setup.css")]
+                  "/css/prosemirror-example-setup.css"
+                  "/css/editor.css")]
     ;; extraer
     [:body#nacional-background
      [:div#page
