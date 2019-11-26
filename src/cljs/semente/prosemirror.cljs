@@ -90,39 +90,55 @@
           "plugins" (exampleSetup #js{"schema" is
                                       "menuBar" false})})))
 
+(defonce editor-view (atom nil))
+
+(defn dispatch-prosemirror-transaction [txn]
+  (let [^EditorView ev @editor-view]
+    (when ev
+      (let [^EditorState new-state
+            (j/call-in ev [:state :apply] txn)]
+        (j/call ev :updateState new-state)
+        (rf/dispatch [:editor-state-changed new-state])))))
+
+(rf/reg-event-fx
+ :prosemirror-txn
+ (fn [_ [_ txn]]
+   {:prosemirror-txn txn}))
+
+(rf/reg-fx
+ :prosemirror-txn
+ dispatch-prosemirror-transaction)
+
 (defn editor [initial-editor-state]
   (println "renderizando editor")
-  (let [editor-view (atom nil)]
-    (r/create-class
-     {:display-name "prosemirror-editor"
-      :should-component-update (constantly false)
-      :component-will-unmount
-      (fn [_]
-        (println "unmounting!")
-        (when-let [^EditorView ev @editor-view]
-          (.destroy ev)))
-      :reagent-render
-      (fn [initial-editor-state]
-        [:div
-         {:ref
-          (fn [dom-el]
-            (reset!
-             editor-view
-             (EditorView.
-              dom-el
-              #js{"state" initial-editor-state
-                  "dispatchTransaction"
-                  (fn [tx]
-                    (let [^EditorView ev @editor-view]
-                      (when ev
-                        (let [^EditorState new-state
-                              (j/call-in ev [:state :apply] tx)]
-                          (j/call ev :updateState new-state)
-                          (rf/dispatch [:editor-state-changed new-state])))))})))}])})))
+  (r/create-class
+   {:display-name "prosemirror-editor"
+    :should-component-update (constantly false)
+    :component-will-unmount
+    (fn [_]
+      (println "unmounting!")
+      (when-let [^EditorView ev @editor-view]
+        (.destroy ev)
+        (reset! editor-view nil)))
+    :reagent-render
+    (fn [initial-editor-state]
+      [:div
+       {:ref
+        (fn [dom-el]
+          (reset!
+           editor-view
+           (EditorView.
+            dom-el
+            #js{"state" initial-editor-state
+                "dispatchTransaction" dispatch-prosemirror-transaction})))}])}))
 
 (defn menubar [editor-state]
   [:div
-   {:on-click #(js/alert "si")}
+   {:on-mouse-down
+    (fn [e]
+      (j/call e :preventDefault)
+      (j/call e :stopPropagation)
+      (rf/dispatch [:toggle-mark :strong]))}
    [:p "Available si: " (pr-str @(rf/subscribe [:mark-available :strong]))]
    [:p "Active si: " (pr-str @(rf/subscribe [:mark-active :strong]))]])
 
