@@ -39,6 +39,11 @@
                                         (j/call $from :marks))))
        (j/call-in editor-state [:doc :rangeHasMark] from to mt)))))
 
+(rf/reg-event-db
+ :editor-state-changed
+ (fn [db [_ editor-state]]
+   (assoc db :editor-state editor-state)))
+
 (rf/reg-event-fx
  :toggle-mark
  (fn [{{:keys [editor-state]} :db} [_ mark-name]]
