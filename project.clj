@@ -57,7 +57,8 @@
   :clean-targets ^{:protect false}
   [:target-path "target/cljsbuild"]
   :shadow-cljs
-  {:nrepl {:port 7002}
+  {:nrepl {:port 7002
+           :middleware [refactor-nrepl.middleware/wrap-refactor]}
    :builds
    {:app
     {:target :browser
@@ -120,10 +121,4 @@
    :project/test {:jvm-opts ["-Dconf=test-config.edn"]
                   :resource-paths ["env/test/resources"]}
    :profiles/dev {}
-   :profiles/test {}}
-
-  :garden {:builds [{:id "jardim"
-                     :source-paths ["env/dev/clj" "src/clj" "src/cljc"]
-                     :stylesheet semente.garden.core/jardim
-                     :compiler {:output-to "resources/public/css/jardim.css"
-                                :pretty-print? true}}]})
+   :profiles/test {}})
