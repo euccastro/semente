@@ -139,6 +139,7 @@
       (j/call e :preventDefault)
       (j/call e :stopPropagation)
       (rf/dispatch [:toggle-mark :strong]))}
+   [:i.material-icons "format_bold"]
    [:p "Available si: " (pr-str @(rf/subscribe [:mark-available :strong]))]
    [:p "Active si: " (pr-str @(rf/subscribe [:mark-active :strong]))]])
 

@@ -21,6 +21,7 @@
      ;; https://github.com/necolas/normalize.css
      (include-css "/css/normalize.css"
                   "https://fonts.googleapis.com/css?family=Ubuntu"
+                  "https://fonts.googleapis.com/icon?family=Material+Icons"
                   "/css/font.css"
                   "/css/semente.css"
                   "/css/prosemirror.css"
