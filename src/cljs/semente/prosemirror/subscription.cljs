@@ -35,3 +35,8 @@
  :<- [:editor-state]
  (fn [^EditorState editor-state _]
    (j/get-in editor-state [:selection :empty])))
+
+(rf/reg-sub
+ :dialog
+ (fn [db _]
+   (:dialog db)))

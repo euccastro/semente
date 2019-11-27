@@ -13,10 +13,20 @@
  :toggle-mark
  (fn [{{:keys [editor-state]} :db} [_ mark-name attrs]]
    (let [mt (mark-type editor-state mark-name)
-         command (toggleMark mt attrs)]
+         command (toggleMark mt (clj->js attrs))]
      {:prosemirror-command [command editor-state]})))
 
 (rf/reg-event-fx
  :prosemirror-txn
  (fn [_ [_ txn]]
    {:prosemirror-txn txn}))
+
+(rf/reg-event-db
+ :set-dialog
+ (fn [db [_ dialog-spec]]
+   (assoc db :dialog dialog-spec)))
+
+(rf/reg-event-db
+ :clear-dialog
+ (fn [db _]
+   (dissoc db :dialog)))

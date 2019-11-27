@@ -56,8 +56,11 @@
      active
      available
      "link"
-     [:toggle-mark :link #js{"href" "https://estraviz.org"
-                             "title" "Títalo da ligaçom"}]]))
+     (if active
+       [:toggle-mark :link]
+       [:set-dialog {:fields [{:id "href" :caption "URL"}
+                              {:id "title" :caption "Título"}]
+                     :event [:toggle-mark :link]}])]))
 
 (defn menubar []
   [:div
@@ -65,8 +68,33 @@
    [mark-menu-item :em "format_italic"]
    [link-menu-item]])
 
+(defn dialog [_]
+  (let [values (r/atom {})]
+    (fn [{:keys [fields event]}]
+      [:div
+       (doall
+        (for [{:keys [id caption]} fields]
+          [:span {:key id}
+           [:label {:for id} caption]
+           [:input {:id id
+                    :name id
+                    :value (get @values id "")
+                    :on-change #(swap! values assoc id (j/get-in % [:target :value]))
+                    :type "text"}]]))
+       [:button {:type :button
+                 :on-click (fn []
+                             ;; XXX: validaçom
+                             (rf/dispatch (conj event @values))
+                             (rf/dispatch [:clear-dialog]))}
+        "Aplicar"]
+       [:button {:type :button :on-click #(rf/dispatch [:clear-dialog])}
+        "Cancelar"]])))
+
 (defn editor-container []
-  (let [es @(rf/subscribe [:editor-state])]
+  (let [es @(rf/subscribe [:editor-state])
+        dialog-spec @(rf/subscribe [:dialog])]
     [:div
-     [menubar]
+     (if dialog-spec
+       [dialog dialog-spec]
+       [menubar])
      [editor es]]))
