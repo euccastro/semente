@@ -17,7 +17,7 @@
     (fn [_]
       (println "unmounting!")
       (when-let [^EditorView ev @editor-view]
-        (.destroy ev)
+        (j/call ev :destroy)
         (reset! editor-view nil)))
     :reagent-render
     (fn [initial-editor-state]
