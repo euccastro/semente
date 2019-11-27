@@ -1,3 +1,7 @@
+;; Agora mesmo assumimos que só hai um editor. Nom é difícil soportar máis do
+;; que um, só hai que acrescentar o concepto de ID de editor e usá-lo nas várias
+;; estruturas de dados, subscriçons, eventos, etc. Nom o fago por enquanto,
+;; porque o desenho inicial para o web da Semente nom requer isso.
 (ns semente.prosemirror.core
   (:require
    [applied-science.js-interop :as j]

@@ -11,8 +11,7 @@
    ;; for side effects
    semente.subscription
    ;; for side effects
-   semente.effect
-   [semente.view :as view]))
+   semente.effect))
 
 (defn ^:dev/after-load mount-components
   []
