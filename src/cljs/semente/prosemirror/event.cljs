@@ -11,9 +11,9 @@
 
 (rf/reg-event-fx
  :toggle-mark
- (fn [{{:keys [editor-state]} :db} [_ mark-name]]
+ (fn [{{:keys [editor-state]} :db} [_ mark-name attrs]]
    (let [mt (mark-type editor-state mark-name)
-         command (toggleMark mt)]
+         command (toggleMark mt attrs)]
      {:prosemirror-command [command editor-state]})))
 
 (rf/reg-event-fx

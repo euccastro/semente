@@ -31,28 +31,42 @@
             #js{"state" initial-editor-state
                 "dispatchTransaction" dispatch-prosemirror-transaction})))}])}))
 
+(defn menu-item [active available icon-name event]
+  [:i
+   {:class ["material-icons-round"
+            (cond active "active"
+                  available "available"
+                  :else "unavailable")]
+    :on-mouse-down
+    (fn [e]
+      (j/call e :preventDefault)
+      (j/call e :stopPropagation)
+      (rf/dispatch event))}
+   icon-name])
+
 (defn mark-menu-item [mark-id icon-name]
   (let [available @(rf/subscribe [:mark-available mark-id])
         active @(rf/subscribe [:mark-active mark-id])]
-    [:i
-     {:class ["material-icons-round"
-              (cond active "active"
-                    available "available"
-                    :else "unavailable")]
-      :on-mouse-down
-      (fn [e]
-        (j/call e :preventDefault)
-        (j/call e :stopPropagation)
-        (rf/dispatch [:toggle-mark mark-id]))}
-     icon-name]))
+    [menu-item active available icon-name [:toggle-mark mark-id]]))
 
-(defn menubar [editor-state]
+(defn link-menu-item []
+  (let [available (not @(rf/subscribe [:selection-empty]))
+        active @(rf/subscribe [:mark-active :link])]
+    [menu-item
+     active
+     available
+     "link"
+     [:toggle-mark :link #js{"href" "https://estraviz.org"
+                             "title" "Títalo da ligaçom"}]]))
+
+(defn menubar []
   [:div
    [mark-menu-item :strong "format_bold"]
-   [mark-menu-item :em "format_italic"]])
+   [mark-menu-item :em "format_italic"]
+   [link-menu-item]])
 
 (defn editor-container []
   (let [es @(rf/subscribe [:editor-state])]
     [:div
-     [menubar es]
+     [menubar]
      [editor es]]))

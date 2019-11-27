@@ -29,3 +29,9 @@
        (boolean (j/call mt :isInSet (or (j/get editor-state :storedMarks)
                                         (j/call $from :marks))))
        (j/call-in editor-state [:doc :rangeHasMark] from to mt)))))
+
+(rf/reg-sub
+ :selection-empty
+ :<- [:editor-state]
+ (fn [^EditorState editor-state _]
+   (j/get-in editor-state [:selection :empty])))
