@@ -34,15 +34,16 @@
 
 (defn menu-item [active available icon-name event]
   [:i
-   {:class ["material-icons-round"
-            (cond active "active"
-                  available "available"
-                  :else "unavailable")]
-    :on-mouse-down
-    (fn [e]
-      (j/call e :preventDefault)
-      (j/call e :stopPropagation)
-      (rf/dispatch event))}
+   (cond->
+       {:class ["material-icons-round"
+                (cond active "active"
+                      available "available"
+                      :else "unavailable")]}
+     available (assoc :on-mouse-down
+                      (fn [e]
+                        (j/call e :preventDefault)
+                        (j/call e :stopPropagation)
+                        (rf/dispatch event))))
    icon-name])
 
 (defn mark-menu-item [mark-id icon-name]
