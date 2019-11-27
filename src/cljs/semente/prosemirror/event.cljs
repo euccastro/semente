@@ -30,3 +30,8 @@
  :clear-dialog
  (fn [db _]
    (dissoc db :dialog)))
+
+(rf/reg-event-fx
+ :focus-editor
+ (fn [_ _]
+   {:focus-editor nil}))

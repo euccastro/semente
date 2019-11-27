@@ -22,4 +22,5 @@
 (defn init! [_]  ; argumento de debug, ignorado por enquanto
   (rf/dispatch-sync [:editor-state-changed (initial-editor-state)])
   (ajax/load-interceptors!)
-  (mount-components))
+  (mount-components)
+  (rf/dispatch [:focus-editor]))
