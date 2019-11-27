@@ -69,23 +69,30 @@
    [link-menu-item]])
 
 (defn dialog [_]
-  (let [values (r/atom {})]
+  (let [values (r/atom {})
+        focused (atom false)]
     (fn [{:keys [fields event]}]
       [:div
        (doall
-        (for [{:keys [id caption]} fields]
+        (for [[i {:keys [id caption]}] (map-indexed vector fields)]
           [:span {:key id}
            [:label {:for id} caption]
-           [:input {:id id
-                    :name id
-                    :value (get @values id "")
-                    :on-change #(swap! values assoc id (j/get-in % [:target :value]))
-                    :type "text"}]]))
+           [:input (cond-> {:id id
+                              :name id
+                              :value (get @values id "")
+                              :on-change #(swap! values assoc id (j/get-in % [:target :value]))
+                              :type "text"}
+                     ;; dar foco, só umha vez, ao primeiro input
+                     (= i 0) (assoc :ref (fn [el]
+                                           (swap! focused (fn [old]
+                                                            (when-not old
+                                                              (j/call el :focus))
+                                                            true)))))]]))
        [:button {:type :button
                  :on-click (fn []
                              ;; XXX: validaçom
                              (rf/dispatch (conj event @values))
-                             (rf/dispatch [:clear-dialog]))}
+                             (rf/dispatch [:focus-editor]))}
         "Aplicar"]
        [:button {:type :button :on-click #(rf/dispatch [:clear-dialog])}
         "Cancelar"]])))
