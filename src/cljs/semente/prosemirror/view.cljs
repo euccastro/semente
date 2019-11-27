@@ -8,7 +8,7 @@
    [semente.prosemirror.shared-state :refer (editor-view)]
    [semente.prosemirror.util :refer (dispatch-prosemirror-transaction)]))
 
-(defn editor [initial-editor-state]
+(defn editor [_]
   (println "renderizando editor")
   (r/create-class
    {:display-name "prosemirror-editor"
@@ -29,7 +29,8 @@
            (EditorView.
             dom-el
             #js{"state" initial-editor-state
-                "dispatchTransaction" dispatch-prosemirror-transaction})))}])}))
+                "dispatchTransaction" dispatch-prosemirror-transaction})))
+        :on-focus #(rf/dispatch [:clear-dialog])}])}))
 
 (defn menu-item [active available icon-name event]
   [:i
