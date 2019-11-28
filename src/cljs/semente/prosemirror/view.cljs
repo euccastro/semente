@@ -101,7 +101,7 @@
                 :available @(rf/subscribe
                              (into [:can-set-block-type]
                                    command-args))
-                :icon-name "calendar_view_day"
+                :icon-name "title"
                 :event (into [:set-block-type]
                              command-args)}]))
 
