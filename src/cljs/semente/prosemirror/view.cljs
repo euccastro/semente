@@ -1,11 +1,38 @@
 (ns semente.prosemirror.view
   (:require
    [applied-science.js-interop :as j]
+   ["prosemirror-model" :refer (Fragment Node Slice)]
    ["prosemirror-view" :refer (EditorView)]
    [re-frame.core :as rf]
    [reagent.core :as r]
    [semente.prosemirror.shared-state :refer (editor-view)]
    [semente.prosemirror.util :refer (dispatch-prosemirror-transaction)]))
+
+(defn- heading? [^Node n]
+  (= (j/get-in n [:type :name]) "heading"))
+
+(declare replace-fragment-headings)
+
+(defn- replace-node-headings [^Node n]
+  (if (and (heading? n)
+           (not= (j/get-in n [:attrs :level]) 2))
+    (j/call-in n [:type :createChecked] #js{"level" 2} (j/get n :content) (j/get n :marks))
+    (j/call n :copy (replace-fragment-headings (j/get n :content)))))
+
+(defn- replace-fragment-headings [^Fragment f]
+  (j/call Fragment
+          :fromArray
+          (clj->js
+           (vec
+            (map #(replace-node-headings (j/call f :child %))
+                 (range 0 (j/get f :childCount)))))))
+
+(defn- replace-headings
+  "Convirte todos os headings a h2"
+  [^Slice slice]
+  (Slice. (replace-fragment-headings (j/get slice :content))
+          (j/get slice :openStart)
+          (j/get slice :openEnd)))
 
 (defn editor [_]
   (println "renderizando editor")
@@ -28,7 +55,8 @@
            (EditorView.
             dom-el
             #js{"state" initial-editor-state
-                "dispatchTransaction" dispatch-prosemirror-transaction})))
+                "dispatchTransaction" dispatch-prosemirror-transaction
+                "transformPasted" replace-headings})))
         :on-focus #(rf/dispatch [:clear-dialog])}])}))
 
 (defn menu-item [{:keys [active available icon-name event]}]
