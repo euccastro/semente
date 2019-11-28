@@ -37,12 +37,13 @@
        {:class ["material-icons-round"
                 (cond active "active"
                       available "available"
-                      :else "unavailable")]}
-     available (assoc :on-mouse-down
-                      (fn [e]
-                        (j/call e :preventDefault)
-                        (j/call e :stopPropagation)
-                        (rf/dispatch event))))
+                      :else "unavailable")]
+        :on-mouse-down
+        (fn [e]
+          (j/call e :preventDefault)
+          (j/call e :stopPropagation)
+          (when available
+            (rf/dispatch event)))})
    icon-name])
 
 (defn mark-menu-item [mark-id icon-name]
