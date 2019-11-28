@@ -38,6 +38,18 @@
        (j/call-in editor-state [:doc :rangeHasMark] from to mt)))))
 
 (rf/reg-sub
+ :selected-block-type
+ :<- [:editor-state]
+ (fn [^EditorState editor-state [_ type-id attrs]]
+   (let [{:keys [$from to node]} (j/lookup (j/get editor-state :selection))
+         nt (node-type editor-state type-id)
+         js-attrs (clj->js attrs)]
+     (if node
+       (j/call node :hasMarkup nt js-attrs)
+       (and (<= to (j/call $from :end))
+            (j/call-in $from [:parent :hasMarkup] nt js-attrs))))))
+
+(rf/reg-sub
  :selection-empty
  :<- [:editor-state]
  (fn [^EditorState editor-state _]

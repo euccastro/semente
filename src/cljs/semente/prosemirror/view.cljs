@@ -95,22 +95,23 @@
                                       {:id "title" :caption "Título"}]
                              :event [:toggle-mark :link]}])}]))
 
-(defn heading-menu-item []
-  (let [command-args [:heading {:level 2}]]
-    [menu-item {:active false
-                :available @(rf/subscribe
-                             (into [:can-set-block-type]
-                                   command-args))
-                :icon-name "title"
-                :event (into [:set-block-type]
-                             command-args)}]))
+(defn block-menu-item [command-args icon-name]
+  [menu-item {:active @(rf/subscribe (into [:selected-block-type]
+                                           command-args))
+              :available @(rf/subscribe
+                           (into [:can-set-block-type]
+                                 command-args))
+              :icon-name icon-name
+              :event (into [:set-block-type]
+                           command-args)}])
 
 (defn menubar []
   [:div
    [mark-menu-item :strong "format_bold"]
    [mark-menu-item :em "format_italic"]
    [link-menu-item]
-   [heading-menu-item]])
+   [block-menu-item [:paragraph] "notes"]
+   [block-menu-item [:heading {:level 2}] "title"]])
 
 (defn dialog [_]
   (let [values (r/atom {})
