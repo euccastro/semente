@@ -5,8 +5,11 @@
    [re-frame.core :as rf]
    [semente.prosemirror.shared-state :refer (editor-view)]))
 
-(defn mark-type [^EditorState editor-state mark-name]
-  (j/get-in editor-state [:schema :marks mark-name]))
+(defn mark-type [^EditorState editor-state mark-id]
+  (j/get-in editor-state [:schema :marks mark-id]))
+
+(defn node-type [^EditorState editor-state node-id]
+  (j/get-in editor-state [:schema :nodes node-id]))
 
 (defn dispatch-prosemirror-transaction [txn]
   (let [^EditorView ev @editor-view]

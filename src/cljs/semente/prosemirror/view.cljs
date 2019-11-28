@@ -1,7 +1,6 @@
 (ns semente.prosemirror.view
   (:require
    [applied-science.js-interop :as j]
-   ["prosemirror-history" :refer (undo redo history)]
    ["prosemirror-view" :refer (EditorView)]
    [re-frame.core :as rf]
    [reagent.core :as r]
@@ -32,7 +31,7 @@
                 "dispatchTransaction" dispatch-prosemirror-transaction})))
         :on-focus #(rf/dispatch [:clear-dialog])}])}))
 
-(defn menu-item [active available icon-name event]
+(defn menu-item [{:keys [active available icon-name event]}]
   [:i
    (cond->
        {:class ["material-icons-round"
@@ -49,27 +48,40 @@
 (defn mark-menu-item [mark-id icon-name]
   (let [available @(rf/subscribe [:mark-available mark-id])
         active @(rf/subscribe [:mark-active mark-id])]
-    [menu-item active available icon-name [:toggle-mark mark-id]]))
+    [menu-item {:active active
+                :available available
+                :icon-name icon-name
+                :event [:toggle-mark mark-id]}]))
 
 (defn link-menu-item []
   (let [available (not @(rf/subscribe [:selection-empty]))
         active @(rf/subscribe [:mark-active :link])]
     [menu-item
-     active
-     available
-     "link"
-     (if active
-       [:toggle-mark :link]
-       [:set-dialog {:fields [{:id "href" :caption "URL"}
-                              {:id "title" :caption "Título"}]
-                     :event [:toggle-mark :link]}])]))
+     {:active active
+      :available available
+      :icon-name "link"
+      :event (if active
+               [:toggle-mark :link]
+               [:set-dialog {:fields [{:id "href" :caption "URL"}
+                                      {:id "title" :caption "Título"}]
+                             :event [:toggle-mark :link]}])}]))
+
+(defn heading-menu-item []
+  (let [command-args [:heading {:level 2}]]
+    [menu-item {:active false
+                :available @(rf/subscribe
+                             (into [:can-set-block-type]
+                                   command-args))
+                :icon-name "calendar_view_day"
+                :event (into [:set-block-type]
+                             command-args)}]))
 
 (defn menubar []
   [:div
    [mark-menu-item :strong "format_bold"]
    [mark-menu-item :em "format_italic"]
    [link-menu-item]
-   [menu-item false true "calendar_view_day" [:whatever]]])
+   [heading-menu-item]])
 
 (defn dialog [_]
   (let [values (r/atom {})

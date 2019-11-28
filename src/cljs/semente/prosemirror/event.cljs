@@ -1,8 +1,8 @@
 (ns semente.prosemirror.event
   (:require
    [re-frame.core :as rf]
-   [semente.prosemirror.util :refer (mark-type)]
-   ["prosemirror-commands" :refer (toggleMark)]))
+   [semente.prosemirror.util :refer (mark-type node-type)]
+   ["prosemirror-commands" :refer (setBlockType toggleMark)]))
 
 (rf/reg-event-db
  :editor-state-changed
@@ -11,9 +11,16 @@
 
 (rf/reg-event-fx
  :toggle-mark
- (fn [{{:keys [editor-state]} :db} [_ mark-name attrs]]
-   (let [mt (mark-type editor-state mark-name)
+ (fn [{{:keys [editor-state]} :db} [_ mark-id attrs]]
+   (let [mt (mark-type editor-state mark-id)
          command (toggleMark mt (clj->js attrs))]
+     {:prosemirror-command [command editor-state]})))
+
+(rf/reg-event-fx
+ :set-block-type
+ (fn [{{:keys [editor-state]} :db} [_ node-id attrs]]
+   (let [nt (node-type editor-state node-id)
+         command (setBlockType nt (clj->js attrs))]
      {:prosemirror-command [command editor-state]})))
 
 (rf/reg-event-fx
