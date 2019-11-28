@@ -68,7 +68,8 @@
   [:div
    [mark-menu-item :strong "format_bold"]
    [mark-menu-item :em "format_italic"]
-   [link-menu-item]])
+   [link-menu-item]
+   [menu-item false true "calendar_view_day" [:whatever]]])
 
 (defn dialog [_]
   (let [values (r/atom {})

@@ -26,8 +26,6 @@
                   "/css/semente.css"
                   "/css/prosemirror.css"
                   "/css/prosemirror-gapcursor.css"
-                  "/css/prosemirror-menu.css"
-                  "/css/prosemirror-example-setup.css"
                   "/css/editor.css")]
     ;; extraer
     [:body#nacional-background
