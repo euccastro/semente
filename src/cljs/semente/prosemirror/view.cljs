@@ -116,7 +116,9 @@
    [link-menu-item]
    [change-block-type-menu-item [:paragraph] "notes"]
    [change-block-type-menu-item [:heading {:level 2}] "title"]
-   [wrap-menu-item [:blockquote] "format_quote"]])
+   [wrap-menu-item [:blockquote] "format_quote"]
+   [block-type-menu-item [:bullet_list] "format_list_bulleted" :wrap-in-list]
+   [block-type-menu-item [:ordered_list] "format_list_numbered" :wrap-in-list]])
 
 (defn dialog [_]
   (let [values (r/atom {})

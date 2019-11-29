@@ -2,6 +2,7 @@
   (:require
    [re-frame.core :as rf]
    [semente.prosemirror.util :refer (mark-type node-type current-editor-state)]
+   ["prosemirror-schema-list" :refer (liftListItem wrapInList)]
    ["prosemirror-commands" :refer (lift setBlockType toggleMark wrapIn)]))
 
 (rf/reg-event-db
@@ -23,7 +24,9 @@
           command (cmd-builder nt (clj->js attrs))]
       ;; As primeiras duas operaçons som para "normalizar" o estado a parágrafo
       ;; simples, para que prosemirror aceite mudar ao tipo que pedimos.
-      {:prosemirror-commands [lift
+      {:prosemirror-commands [(liftListItem (node-type es :bullet_list))
+                              (liftListItem (node-type es :ordered_list))
+                              lift
                               (setBlockType (node-type es :paragraph))
                               command]})))
 
@@ -34,6 +37,10 @@
 (rf/reg-event-fx
  :wrap-in
  (node-command wrapIn))
+
+(rf/reg-event-fx
+ :wrap-in-list
+ (node-command wrapInList))
 
 (rf/reg-event-db
  :set-dialog
