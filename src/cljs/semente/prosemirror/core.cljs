@@ -11,25 +11,29 @@
    ["prosemirror-schema-list" :refer (addListNodes)]
    ["prosemirror-state" :refer (EditorState)]))
 
+(defn change-node [nodes node-id changes]
+  (j/call nodes
+          :update
+          node-id
+          (-> (j/call nodes :get node-id)
+              (js->clj :keywordize-keys true)
+              (merge changes)
+              clj->js)))
+
 (defn initial-schema []
-  (let [nodes (addListNodes (j/get-in schema [:spec :nodes])
-                            "paragraph+"
-                            "block")
-        image (j/call nodes :get "image")]
-    (Schema.
-     (clj->js
-      {:nodes (-> nodes
-               (j/call :remove "code_block")
-               (j/call :remove "horizontal_rule")
-               (j/call :update "image" (-> image
-                                           (js->clj :keywordize-keys true)
-                                           (assoc :inline false)
-                                           (assoc :group :block)
-                                           (assoc :marks "")
-                                           clj->js)))
-       :marks (-> schema
-                  (j/get-in [:spec :marks])
-                  (j/call :remove "code"))}))))
+  (Schema.
+   (clj->js
+    {:nodes (-> (j/get-in schema [:spec :nodes])
+                (addListNodes "paragraph+" "block")
+                (j/call :remove "code_block")
+                (j/call :remove "horizontal_rule")
+                (change-node "blockquote" {:content "paragraph+"})
+                (change-node "image" {:inline false
+                                      :group :block
+                                      :marks ""}))
+     :marks (-> schema
+                (j/get-in [:spec :marks])
+                (j/call :remove "code"))})))
 
 (defn initial-editor-state []
   (.create
