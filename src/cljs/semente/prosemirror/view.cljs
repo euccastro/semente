@@ -95,21 +95,19 @@
                                       {:id "title" :caption "Título"}]
                              :event [:toggle-mark :link]}])}]))
 
-(defn- block-type-menu-item [command-args icon-name available-sub event-key ]
+(defn- block-type-menu-item [command-args icon-name event-key]
   [menu-item {:active @(rf/subscribe (into [:selected-block-type]
                                            command-args))
-              :available @(rf/subscribe
-                           (into [available-sub]
-                                 command-args))
+              :available true
               :icon-name icon-name
               :event (into [event-key]
                            command-args)}])
 
 (defn- change-block-type-menu-item [command-args icon-name]
-  [block-type-menu-item command-args icon-name :can-set-block-type :set-block-type])
+  [block-type-menu-item command-args icon-name :set-block-type])
 
 (defn- wrap-menu-item [command-args icon-name]
-  [block-type-menu-item command-args icon-name :can-wrap-in :wrap-in])
+  [block-type-menu-item command-args icon-name :wrap-in])
 
 (defn menubar []
   [:div

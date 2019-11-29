@@ -3,16 +3,15 @@
    [applied-science.js-interop :as j]
    [re-frame.core :as rf]
    [semente.prosemirror.shared-state :refer (editor-view)]
-   [semente.prosemirror.util :refer (dispatch-prosemirror-transaction)]))
+   [semente.prosemirror.util :refer (current-editor-state
+                                     dispatch-prosemirror-transaction)]))
 
 (rf/reg-fx
- :prosemirror-command
- (fn [[command editor-state]]
-   (command editor-state #(rf/dispatch [:prosemirror-txn %]))))
-
-(rf/reg-fx
- :prosemirror-txn
- dispatch-prosemirror-transaction)
+ :prosemirror-commands
+ (fn [cmds]
+   (doseq [command cmds]
+     (command (current-editor-state)
+              dispatch-prosemirror-transaction))))
 
 (rf/reg-fx
  :focus-editor

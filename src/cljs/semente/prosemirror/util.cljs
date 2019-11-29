@@ -18,3 +18,6 @@
             (j/call-in ev [:state :apply] txn)]
         (j/call ev :updateState new-state)
         (rf/dispatch [:editor-state-changed new-state])))))
+
+(defn current-editor-state []
+  (j/get @editor-view :state))
