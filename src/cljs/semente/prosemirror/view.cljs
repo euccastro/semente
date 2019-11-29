@@ -34,7 +34,7 @@
           (j/get slice :openStart)
           (j/get slice :openEnd)))
 
-(defn editor [_]
+(defn- editor [_]
   (println "renderizando editor")
   (r/create-class
    {:display-name "prosemirror-editor"
@@ -59,7 +59,7 @@
                 "transformPasted" replace-headings})))
         :on-focus #(rf/dispatch [:clear-dialog])}])}))
 
-(defn menu-item [{:keys [active available icon-name event]}]
+(defn- menu-item [{:keys [active available icon-name event]}]
   [:i
    (cond->
        {:class ["material-icons-round"
@@ -74,7 +74,7 @@
             (rf/dispatch event)))})
    icon-name])
 
-(defn mark-menu-item [mark-id icon-name]
+(defn- mark-menu-item [mark-id icon-name]
   (let [available @(rf/subscribe [:mark-available mark-id])
         active @(rf/subscribe [:mark-active mark-id])]
     [menu-item {:active active
@@ -82,7 +82,7 @@
                 :icon-name icon-name
                 :event [:toggle-mark mark-id]}]))
 
-(defn link-menu-item []
+(defn- link-menu-item []
   (let [available (not @(rf/subscribe [:selection-empty]))
         active @(rf/subscribe [:mark-active :link])]
     [menu-item
@@ -95,23 +95,30 @@
                                       {:id "title" :caption "Título"}]
                              :event [:toggle-mark :link]}])}]))
 
-(defn block-menu-item [command-args icon-name]
+(defn- block-type-menu-item [command-args icon-name available-sub event-key ]
   [menu-item {:active @(rf/subscribe (into [:selected-block-type]
                                            command-args))
               :available @(rf/subscribe
-                           (into [:can-set-block-type]
+                           (into [available-sub]
                                  command-args))
               :icon-name icon-name
-              :event (into [:set-block-type]
+              :event (into [event-key]
                            command-args)}])
+
+(defn- change-block-type-menu-item [command-args icon-name]
+  [block-type-menu-item command-args icon-name :can-set-block-type :set-block-type])
+
+(defn- wrap-menu-item [command-args icon-name]
+  [block-type-menu-item command-args icon-name :can-wrap-in :wrap-in])
 
 (defn menubar []
   [:div
    [mark-menu-item :strong "format_bold"]
    [mark-menu-item :em "format_italic"]
    [link-menu-item]
-   [block-menu-item [:paragraph] "notes"]
-   [block-menu-item [:heading {:level 2}] "title"]])
+   [change-block-type-menu-item [:paragraph] "notes"]
+   [change-block-type-menu-item [:heading {:level 2}] "title"]
+   [wrap-menu-item [:blockquote] "format_quote"]])
 
 (defn dialog [_]
   (let [values (r/atom {})

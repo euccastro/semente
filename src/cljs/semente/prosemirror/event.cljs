@@ -2,7 +2,7 @@
   (:require
    [re-frame.core :as rf]
    [semente.prosemirror.util :refer (mark-type node-type)]
-   ["prosemirror-commands" :refer (setBlockType toggleMark)]))
+   ["prosemirror-commands" :refer (setBlockType toggleMark wrapIn)]))
 
 (rf/reg-event-db
  :editor-state-changed
@@ -16,12 +16,19 @@
          command (toggleMark mt (clj->js attrs))]
      {:prosemirror-command [command editor-state]})))
 
+(defn- node-command [cmd-builder]
+  (fn [{{:keys [editor-state]} :db} [_ node-id attrs]]
+    (let [nt (node-type editor-state node-id)
+          command (cmd-builder nt (clj->js attrs))]
+      {:prosemirror-command [command editor-state]})))
+
 (rf/reg-event-fx
  :set-block-type
- (fn [{{:keys [editor-state]} :db} [_ node-id attrs]]
-   (let [nt (node-type editor-state node-id)
-         command (setBlockType nt (clj->js attrs))]
-     {:prosemirror-command [command editor-state]})))
+ (node-command setBlockType))
+
+(rf/reg-event-fx
+ :wrap-in
+ (node-command wrapIn))
 
 (rf/reg-event-fx
  :prosemirror-txn

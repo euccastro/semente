@@ -3,7 +3,7 @@
    [applied-science.js-interop :as j]
    [re-frame.core :as rf]
    [semente.prosemirror.util :refer (mark-type node-type)]
-   ["prosemirror-commands" :refer (setBlockType toggleMark)]
+   ["prosemirror-commands" :refer (setBlockType toggleMark wrapIn)]
    ["prosemirror-state" :refer (EditorState)]))
 
 
@@ -19,12 +19,20 @@
    ((toggleMark (mark-type editor-state mark-id))
     editor-state)))
 
+(defn- nodetype-sub [cmd-builder]
+  (fn [^EditorState editor-state [_ type-id attrs]]
+    ((cmd-builder (node-type editor-state type-id) (clj->js attrs))
+     editor-state)))
+
 (rf/reg-sub
  :can-set-block-type
  :<- [:editor-state]
- (fn [^EditorState editor-state [_ type-id attrs]]
-   ((setBlockType (node-type editor-state type-id) (clj->js attrs))
-    editor-state)))
+ (nodetype-sub setBlockType))
+
+(rf/reg-sub
+ :can-wrap-in
+ :<- [:editor-state]
+ (nodetype-sub wrapIn))
 
 (rf/reg-sub
  :mark-active
