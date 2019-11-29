@@ -11,7 +11,7 @@
    ["prosemirror-schema-list" :refer (addListNodes)]
    ["prosemirror-state" :refer (EditorState)]))
 
-(defn change-node [nodes node-id changes]
+(defn- change-node [nodes node-id changes]
   (j/call nodes
           :update
           node-id
@@ -20,7 +20,7 @@
               (merge changes)
               clj->js)))
 
-(defn initial-schema []
+(defn- initial-schema []
   (Schema.
    (clj->js
     {:nodes (-> (j/get-in schema [:spec :nodes])
