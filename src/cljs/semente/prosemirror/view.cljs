@@ -70,7 +70,7 @@
         (fn [e]
           (j/call e :preventDefault)
           (j/call e :stopPropagation)
-          (when available
+          (when (and available event)
             (rf/dispatch event)))})
    icon-name])
 
@@ -109,6 +109,13 @@
 (defn- wrap-menu-item [command-args icon-name]
   [block-type-menu-item command-args icon-name :wrap-in])
 
+(defn- image-menu-item []
+  [:label {:for "file-input"}
+   [menu-item {:active false
+               :available true
+               :icon-name "image"
+               :event nil}]])
+
 (defn menubar []
   [:div
    [mark-menu-item :strong "format_bold"]
@@ -118,7 +125,8 @@
    [change-block-type-menu-item [:heading {:level 2}] "title"]
    [wrap-menu-item [:blockquote] "format_quote"]
    [block-type-menu-item [:bullet_list] "format_list_bulleted" :wrap-in-list]
-   [block-type-menu-item [:ordered_list] "format_list_numbered" :wrap-in-list]])
+   [block-type-menu-item [:ordered_list] "format_list_numbered" :wrap-in-list]
+   [image-menu-item]])
 
 (defn dialog [_]
   (let [values (r/atom {})
@@ -153,6 +161,10 @@
   (let [es @(rf/subscribe [:editor-state])
         dialog-spec @(rf/subscribe [:dialog])]
     [:div
+     [:input#file-input {:type "file"
+                         :accept "image/*"
+                         :style {:display :none}
+                         :on-change #(rf/dispatch [:files-selected])}]
      (if dialog-spec
        [dialog dialog-spec]
        [menubar])

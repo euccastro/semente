@@ -52,5 +52,10 @@
 
 (rf/reg-event-fx
  :focus-editor
- (fn [_ _]
-   {:focus-editor nil}))
+ (constantly {:focus-editor nil}))
+
+(rf/reg-event-fx
+ :files-selected
+ (fn [_]
+   (println "Now I would handle selected files!")
+   {}))
