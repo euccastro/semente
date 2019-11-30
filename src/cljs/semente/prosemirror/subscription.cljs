@@ -40,7 +40,10 @@
      (if node
        (j/call node :hasMarkup nt js-attrs)
        (and (<= to (j/call $from :end))
-            (j/call-in $from [:parent :hasMarkup] nt js-attrs))))))
+            (j/call (j/call $from :node 1)
+                    :hasMarkup
+                    nt
+                    js-attrs))))))
 
 (rf/reg-sub
  :selection-empty
