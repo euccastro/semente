@@ -24,9 +24,7 @@
           command (cmd-builder nt (clj->js attrs))]
       ;; As primeiras duas operaçons som para "normalizar" o estado a parágrafo
       ;; simples, para que prosemirror aceite mudar ao tipo que pedimos.
-      {:prosemirror-commands [(liftListItem (node-type es :bullet_list))
-                              (liftListItem (node-type es :ordered_list))
-                              lift
+      {:prosemirror-commands [lift
                               (setBlockType (node-type es :paragraph))
                               command]})))
 
