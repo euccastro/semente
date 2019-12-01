@@ -39,12 +39,11 @@
 (defn initial-editor-state []
   (.create
    EditorState
-   (let [is (initial-schema)
-         plugins (exampleSetup #js{"schema" is
-                                   "menuBar" false})]
-     (j/call plugins :push (placeholder-plugin))
+   (let [is (initial-schema)]
      #js {"schema" is
-          "plugins" plugins})))
+          "plugins" (j/push! (exampleSetup #js{"schema" is
+                                               "menuBar" false})
+                             placeholder-plugin)})))
 
 
 (comment

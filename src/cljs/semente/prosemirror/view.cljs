@@ -164,7 +164,10 @@
      [:input#file-input {:type "file"
                          :accept "image/*"
                          :style {:display :none}
-                         :on-change #(rf/dispatch [:files-selected])}]
+                         :on-change (fn [e]
+                                      (let [files (j/get-in e [:target :files])]
+                                        (when (> (j/get files :length) 0)
+                                          (rf/dispatch [:files-selected files]))))}]
      (if dialog-spec
        [dialog dialog-spec]
        [menubar])

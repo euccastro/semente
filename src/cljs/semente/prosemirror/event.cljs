@@ -56,6 +56,5 @@
 
 (rf/reg-event-fx
  :files-selected
- (fn [_]
-   (println "Now I would handle selected files!")
-   {}))
+ (fn [_ [_ files]]
+   {:handle-files files}))

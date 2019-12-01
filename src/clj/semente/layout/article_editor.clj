@@ -26,6 +26,7 @@
                   "/css/semente.css"
                   "/css/prosemirror.css"
                   "/css/prosemirror-gapcursor.css"
+                  "/css/spinner.css"
                   "/css/editor.css")]
     ;; extraer
     [:body#nacional-background
