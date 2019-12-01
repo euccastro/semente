@@ -9,7 +9,8 @@
    ["prosemirror-model" :refer (Schema)]
    ["prosemirror-schema-basic" :refer (schema)]
    ["prosemirror-schema-list" :refer (addListNodes)]
-   ["prosemirror-state" :refer (EditorState)]))
+   ["prosemirror-state" :refer (EditorState)]
+   [semente.prosemirror.placeholder-plugin :refer (placeholder-plugin)]))
 
 (defn- change-node [nodes node-id changes]
   (j/call nodes
@@ -38,10 +39,12 @@
 (defn initial-editor-state []
   (.create
    EditorState
-   (let [is (initial-schema)]
+   (let [is (initial-schema)
+         plugins (exampleSetup #js{"schema" is
+                                   "menuBar" false})]
+     (j/call plugins :push (placeholder-plugin))
      #js {"schema" is
-          "plugins" (exampleSetup #js{"schema" is
-                                      "menuBar" false})})))
+          "plugins" plugins})))
 
 
 (comment
