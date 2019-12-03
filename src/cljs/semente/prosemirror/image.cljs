@@ -7,6 +7,13 @@
    [semente.prosemirror.util :refer (current-editor-state
                                      node-type)]))
 
+(def schema-changes
+  {:inline false
+   :attrs #js{"src" #js{}
+              "db_id" #js{"default" nil}
+              "desc" #js{"default" "muda-me!"}}
+   :group :block
+   :marks ""})
 
 (defn throbber []
   [:div.lds-ellipsis-container
@@ -16,30 +23,27 @@
     "subindo..."
     [:div] [:div] [:div] [:div]]])
 
-(defn image-parent [src]
-  [:div.editor-image
-   [:img {:src src
-          :title "placeholder!"
-          :draggable false
-          :style {:z-index -1
-                  :display :block
-                  :margin :auto}}]
-   [throbber]])
-
-(def schema-changes
-  {:inline false
-   :attrs #js{"src" #js{}
-              "db_id" #js{"default" nil}
-              "alt" #js{"default" nil}
-              "title" #js{"default" nil}}
-   :group :block
-   :marks ""})
+(defn image-parent [node-atom]
+  (let [{:keys [src db_id desc]}
+        (j/lookup (j/get @node-atom :attrs))]
+    [:div.editor-image
+     [:img {:src src
+            :alt desc
+            :title desc
+            :draggable false
+            :style {:z-index -1
+                    :display :block
+                    :margin :auto}}]
+     (when-not db_id
+       [throbber])]))
 
 (defn node-view [node & _]
-  (let [dom-node (-> (.createElement js/document "div"))]
-    (r/render [image-parent (j/get-in node [:attrs :src])]
+  (let [dom-node (-> (.createElement js/document "div"))
+        ratom (r/atom node)]
+    (r/render [image-parent ratom]
               dom-node)
     #js{"dom" dom-node
+        "update" #(swap! ratom %)
         "ignoreMutation" (constantly true)}))
 
 (defn handle-files [files]
