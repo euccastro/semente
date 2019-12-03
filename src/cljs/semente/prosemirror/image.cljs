@@ -43,7 +43,12 @@
     (r/render [image-parent ratom]
               dom-node)
     #js{"dom" dom-node
-        "update" #(swap! ratom %)
+        "update" (fn [node]
+                   (if (= (j/get-in node [:type :name])
+                          "image")
+                     (do (swap! ratom node)
+                         true)
+                     false))
         "ignoreMutation" (constantly true)}))
 
 (defn handle-files [files]
