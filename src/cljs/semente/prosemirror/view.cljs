@@ -140,10 +140,10 @@
           [:span {:key id}
            [:label {:for id} caption]
            [:input (cond-> {:id id
-                              :name id
-                              :value (get @values id "")
-                              :on-change #(swap! values assoc id (j/get-in % [:target :value]))
-                              :type "text"}
+                            :name id
+                            :value (get @values id "")
+                            :on-change #(swap! values assoc id (j/get-in % [:target :value]))
+                            :type "text"}
                      ;; dar foco, só umha vez, ao primeiro input
                      (= i 0) (assoc :ref (fn [el]
                                            (swap! focused (fn [old]
@@ -159,9 +159,21 @@
        [:button {:type :button :on-click #(rf/dispatch [:clear-dialog])}
         "Cancelar"]])))
 
+(defn image-desc-input [{:keys [src desc] :as wat}]
+  [:div
+   [:label {:for "image-desc-input"} "descriçom"]
+   [:input {:type "text"
+            :id "image-desc-input"
+            :value desc
+            :on-change #(rf/dispatch
+                         [:img-desc-change
+                          {:src src
+                           :desc (j/get-in % [:target :value])}])}]])
+
 (defn editor-container []
   (let [es @(rf/subscribe [:editor-state])
-        dialog-spec @(rf/subscribe [:dialog])]
+        dialog-spec @(rf/subscribe [:dialog])
+        selected-image @(rf/subscribe [:selected-image])]
     [:div
      [:input#file-input {:type "file"
                          :accept "image/*"
@@ -170,7 +182,8 @@
                                       (let [files (j/get-in e [:target :files])]
                                         (when (> (j/get files :length) 0)
                                           (rf/dispatch [:files-selected files]))))}]
-     (if dialog-spec
-       [dialog dialog-spec]
-       [menubar])
+     (cond
+       selected-image [image-desc-input selected-image]
+       dialog-spec [dialog dialog-spec]
+       :else [menubar])
      [editor es]]))

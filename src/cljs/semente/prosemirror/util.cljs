@@ -19,5 +19,18 @@
         (j/call ev :updateState new-state)
         (rf/dispatch [:editor-state-changed new-state])))))
 
+(defn node-type? [node type-name]
+  (= (j/get-in node [:type :name]) type-name))
+
 (defn current-editor-state []
   (j/get @editor-view :state))
+
+(comment
+
+
+  (j/call-in (current-editor-state)
+             [:doc :child]
+             1)
+  (def img *1)
+  (j/get-in img [:attrs :src])
+  )

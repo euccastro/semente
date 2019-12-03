@@ -5,13 +5,14 @@
    [reagent.core :as r]
    [semente.prosemirror.shared-state :refer (editor-view)]
    [semente.prosemirror.util :refer (current-editor-state
-                                     node-type)]))
+                                     node-type
+                                     node-type?)]))
 
 (def schema-changes
   {:inline false
    :attrs #js{"src" #js{}
               "db_id" #js{"default" nil}
-              "desc" #js{"default" "muda-me!"}}
+              "desc" #js{"default" nil}}
    :group :block
    :marks ""})
 
@@ -44,9 +45,8 @@
               dom-node)
     #js{"dom" dom-node
         "update" (fn [node]
-                   (if (= (j/get-in node [:type :name])
-                          "image")
-                     (do (swap! ratom node)
+                   (if (node-type? node "image")
+                     (do (reset! ratom node)
                          true)
                      false))
         "ignoreMutation" (constantly true)}))
@@ -73,3 +73,21 @@
 (rf/reg-fx
  :handle-files
  handle-files)
+
+(rf/reg-fx
+ :img-desc-change
+ (fn [{:keys [src desc]}]
+   (let [ev @editor-view
+         tr (j/get-in ev [:state :tr])]
+     (j/call-in ev [:state :doc :forEach]
+                (fn [node offset index] ()
+                  (when (and (node-type? node "image")
+                             (= (j/get-in node [:attrs :src])
+                                src))
+                    (j/call ev :dispatch
+                            (j/call tr :setNodeMarkup
+                                    offset
+                                    nil
+                                    #js{"src" src
+                                        "db_id" (j/get-in node [:attrs :db_id])
+                                        "desc" desc}))))))))

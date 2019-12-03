@@ -58,3 +58,8 @@
  :files-selected
  (fn [_ [_ files]]
    {:handle-files files}))
+
+(rf/reg-event-fx
+ :img-desc-change
+ (fn [_ [_ x]]
+   {:img-desc-change x}))
