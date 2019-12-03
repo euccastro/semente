@@ -180,4 +180,5 @@
   [:i.active {:color :black}]
   [:i.available {:color :grey}]
   [:i.unavailable {:color :lightgrey}]
-  [:placeholder {:display :block}])
+  ;; para centrar o throbber
+  [:.editor-image {:position :relative}])

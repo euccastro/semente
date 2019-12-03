@@ -5,6 +5,7 @@
    ["prosemirror-view" :refer (EditorView)]
    [re-frame.core :as rf]
    [reagent.core :as r]
+   [semente.prosemirror.image :as image]
    [semente.prosemirror.shared-state :refer (editor-view)]
    [semente.prosemirror.util :refer (dispatch-prosemirror-transaction)]))
 
@@ -54,8 +55,9 @@
            editor-view
            (EditorView.
             dom-el
-            #js{"state" initial-editor-state
-                "dispatchTransaction" dispatch-prosemirror-transaction
+            #js{"dispatchTransaction" dispatch-prosemirror-transaction
+                "nodeViews" #js{"image" image/node-view}
+                "state" initial-editor-state
                 "transformPasted" replace-headings})))
         :on-focus #(rf/dispatch [:clear-dialog])}])}))
 

@@ -8,45 +8,23 @@
                                      node-type)]))
 
 
-;; (defn spinner []
-;;   [:div.lds-ellipsis-container
-;;    [:div.lds-ellipsis
-;;     {:spellCheck false
-;;      :contentEditable false}
-;;     "subindo..."
-;;     [:div] [:div] [:div] [:div]]])
+(defn throbber []
+  [:div.lds-ellipsis-container
+   [:div.lds-ellipsis
+    {:spellCheck false
+     :contentEditable false}
+    "subindo..."
+    [:div] [:div] [:div] [:div]]])
 
-;; (defn placeholder-comp [src]
-;;   [:div
-;;    [:img {:src src
-;;           :title "placeholder!"
-;;           :draggable false
-;;           :style {:z-index -1
-;;                   :display :block
-;;                   :margin :auto}}]
-;;    [spinner]])
-
-;; // :: NodeSpec An inline image (`<img>`) node. Supports `src`,
-;; // `alt`, and `href` attributes. The latter two default to the empty
-;; // string.
-;; image: {
-;;         inline: true,
-;;         attrs: {
-;;                 src: {},
-;;                 alt: {default: null},
-;;                 title: {default: null}
-;;                 },
-;;         group: "inline",
-;;         draggable: true,
-;;         parseDOM: [{tag: "img[src]", getAttrs(dom) {
-;;                                                     return {
-;;                                                             src: dom.getAttribute("src"),
-;;                                                             title: dom.getAttribute("title"),
-;;                                                             alt: dom.getAttribute("alt")
-;;                                                             }
-;;                                                     }}],
-;;         toDOM(node) { let {src, alt, title} = node.attrs; return ["img", {src, alt, title}] }
-;;                      },
+(defn image-parent [src]
+  [:div.editor-image
+   [:img {:src src
+          :title "placeholder!"
+          :draggable false
+          :style {:z-index -1
+                  :display :block
+                  :margin :auto}}]
+   [throbber]])
 
 (def schema-changes
   {:inline false
@@ -56,6 +34,13 @@
               "title" #js{"default" nil}}
    :group :block
    :marks ""})
+
+(defn node-view [node & _]
+  (let [dom-node (-> (.createElement js/document "div"))]
+    (r/render [image-parent (j/get-in node [:attrs :src])]
+              dom-node)
+    #js{"dom" dom-node
+        "ignoreMutation" (constantly true)}))
 
 (defn handle-files [files]
   (loop [tr (j/get-in @editor-view [:state :tr])
