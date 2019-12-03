@@ -10,7 +10,7 @@
    ["prosemirror-schema-basic" :refer (schema)]
    ["prosemirror-schema-list" :refer (addListNodes)]
    ["prosemirror-state" :refer (EditorState)]
-   [semente.prosemirror.placeholder-plugin :refer (placeholder-plugin)]))
+   [semente.prosemirror.image :as image]))
 
 (defn- change-node [nodes node-id changes]
   (j/call nodes
@@ -29,9 +29,7 @@
                 (j/call :remove "code_block")
                 (j/call :remove "horizontal_rule")
                 (change-node "blockquote" {:content "paragraph+"})
-                (change-node "image" {:inline false
-                                      :group :block
-                                      :marks ""}))
+                (change-node "image" image/schema-changes))
      :marks (-> schema
                 (j/get-in [:spec :marks])
                 (j/call :remove "code"))})))
@@ -41,9 +39,8 @@
    EditorState
    (let [is (initial-schema)]
      #js {"schema" is
-          "plugins" (j/push! (exampleSetup #js{"schema" is
-                                               "menuBar" false})
-                             placeholder-plugin)})))
+          "plugins" (exampleSetup #js{"schema" is
+                                      "menuBar" false})})))
 
 
 (comment
