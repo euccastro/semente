@@ -58,8 +58,8 @@
 
 (defn handle-files [files]
   (loop [tr (j/get-in @editor-view [:state :tr])
-         i 0]
-    (if (= i (j/get files :length))
+         i (dec (j/get files :length))]
+    (if (= i -1)
       (j/call @editor-view :dispatch tr)
       (let [f (aget files i)
             insert-pos (j/call-in tr [:selection :$from :after] 1)
@@ -74,7 +74,7 @@
                         :create
                         #js{"src" url}))]
         (rf/dispatch [:upload-img {:url url :file f}])
-        (recur tr (inc i))))))
+        (recur tr (dec i))))))
 
 
 (defn- update-image-attrs [url f]

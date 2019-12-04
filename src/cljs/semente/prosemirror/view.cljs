@@ -177,6 +177,7 @@
     [:div
      [:input#file-input {:type "file"
                          :accept "image/*"
+                         :multiple true
                          :style {:display :none}
                          :on-change (fn [e]
                                       (let [files (j/get-in e [:target :files])]
