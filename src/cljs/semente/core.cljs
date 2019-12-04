@@ -2,7 +2,6 @@
   (:require
    [re-frame.core :as rf]
    [reagent.core :as r]
-   [ajax.core :as http]
    [semente.ajax :as ajax]
    ;; for side effects
    semente.event

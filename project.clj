@@ -13,7 +13,7 @@
                  [com.google.guava/guava "25.1-jre"]
                  [com.google.javascript/closure-compiler-unshaded "v20190618" :scope "provided"]
                  [cprop "0.1.14"]
-                 [day8.re-frame/http-fx "0.1.6"]
+                 [day8.re-frame/http-fx "0.2.0"]
                  [expound "0.7.2"]
                  [funcool/struct "1.4.0"]
                  [juxt/crux-core "19.09-1.5.0-alpha"]

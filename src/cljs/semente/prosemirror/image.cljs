@@ -1,5 +1,6 @@
 (ns semente.prosemirror.image
   (:require
+   [ajax.core :refer (raw-response-format)]
    [applied-science.js-interop :as j]
    [re-frame.core :as rf]
    [reagent.core :as r]
@@ -7,6 +8,10 @@
    [semente.prosemirror.util :refer (current-editor-state
                                      node-type
                                      node-type?)]))
+
+;; Valor especial de attrs -> db_id para marcar umha imagem que nom conseguimos
+;; subir.
+(def failed-db-id "<failed>")
 
 (def schema-changes
   {:inline false
@@ -68,26 +73,71 @@
                                    :image)
                         :create
                         #js{"src" url}))]
+        (rf/dispatch [:upload-img {:url url :file f}])
         (recur tr (inc i))))))
+
+
+(defn- update-image-attrs [url f]
+  (let [ev @editor-view
+        tr (j/get-in ev [:state :tr])]
+    (j/call-in ev [:state :doc :forEach]
+               (fn [node offset _] ()
+                 (when (and (node-type? node "image")
+                            (= (j/get-in node [:attrs :src])
+                               url))
+                   (j/call ev :dispatch
+                           (j/call tr :setNodeMarkup
+                                   offset
+                                   nil
+                                   (-> (j/get node :attrs)
+                                       (j/select-keys [:src :db_id :desc])
+                                       js->clj
+                                       f
+                                       clj->js))))))))
+
+(rf/reg-event-fx
+ :files-selected
+ (fn [_ [_ files]]
+   {:handle-files files}))
 
 (rf/reg-fx
  :handle-files
  handle-files)
 
 (rf/reg-fx
+ :assoc-image-attrs
+ (fn [[src k v]]
+   (update-image-attrs src #(assoc % k v))))
+
+(rf/reg-event-fx
  :img-desc-change
- (fn [{:keys [src desc]}]
-   (let [ev @editor-view
-         tr (j/get-in ev [:state :tr])]
-     (j/call-in ev [:state :doc :forEach]
-                (fn [node offset index] ()
-                  (when (and (node-type? node "image")
-                             (= (j/get-in node [:attrs :src])
-                                src))
-                    (j/call ev :dispatch
-                            (j/call tr :setNodeMarkup
-                                    offset
-                                    nil
-                                    #js{"src" src
-                                        "db_id" (j/get-in node [:attrs :db_id])
-                                        "desc" desc}))))))))
+ (fn [_ [_ {:keys [src desc]}]]
+   {:assoc-image-attrs [src :desc desc]}))
+
+(rf/reg-event-fx
+ :img-upload-failed
+ (fn [_ [_ url]]
+   {:assoc-image-attrs [url :db_id failed-db-id]}))
+
+(rf/reg-event-fx
+ :img-uploaded
+ (fn [_ [_ url db-id]]
+   (println "IMAGE UPLOADED" db-id)
+   {:assoc-image-attrs [url :db_id db-id]}))
+
+(rf/reg-event-fx
+ :upload-img
+ (fn [_ [_ {:keys [file url tries-left]
+            :or {tries-left 3}
+            :as args}]]
+   {:http-xhrio {:method :post
+                 :uri "/save-image"
+                 :body (doto (js/FormData.)
+                         (.append "file" file url))
+                 :timeout 30000
+                 :response-format (raw-response-format)
+                 :on-success [:img-uploaded url]
+                 :on-failure (if (= tries-left 0)
+                               [:img-upload-failed url]
+                               [:upload-img
+                                (update args :tries-left dec)])}}))

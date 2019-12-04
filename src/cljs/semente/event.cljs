@@ -1,5 +1,6 @@
 (ns semente.event
   (:require
-   [re-frame.core :as rf]
+   ;; for side effects
+   day8.re-frame.http-fx
    ;; for side effects
    semente.prosemirror.event))

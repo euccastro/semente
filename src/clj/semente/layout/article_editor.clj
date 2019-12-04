@@ -7,7 +7,8 @@
    semente.model.article
    [semente.style-constants :as style]
    [hiccup.page :refer [include-css]]
-   [hiccup.element :refer [image link-to]]))
+   [hiccup.element :refer [image link-to]]
+   [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
 
 (defn article-editor
   []
@@ -30,6 +31,7 @@
                   "/css/editor.css")]
     ;; extraer
     [:body#nacional-background
+     [:script (str "window.csrfToken = \"" *anti-forgery-token* "\";")]
      [:div#page
       [:div#app]]
      (l/js-app)]]))
