@@ -50,11 +50,12 @@
          js-attrs (clj->js attrs)]
      (if node
        (j/call node :hasMarkup nt js-attrs)
-       (and (<= to (j/call $from :end))
-            (j/call (j/call $from :node 1)
-                    :hasMarkup
-                    nt
-                    js-attrs))))))
+       (when (<= to (j/call $from :end))
+         (some->
+          (j/call $from :node 1)
+          (j/call :hasMarkup
+                  nt
+                  js-attrs)))))))
 
 (rf/reg-sub
  :selection-empty
