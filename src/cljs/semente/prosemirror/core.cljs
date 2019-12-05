@@ -29,7 +29,7 @@
                 (j/call :remove "code_block")
                 (j/call :remove "horizontal_rule")
                 (change-node "blockquote" {:content "paragraph+"})
-                (change-node "image" image/schema-changes))
+                (j/call :update "image" image/image-node-spec))
      :marks (-> schema
                 (j/get-in [:spec :marks])
                 (j/call :remove "code"))})))
