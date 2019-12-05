@@ -30,11 +30,15 @@
                   "desc" (let [alt (j/call dom-el :getAttribute "alt")]
                            (if (seq alt)
                              alt
-                             (j/call dom-el :getAttribute "title")))})}]
+                             (j/call dom-el :getAttribute "title")))
+                  "db_id" (j/call dom-el :getAttribute "data-db_id")})}]
     :toDOM
     (fn [node]
-      (let [{:keys [src desc]} (j/lookup (j/get node :attrs))]
-        #js["img" #js{"src" src "alt" desc "title" desc}]))}))
+      (let [{:keys [src desc db_id]} (j/lookup (j/get node :attrs))]
+        #js["img" #js{"src" src
+                      "alt" desc
+                      "title" desc
+                      "data-db_id" db_id}]))}))
 
 (defn throbber []
   [:div.lds-ellipsis-container
