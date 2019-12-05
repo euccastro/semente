@@ -1,6 +1,7 @@
 (ns semente.prosemirror.image
   (:require
-   [ajax.core :refer (raw-response-format)]
+   [ajax.core :refer (raw-response-format
+                      text-request-format)]
    [applied-science.js-interop :as j]
    [re-frame.core :as rf]
    [reagent.core :as r]
@@ -83,8 +84,6 @@
       (let [f (aget files i)
             insert-pos (j/call-in tr [:selection :$from :after] 1)
             url (j/call js/URL :createObjectURL f)
-            ;; XXX clear empty paragraph
-            ;; XXX move cursor past insert-pos?
             tr (j/call tr :insert
                        insert-pos
                        (j/call
@@ -94,7 +93,6 @@
                         #js{"src" url}))]
         (rf/dispatch [:upload-img {:url url :file f}])
         (recur tr (dec i))))))
-
 
 (defn- update-image-attrs [url f]
   (let [ev @editor-view
@@ -150,10 +148,27 @@
             :or {tries-left 3}
             :as args}]]
    {:http-xhrio {:method :post
-                 :uri "/save-image"
+                 :uri "/save-image-from-file"
                  :body (doto (js/FormData.)
                          (.append "file" file url))
                  :timeout 30000
+                 :response-format (raw-response-format)
+                 :on-success [:img-uploaded url]
+                 :on-failure (if (= tries-left 0)
+                               [:img-upload-failed url]
+                               [:upload-img
+                                (update args :tries-left dec)])}}))
+
+(rf/reg-event-fx
+ :register-img-url
+ (fn [_ [_ {:keys [url tries-left]
+            :or {tries-left 3}
+            :as args}]]
+   {:http-xhrio {:method :post
+                 :uri "/save-image-from-url"
+                 :params url
+                 :timeout 30000
+                 :format (text-request-format)
                  :response-format (raw-response-format)
                  :on-success [:img-uploaded url]
                  :on-failure (if (= tries-left 0)

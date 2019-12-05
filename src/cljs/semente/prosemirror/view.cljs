@@ -1,13 +1,16 @@
 (ns semente.prosemirror.view
   (:require
    [applied-science.js-interop :as j]
+   [clojure.string :as str]
    ["prosemirror-model" :refer (Fragment Node Slice)]
    ["prosemirror-view" :refer (EditorView)]
    [re-frame.core :as rf]
    [reagent.core :as r]
    [semente.prosemirror.image :as image]
    [semente.prosemirror.shared-state :refer (editor-view)]
-   [semente.prosemirror.util :refer (dispatch-prosemirror-transaction)]))
+   [semente.prosemirror.util :refer (dispatch-prosemirror-transaction
+                                     node-type?)]))
+
 
 (defn- heading? [^Node n]
   (= (j/get-in n [:type :name]) "heading"))
@@ -20,13 +23,18 @@
     (j/call-in n [:type :createChecked] #js{"level" 2} (j/get n :content) (j/get n :marks))
     (j/call n :copy (replace-fragment-headings (j/get n :content)))))
 
-(defn- replace-fragment-headings [^Fragment f]
+(defn fragment-children [^Fragment fragment]
+  (map (partial j/call fragment :child)
+       (range 0 (j/get fragment :childCount))))
+
+(defn map-fragment [f ^Fragment fragment]
   (j/call Fragment
           :fromArray
           (clj->js
-           (vec
-            (map #(replace-node-headings (j/call f :child %))
-                 (range 0 (j/get f :childCount)))))))
+           (vec (map f (fragment-children fragment))))))
+
+(defn- replace-fragment-headings [^Fragment f]
+  (map-fragment replace-node-headings f))
 
 (defn- replace-headings
   "Convirte todos os headings a h2"
@@ -34,6 +42,30 @@
   (Slice. (replace-fragment-headings (j/get slice :content))
           (j/get slice :openStart)
           (j/get slice :openEnd)))
+
+(comment
+
+  (j/get-in img [:attrs :src])
+
+  (j/get-in dom-event* [:clipboardData :items :length])
+  (.-length (:types dom-event*))
+  )
+
+(defn register-images
+  [slice]
+  (doseq [node (-> slice (j/get :content) fragment-children)
+          :let [src (j/get-in node [:attrs :src])]
+          :when (and (node-type? node "image")
+                     (empty? (j/get-in node [:attrs :db_id]))
+                     (or (str/starts-with? src "http://")
+                         (str/starts-with? src "https://")))]
+    (println "registering image")
+    (rf/dispatch [:register-img-url {:url src}])))
+
+(defn- transform-pasted
+  [^Slice slice]
+  (register-images slice)
+  (replace-headings slice))
 
 (defn- editor [_]
   (println "renderizando editor")
@@ -58,7 +90,7 @@
             #js{"dispatchTransaction" dispatch-prosemirror-transaction
                 "nodeViews" #js{"image" image/node-view}
                 "state" initial-editor-state
-                "transformPasted" replace-headings})))
+                "transformPasted" transform-pasted})))
         :on-focus #(rf/dispatch [:clear-dialog])}])}))
 
 (defn- menu-item [{:keys [active available icon-name event]}]
