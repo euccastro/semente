@@ -104,15 +104,15 @@
                  (when (and (node-type? node "image")
                             (= (j/get-in node [:attrs :src])
                                url))
-                   (j/call ev :dispatch
-                           (j/call tr :setNodeMarkup
-                                   offset
-                                   nil
-                                   (-> (j/get node :attrs)
-                                       (j/select-keys [:src :db_id :desc])
-                                       js->clj
-                                       f
-                                       clj->js))))))))
+                   (j/call tr :setNodeMarkup
+                           offset
+                           nil
+                           (-> (j/get node :attrs)
+                               (j/select-keys [:src :db_id :desc])
+                               js->clj
+                               f
+                               clj->js)))))
+    (j/call ev :dispatch tr)))
 
 (rf/reg-event-fx
  :files-selected
