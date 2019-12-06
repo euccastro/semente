@@ -52,7 +52,7 @@
                     [:upload-img {:url src :file file}]
                     [:register-img-url {:url src}]))}
    [:div.image-failed-container
-    [:div.caption "Problema subindo imagem" [:br] "Clica aqui para tentar de novo"]
+    [:div.caption "problema subindo imagem" [:br] "clica aqui para tentar de novo"]
     [:div.icon [:i.material-icons-round "sync_problem"]]]])
 
 (defn throbber []
