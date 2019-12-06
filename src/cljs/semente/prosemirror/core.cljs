@@ -10,7 +10,7 @@
    ["prosemirror-schema-basic" :refer (schema)]
    ["prosemirror-schema-list" :refer (addListNodes)]
    ["prosemirror-state" :refer (EditorState)]
-   [semente.prosemirror.image :as image]))
+   [semente.prosemirror.image.core :as image]))
 
 (defn- change-node [nodes node-id changes]
   (j/call nodes
@@ -41,7 +41,6 @@
      #js {"schema" is
           "plugins" (exampleSetup #js{"schema" is
                                       "menuBar" false})})))
-
 
 (comment
 
