@@ -5,7 +5,8 @@
    [applied-science.js-interop :as j]
    [re-frame.core :as rf]
    [reagent.core :as r]
-   [semente.prosemirror.shared-state :refer (editor-view)]
+   [semente.prosemirror.shared-state :refer (editor-view
+                                             orphan-components)]
    [semente.prosemirror.util :refer (current-editor-state
                                      node-type
                                      node-type?)]))
@@ -68,12 +69,17 @@
         ratom (r/atom node)]
     (r/render [image-parent ratom]
               dom-node)
+    (swap! orphan-components
+           assoc
+           dom-node
+           [image-parent ratom])
     #js{"dom" dom-node
         "update" (fn [node]
                    (if (node-type? node "image")
                      (do (reset! ratom node)
                          true)
                      false))
+        "destroy" #(swap! orphan-components dissoc dom-node)
         "ignoreMutation" (constantly true)}))
 
 (defn handle-files [files]

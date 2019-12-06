@@ -72,25 +72,21 @@
   (r/create-class
    {:display-name "prosemirror-editor"
     :should-component-update (constantly false)
-    :component-will-unmount
-    (fn [_]
-      (println "unmounting!")
-      (when-let [^EditorView ev @editor-view]
-        (j/call ev :destroy)
-        (reset! editor-view nil)))
     :reagent-render
     (fn [initial-editor-state]
       [:div
        {:ref
         (fn [dom-el]
-          (reset!
+          (swap!
            editor-view
-           (EditorView.
-            dom-el
-            #js{"dispatchTransaction" dispatch-prosemirror-transaction
-                "nodeViews" #js{"image" image/node-view}
-                "state" initial-editor-state
-                "transformPasted" transform-pasted})))
+           (fn [old]
+             (when old (j/call old :destroy))
+             (EditorView.
+              dom-el
+              #js{"dispatchTransaction" #'dispatch-prosemirror-transaction
+                  "nodeViews" #js{"image" image/node-view}
+                  "state" initial-editor-state
+                  "transformPasted" #'transform-pasted}))))
         :on-focus #(rf/dispatch [:clear-dialog])}])}))
 
 (defn- menu-item [{:keys [active available icon-name event]}]
