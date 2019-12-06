@@ -20,7 +20,8 @@
    {:inline false
     :attrs #js{"src" #js{}
                "db_id" #js{"default" nil}
-               "desc" #js{"default" nil}}
+               "desc" #js{"default" nil}
+               "file" #js{"default" nil}}
     :group :block
     :marks ""
     :draggable true
@@ -33,14 +34,26 @@
                            (if (seq alt)
                              alt
                              (j/call dom-el :getAttribute "title")))
-                  "db_id" (j/call dom-el :getAttribute "data-db_id")})}]
+                  "db_id" (j/call dom-el :getAttribute "data-db_id")
+                  "file" (j/call dom-el :getAttribute "data-file")})}]
     :toDOM
     (fn [node]
-      (let [{:keys [src desc db_id]} (j/lookup (j/get node :attrs))]
+      (let [{:keys [src desc db_id file]} (j/lookup (j/get node :attrs))]
         #js["img" #js{"src" src
                       "alt" desc
                       "title" desc
-                      "data-db_id" db_id}]))}))
+                      "data-db_id" db_id
+                      "data-file" file}]))}))
+
+(defn failed [src file]
+  [:div.image-failed-parent
+   {:on-click
+    #(rf/dispatch (if file
+                    [:upload-img {:url src :file file}]
+                    [:register-img-url {:url src}]))}
+   [:div.image-failed-container
+    [:div.caption "Problema subindo imagem" [:br] "Clica aqui para tentar de novo"]
+    [:div.icon [:i.material-icons-round "sync_problem"]]]])
 
 (defn throbber []
   [:div.lds-ellipsis-container
@@ -51,7 +64,7 @@
     [:div] [:div] [:div] [:div]]])
 
 (defn image-parent [node-atom]
-  (let [{:keys [src db_id desc]}
+  (let [{:keys [src db_id desc file]}
         (j/lookup (j/get @node-atom :attrs))]
     [:div.editor-image
      [:img {:src src
@@ -61,8 +74,9 @@
             :style {:z-index -1
                     :display :block
                     :margin :auto}}]
-     (when-not db_id
-       [throbber])]))
+     (cond
+       (not db_id) [throbber]
+       (= db_id failed-db-id) [failed src file])]))
 
 (defn node-view [node & _]
   (let [dom-node (-> (.createElement js/document "div"))
@@ -96,7 +110,8 @@
                         (node-type (current-editor-state)
                                    :image)
                         :create
-                        #js{"src" url}))]
+                        #js{"src" url
+                            "file" f}))]
         (rf/dispatch [:upload-img {:url url :file f}])
         (recur tr (dec i))))))
 
@@ -112,7 +127,7 @@
                            offset
                            nil
                            (-> (j/get node :attrs)
-                               (j/select-keys [:src :db_id :desc])
+                               (j/select-keys [:src :db_id :desc :file])
                                js->clj
                                f
                                clj->js)))))
@@ -145,7 +160,6 @@
 (rf/reg-event-fx
  :img-uploaded
  (fn [_ [_ url db-id]]
-   (println "IMAGE UPLOADED" db-id)
    {:assoc-image-attrs [url :db_id db-id]}))
 
 (rf/reg-event-fx
@@ -153,7 +167,8 @@
  (fn [_ [_ {:keys [file url tries-left]
             :or {tries-left 3}
             :as args}]]
-   {:http-xhrio {:method :post
+   {:assoc-image-attrs [url :db_id nil]
+    :http-xhrio {:method :post
                  :uri "/save-image-from-file"
                  :body (doto (js/FormData.)
                          (.append "file" file url))
@@ -170,7 +185,8 @@
  (fn [_ [_ {:keys [url tries-left]
             :or {tries-left 3}
             :as args}]]
-   {:http-xhrio {:method :post
+   {:assoc-image-attrs [url :db_id nil]
+    :http-xhrio {:method :post
                  :uri "/save-image-from-url"
                  :params url
                  :timeout 30000
@@ -181,3 +197,16 @@
                                [:img-upload-failed url]
                                [:upload-img
                                 (update args :tries-left dec)])}}))
+
+(comment
+
+  ;; selecciona umha imagem e corre isto para aceder a ela programaticamente
+  (def img (j/get-in @editor-view [:state :selection :node]))
+  (let [{:keys [db_id src desc file]} (j/lookup (j/get img :attrs))]
+    (def db_id db_id)
+    (def src src)
+    (def desc desc)
+    (def file file))
+  (rf/dispatch [:img-upload-failed src])
+
+  )

@@ -10,3 +10,8 @@
 (defn ^:dev/after-load remount-orphans []
   (doseq [[dom-el comp-spec] @orphan-components]
     (r/render comp-spec dom-el)))
+
+(comment
+
+  (remount-orphans)
+  )
