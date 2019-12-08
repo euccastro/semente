@@ -51,7 +51,7 @@
 
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :test-paths ["test/clj"]
-  :resource-paths ["resources" "target/cljsbuild"]
+  :resource-paths ["resources" "target/cljsbuild" "../semente-resources"]
   :target-path "target/%s/"
   :main ^:skip-aot semente.core
 
