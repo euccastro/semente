@@ -10,6 +10,8 @@
                  [cljs-ajax "0.8.0"]
                  [clojure.java-time "0.3.2"]
                  [com.cognitect/transit-clj "0.8.313"]
+                 [com.google.api-client/google-api-client "1.30.6"]
+                 [com.google.apis/google-api-services-drive "v3-rev110-1.23.0"]
                  [com.google.guava/guava "25.1-jre"]
                  [com.google.javascript/closure-compiler-unshaded "v20190618" :scope "provided"]
                  [cprop "0.1.14"]
