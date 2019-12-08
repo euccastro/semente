@@ -15,7 +15,6 @@
 (def ^:private transport (GoogleNetHttpTransport/newTrustedTransport))
 (def ^:private json-factory (JacksonFactory/getDefaultInstance))
 
-;; Só admite arquivos de até 5MB
 (defn upload-file [file name mime-type]
   (let [file (cond-> file (string? file) io/file)
         credentials (.createScoped
@@ -36,6 +35,6 @@
 
 (comment
 
-  (upload-file "/home/es/Downloads/snap.png" "snap" "image/png")
+  (upload-file "/home/es/Downloads/6236169.pdf" "prova-pdf" "application/pdf")
 
   )
