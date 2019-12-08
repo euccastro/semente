@@ -1,6 +1,7 @@
 (ns semente.google-drive
   (:require
-   [clojure.java.io :as io])
+   [clojure.java.io :as io]
+   [semente.config :refer (env)])
   (:import
    com.google.api.client.http.FileContent
    com.google.api.client.googleapis.auth.oauth2.GoogleCredential
@@ -10,7 +11,8 @@
    com.google.api.services.drive.model.File))
 
 ;; XXX
-(def ^:private creds-path "/home/es/Downloads/semente-web-1044b9247bc2.json")
+(defn- creds []
+  (-> env :google-drive-credentials .getBytes io/input-stream))
 
 (def ^:private transport (GoogleNetHttpTransport/newTrustedTransport))
 (def ^:private json-factory (JacksonFactory/getDefaultInstance))
@@ -18,7 +20,7 @@
 (defn upload-file [file name mime-type]
   (let [file (cond-> file (string? file) io/file)
         credentials (.createScoped
-                     (GoogleCredential/fromStream (io/input-stream creds-path))
+                     (GoogleCredential/fromStream (io/input-stream (creds)))
                      [DriveScopes/DRIVE])
         drive (-> (Drive$Builder. transport json-factory credentials)
                   (.setApplicationName "Web da Semente")
@@ -35,6 +37,6 @@
 
 (comment
 
-  (upload-file "/home/es/Downloads/6236169.pdf" "prova-pdf" "application/pdf")
+  (upload-file "/home/es/Downloads/nuncamais.jpg" "prova-2" "image/jpeg")
 
   )
