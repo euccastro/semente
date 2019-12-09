@@ -6,11 +6,11 @@
    ["prosemirror-view" :refer (EditorView)]
    [re-frame.core :as rf]
    [reagent.core :as r]
+   [semente.prosemirror.html-parsing :refer (lift-images)]
    [semente.prosemirror.image.view :refer (node-view)]
    [semente.prosemirror.shared-state :refer (editor-view)]
    [semente.prosemirror.util :refer (dispatch-prosemirror-transaction
                                      node-type?)]))
-
 
 (defn- heading? [^Node n]
   (= (j/get-in n [:type :name]) "heading"))
@@ -43,13 +43,10 @@
           (j/get slice :openStart)
           (j/get slice :openEnd)))
 
-(comment
-
-  (j/get-in img [:attrs :src])
-
-  (j/get-in dom-event* [:clipboardData :items :length])
-  (.-length (:types dom-event*))
-  )
+(defn- guarded-lift-images [html]
+  (try
+    (lift-images html)
+    (catch :default _ html)))
 
 (defn register-images
   [slice]
@@ -86,7 +83,8 @@
               #js{"dispatchTransaction" #'dispatch-prosemirror-transaction
                   "nodeViews" #js{"image" node-view}
                   "state" initial-editor-state
-                  "transformPasted" #'transform-pasted}))))
+                  "transformPastedHTML" guarded-lift-images
+                  "transformPasted" transform-pasted}))))
         :on-focus #(rf/dispatch [:clear-dialog])}])}))
 
 (defn- menu-item [{:keys [active available icon-name event]}]
