@@ -1,7 +1,7 @@
 (ns semente.prosemirror.image.event
   (:require
-   [ajax.core :refer (raw-response-format
-                      text-request-format)]
+   [ajax.core :refer (transit-request-format
+                      transit-response-format)]
    [re-frame.core :as rf]
    [semente.prosemirror.image.const :refer (failed-db-id)]))
 
@@ -36,7 +36,7 @@
                  :body (doto (js/FormData.)
                          (.append "file" file url))
                  :timeout 30000
-                 :response-format (raw-response-format)
+                 :response-format (transit-response-format)
                  :on-success [:img-uploaded url]
                  :on-failure (if (= tries-left 0)
                                [:img-upload-failed url]
@@ -51,10 +51,10 @@
    {:assoc-image-attrs [url :db_id nil]
     :http-xhrio {:method :post
                  :uri "/save-image-from-url"
-                 :params url
+                 :params {:url url}
                  :timeout 30000
-                 :format (text-request-format)
-                 :response-format (raw-response-format)
+                 :format (transit-request-format)
+                 :response-format (transit-response-format)
                  :on-success [:img-uploaded url]
                  :on-failure (if (= tries-left 0)
                                [:img-upload-failed url]
