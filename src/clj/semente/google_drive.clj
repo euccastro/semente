@@ -10,7 +10,6 @@
    (com.google.api.services.drive Drive$Builder DriveScopes)
    com.google.api.services.drive.model.File))
 
-;; XXX
 (defn- creds []
   (-> env :google-drive-credentials .getBytes io/input-stream))
 

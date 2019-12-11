@@ -2,6 +2,7 @@
   (:require
    [applied-science.js-interop :as j]
    [clojure.string :as str]
+   ["prosemirror-history" :refer (undo redo)]
    ["prosemirror-model" :refer (Fragment Node Slice)]
    ["prosemirror-view" :refer (EditorView)]
    [re-frame.core :as rf]
@@ -144,6 +145,12 @@
                :icon-name "image"
                :event nil}]])
 
+(defn- command-menu-item [cmd icon-name]
+  [menu-item {:active false
+              :available @(rf/subscribe [:pm-command-available cmd])
+              :icon-name icon-name
+              :event [:pm-commands [cmd]]}])
+
 (defn menubar []
   [:div
    [mark-menu-item :strong "format_bold"]
@@ -154,7 +161,9 @@
    [wrap-menu-item [:blockquote] "format_quote"]
    [block-type-menu-item [:bullet_list] "format_list_bulleted" :wrap-in-list]
    [block-type-menu-item [:ordered_list] "format_list_numbered" :wrap-in-list]
-   [image-menu-item]])
+   [image-menu-item]
+   [command-menu-item undo "undo"]
+   [command-menu-item redo "redo"]])
 
 (defn dialog [_]
   (let [values (r/atom {})

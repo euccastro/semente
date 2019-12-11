@@ -17,11 +17,15 @@
  (fn [db _]
    (:editor-state db)))
 
+(defn- command-available? [cmd editor-state]
+  (cmd editor-state))
+
 (rf/reg-sub
  :mark-available
  :<- [:editor-state]
  (fn [^EditorState editor-state [_ mark-id]]
-   ((toggleMark (mark-type editor-state mark-id))
+   (command-available?
+    (toggleMark (mark-type editor-state mark-id))
     editor-state)))
 
 (rf/reg-sub
@@ -72,8 +76,13 @@
        (let [{:keys [src desc db_id] :as m} (j/lookup (j/get node :attrs))]
          m)))))
 
-
 (rf/reg-sub
  :dialog
  (fn [db _]
    (:dialog db)))
+
+(rf/reg-sub
+ :pm-command-available
+ :<- [:editor-state]
+ (fn [^EditorState editor-state [_ cmd]]
+   (command-available? cmd editor-state)))

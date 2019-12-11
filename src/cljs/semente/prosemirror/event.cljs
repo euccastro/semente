@@ -56,3 +56,8 @@
 (rf/reg-event-fx
  :focus-editor
  (constantly {:focus-editor nil}))
+
+(rf/reg-event-fx
+ :pm-commands
+ (fn [_ [_ cmds]]
+   {:prosemirror-commands cmds}))
