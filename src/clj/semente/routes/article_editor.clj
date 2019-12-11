@@ -52,15 +52,12 @@
   (move-file
    f
    (str (System/getProperty "user.dir") "/../semente-resources/public/img/prova2.jpg"))
-  "mock-db-id"
-  )
+  (response/ok {:db-id "mock-db-id"}))
 
 (defn save-image-from-file [request]
   ;; para ver o throbber quando provo localmente
   (Thread/sleep 3000)
-  (-> "mock-db-id"
-      response/ok
-      (response/content-type "text/plain; charset=utf-8")))
+  (response/ok {:db-id "mock-db-id"}))
 
 (defn save-image-from-url [{{:keys [url]} :params}]
   (let [resp (download url)

@@ -22,7 +22,7 @@
 
 (rf/reg-event-fx
  :img-uploaded
- (fn [_ [_ url db-id]]
+ (fn [_ [_ url {:keys [db-id]}]]
    {:assoc-image-attrs [url :db_id db-id]}))
 
 (rf/reg-event-fx
@@ -41,7 +41,10 @@
                  :on-failure (if (= tries-left 0)
                                [:img-upload-failed url]
                                [:upload-img
-                                (update args :tries-left dec)])}}))
+                                ;; uso assoc e nom update porque tries-left nom
+                                ;; está em args a primeira vez que manejamos
+                                ;; este evento
+                                (assoc args :tries-left (dec tries-left))])}}))
 
 (rf/reg-event-fx
  :register-img-url
@@ -58,5 +61,8 @@
                  :on-success [:img-uploaded url]
                  :on-failure (if (= tries-left 0)
                                [:img-upload-failed url]
-                               [:upload-img
-                                (update args :tries-left dec)])}}))
+                               [:register-img-url
+                                ;; uso assoc e nom update porque tries-left nom
+                                ;; está em args a primeira vez que manejamos
+                                ;; este evento
+                                (assoc args :tries-left (dec tries-left))])}}))
