@@ -4,11 +4,12 @@
    [buddy.core.hash :refer (sha256)]
    [clj-http.client :as http]
    [clojure.java.io :as io]
+   [clojure.string :as str]
    [resilience4clj-retry.core :as rt]
    [resilience4clj-timelimiter.core :as tl]
    [ring.util.http-response :as response]
-   [semente.middleware :as middleware]
-   [clojure.string :as str])
+   [semente.google-drive :refer (upload-file)]
+   [semente.middleware :as middleware])
   (:import
    (java.net URI)
    (java.nio.file CopyOption Files Paths StandardCopyOption)))
@@ -18,6 +19,8 @@
                        :wait-duration 1000}))
 
 (def dl-tl (tl/create {:timeout-duration 10000}))
+(def backup-tl (tl/create {:timeout-duration 10000
+                           :cancel-running-future? false}))
 
 (def download
   (-> (fn [url]
@@ -25,6 +28,10 @@
       (tl/decorate dl-tl)
       (rt/decorate retry)))
 
+(def backup
+  (-> upload-file
+      (tl/decorate backup-tl)
+      (rt/decorate retry)))
 
 (comment
 
@@ -55,11 +62,13 @@
   (apply str (map char (b64/encode (sha256 x) true))))
 
 (defn- save-image-from-temp-file [f mime-type]
-  (let [db-id (str (url-safe-hash f) "." (mime-type->ext mime-type))]
-    (move-file f
-               (str (System/getProperty "user.dir")
-                    "/../semente-resources/public/img/"
-                    db-id))
+  (let [db-id (str (url-safe-hash f) "." (mime-type->ext mime-type))
+        dest-path (str (System/getProperty "user.dir")
+                       "/../semente-resources/public/img/"
+                       db-id)]
+    (when-not (.exists (io/as-file dest-path))
+      (backup f db-id mime-type)
+      (move-file f dest-path))
     (response/ok {:db-id db-id})))
 
 (defn save-image-from-file [{{{:keys [tempfile content-type]} :file} :params}]
