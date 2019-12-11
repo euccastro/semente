@@ -88,13 +88,14 @@
                   "transformPasted" transform-pasted}))))
         :on-focus #(rf/dispatch [:clear-dialog])}])}))
 
-(defn- menu-item [{:keys [active available icon-name event]}]
+(defn- menu-item [{:keys [active available icon-name tooltip event]}]
   [:i
    (cond->
        {:class ["material-icons-round"
                 (cond active "active"
                       available "available"
                       :else "unavailable")]
+        :title tooltip
         :on-mouse-down
         (fn [e]
           (j/call e :preventDefault)
@@ -103,12 +104,13 @@
             (rf/dispatch event)))})
    icon-name])
 
-(defn- mark-menu-item [mark-id icon-name]
+(defn- mark-menu-item [mark-id icon-name tooltip]
   (let [available @(rf/subscribe [:mark-available mark-id])
         active @(rf/subscribe [:mark-active mark-id])]
     [menu-item {:active active
                 :available available
                 :icon-name icon-name
+                :tooltip tooltip
                 :event [:toggle-mark mark-id]}]))
 
 (defn- link-menu-item []
@@ -118,52 +120,56 @@
      {:active active
       :available available
       :icon-name "link"
+      :tooltip "ligaçom"
       :event (if active
                [:toggle-mark :link]
                [:set-dialog {:fields [{:id "href" :caption "URL"}
                                       {:id "title" :caption "Título"}]
                              :event [:toggle-mark :link]}])}]))
 
-(defn- block-type-menu-item [command-args icon-name event-key]
+(defn- block-type-menu-item [command-args icon-name tooltip event-key]
   [menu-item {:active @(rf/subscribe (into [:selected-block-type]
                                            command-args))
               :available true
               :icon-name icon-name
+              :tooltip tooltip
               :event (into [event-key]
                            command-args)}])
 
-(defn- change-block-type-menu-item [command-args icon-name]
-  [block-type-menu-item command-args icon-name :set-block-type])
+(defn- change-block-type-menu-item [command-args icon-name tooltip]
+  [block-type-menu-item command-args icon-name tooltip :set-block-type])
 
-(defn- wrap-menu-item [command-args icon-name]
-  [block-type-menu-item command-args icon-name :wrap-in])
+(defn- wrap-menu-item [command-args icon-name tooltip]
+  [block-type-menu-item command-args icon-name tooltip :wrap-in])
 
 (defn- image-menu-item []
   [:label {:for "file-input"}
    [menu-item {:active false
                :available true
                :icon-name "image"
+               :tooltip "insertar imagem"
                :event nil}]])
 
-(defn- command-menu-item [cmd icon-name]
+(defn- command-menu-item [cmd icon-name tooltip]
   [menu-item {:active false
               :available @(rf/subscribe [:pm-command-available cmd])
               :icon-name icon-name
+              :tooltip tooltip
               :event [:pm-commands [cmd]]}])
 
 (defn menubar []
   [:div
-   [mark-menu-item :strong "format_bold"]
-   [mark-menu-item :em "format_italic"]
+   [mark-menu-item :strong "format_bold" "forte (ctrl+B)"]
+   [mark-menu-item :em "format_italic" "ênfase (ctrl+I)"]
    [link-menu-item]
-   [change-block-type-menu-item [:paragraph] "notes"]
-   [change-block-type-menu-item [:heading {:level 2}] "title"]
-   [wrap-menu-item [:blockquote] "format_quote"]
-   [block-type-menu-item [:bullet_list] "format_list_bulleted" :wrap-in-list]
-   [block-type-menu-item [:ordered_list] "format_list_numbered" :wrap-in-list]
+   [change-block-type-menu-item [:paragraph] "notes" "parágrafo"]
+   [change-block-type-menu-item [:heading {:level 2}] "title" "título de secçom"]
+   [wrap-menu-item [:blockquote] "format_quote" "cita"]
+   [block-type-menu-item [:bullet_list] "format_list_bulleted" "lista sem numerar" :wrap-in-list]
+   [block-type-menu-item [:ordered_list] "format_list_numbered" "lista numerada" :wrap-in-list]
    [image-menu-item]
-   [command-menu-item undo "undo"]
-   [command-menu-item redo "redo"]])
+   [command-menu-item undo "undo" "desfazer (ctrl+Z)"]
+   [command-menu-item redo "redo" "refazer (ctrl+maiús+Z)"]])
 
 (defn dialog [_]
   (let [values (r/atom {})
