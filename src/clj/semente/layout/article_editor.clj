@@ -10,6 +10,9 @@
    [hiccup.element :refer [image link-to]]
    [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
 
+;; XXX: sacar da db em base à utente autenticada
+(def autora "Mariquinha do Penedo")
+
 (defn article-editor
   []
   (l/ok-hiccup
@@ -31,7 +34,8 @@
                   "/css/editor.css")]
     ;; extraer
     [:body#nacional-background
-     [:script (str "window.csrfToken = \"" *anti-forgery-token* "\";")]
+     [:script (str "window.csrfToken = \"" *anti-forgery-token* "\";"
+                   "window.autora = \"" autora "\"")]
      [:div#page
       [:div#app]]
      (l/js-app)]]))
