@@ -34,13 +34,21 @@
                 (j/get-in [:spec :marks])
                 (j/call :remove "code"))})))
 
+
+(def map-keys
+  (clj->js
+   (into {"Ctrl->" false}
+         (for [i (range 10)]
+           [(str "Shift-Ctrl-" i) false]))))
+
 (defn initial-editor-state []
   (.create
    EditorState
    (let [is (initial-schema)]
      #js {"schema" is
           "plugins" (exampleSetup #js{"schema" is
-                                      "menuBar" false})})))
+                                      "menuBar" false
+                                      "mapKeys" map-keys})})))
 
 (comment
 
