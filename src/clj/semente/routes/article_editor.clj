@@ -1,5 +1,7 @@
 (ns semente.routes.article-editor
   (:require
+   [buddy.core.codecs.base64 :as b64]
+   [buddy.core.hash :refer (sha256)]
    [clj-http.client :as http]
    [clojure.java.io :as io]
    [resilience4clj-retry.core :as rt]
@@ -47,12 +49,18 @@
       (str/split #"/")
       last))
 
+(defn url-safe-hash
+  "URL-safe base64 encoding of sha256 hash"
+  [x]
+  (apply str (map char (b64/encode (sha256 x) true))))
+
 (defn- save-image-from-temp-file [f mime-type]
-  ;; calculate hash
-  (move-file
-   f
-   (str (System/getProperty "user.dir") "/../semente-resources/public/img/prova2.jpg"))
-  (response/ok {:db-id "mock-db-id"}))
+  (let [db-id (str (url-safe-hash f) "." (mime-type->ext mime-type))]
+    (move-file f
+               (str (System/getProperty "user.dir")
+                    "/../semente-resources/public/img/"
+                    db-id))
+    (response/ok {:db-id db-id})))
 
 (defn save-image-from-file [{{{:keys [tempfile content-type]} :file} :params}]
   (save-image-from-temp-file tempfile content-type))
