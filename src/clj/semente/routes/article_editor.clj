@@ -54,10 +54,8 @@
    (str (System/getProperty "user.dir") "/../semente-resources/public/img/prova2.jpg"))
   (response/ok {:db-id "mock-db-id"}))
 
-(defn save-image-from-file [request]
-  ;; para ver o throbber quando provo localmente
-  (Thread/sleep 3000)
-  (response/ok {:db-id "mock-db-id"}))
+(defn save-image-from-file [{{{:keys [tempfile content-type]} :file} :params}]
+  (save-image-from-temp-file tempfile content-type))
 
 (defn save-image-from-url [{{:keys [url]} :params}]
   (let [resp (download url)
