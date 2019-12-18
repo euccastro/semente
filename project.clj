@@ -7,15 +7,20 @@
                  [buddy "2.0.0"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [cheshire "5.8.1"]
+                 [clj-http "3.10.0"]
                  [cljs-ajax "0.8.0"]
                  [clojure.java-time "0.3.2"]
                  [com.cognitect/transit-clj "0.8.313"]
+                 [com.google.api-client/google-api-client "1.30.6"]
+                 [com.google.apis/google-api-services-drive "v3-rev110-1.23.0"]
                  [com.google.guava/guava "25.1-jre"]
                  [com.google.javascript/closure-compiler-unshaded "v20190618" :scope "provided"]
+                 [com.rpl/specter "1.1.3"]
                  [cprop "0.1.14"]
                  [day8.re-frame/http-fx "0.1.6"]
                  [expound "0.7.2"]
                  [funcool/struct "1.4.0"]
+                 [hickory "0.7.1"]
                  [juxt/crux-core "19.09-1.5.0-alpha"]
                  [kee-frame "0.3.3" :exclusions [metosin/reitit-core org.clojure/core.async]]
                  [lambdaisland/garden-watcher "0.3.5"]
@@ -39,6 +44,8 @@
                  [org.webjars/webjars-locator "0.36"]
                  [re-frame "0.10.8"]
                  [reagent "0.8.1"]
+                 [resilience4clj/resilience4clj-retry "0.1.1"]
+                 [resilience4clj/resilience4clj-timelimiter "0.1.1"]
                  [ring-webjars "0.2.0"]
                  [ring/ring-core "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
@@ -49,7 +56,7 @@
 
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :test-paths ["test/clj"]
-  :resource-paths ["resources" "target/cljsbuild"]
+  :resource-paths ["resources" "target/cljsbuild" "../semente-resources"]
   :target-path "target/%s/"
   :main ^:skip-aot semente.core
 
@@ -105,14 +112,14 @@
                   :dependencies [[binaryage/devtools "0.9.10"]
                                  [cider/piggieback "0.4.1"]
                                  [garden "1.3.9"]
+                                 [miracle-save "0.0.1"]
                                  [pjstadig/humane-test-output "0.9.0"]
                                  [prone "2019-07-08"]
                                  [re-frisk "0.5.4.1"]
                                  [ring/ring-devel "1.7.1"]
-                                 [ring/ring-mock "0.4.0"]]
+                                 [ring/ring-mock "0.4.0"]
+                                 [vvvvalvalval/scope-capture "0.3.2"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]]
-
-
                   :source-paths ["env/dev/clj" "env/dev/cljs" "test/cljs"]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}

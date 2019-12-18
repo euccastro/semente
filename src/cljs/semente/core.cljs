@@ -2,12 +2,11 @@
   (:require
    [re-frame.core :as rf]
    [reagent.core :as r]
-   [ajax.core :as http]
    [semente.ajax :as ajax]
    ;; for side effects
    semente.event
    [semente.prosemirror.core :refer (initial-editor-state)]
-   [semente.prosemirror.view :refer (editor-container)]
+   [semente.view :as view]
    ;; for side effects
    semente.subscription
    ;; for side effects
@@ -16,7 +15,7 @@
 (defn ^:dev/after-load mount-components
   []
   (rf/clear-subscription-cache!)
-  (r/render [editor-container]
+  (r/render [view/root-component]
             (.getElementById js/document "app")))
 
 (defn init! [_]  ; argumento de debug, ignorado por enquanto

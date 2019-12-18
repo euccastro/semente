@@ -1,9 +1,12 @@
 (ns semente.prosemirror.event
   (:require
    [re-frame.core :as rf]
+   ;; for side effects
+   semente.prosemirror.image.event
    [semente.prosemirror.util :refer (mark-type node-type current-editor-state)]
-   ["prosemirror-schema-list" :refer (liftListItem wrapInList)]
+   ["prosemirror-schema-list" :refer (wrapInList)]
    ["prosemirror-commands" :refer (lift setBlockType toggleMark wrapIn)]))
+
 
 (rf/reg-event-db
  :editor-state-changed
@@ -55,7 +58,6 @@
  (constantly {:focus-editor nil}))
 
 (rf/reg-event-fx
- :files-selected
- (fn [_]
-   (println "Now I would handle selected files!")
-   {}))
+ :pm-commands
+ (fn [_ [_ cmds]]
+   {:prosemirror-commands cmds}))

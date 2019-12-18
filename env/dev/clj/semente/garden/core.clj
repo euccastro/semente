@@ -2,8 +2,9 @@
   (:require
    [garden-watcher.core :as gwatcher]
    [garden-watcher.def :refer [defstyles]]
+   [garden.color :refer (rgba)]
    [garden.stylesheet :refer [at-media]]
-   [garden.units :refer [em px]]
+   [garden.units :refer [em px percent]]
    [mount.core :as mount]
    [semente.style-constants :as style]))
 
@@ -174,9 +175,35 @@
   [:.bad {:background-color :tomato
           :color :lawngreen}])
 
+(def image-failed-width (px 260))
+(def image-failed-height (px 80))
 
 (defstyles editor
   [:.material-icons-round {:cursor :pointer}]
   [:i.active {:color :black}]
   [:i.available {:color :grey}]
-  [:i.unavailable {:color :lightgrey}])
+  [:i.unavailable {:color :lightgrey}]
+  ;; para centrar o throbber
+  [:.editor-image {:position :relative}]
+  [:.image-failed-parent
+   {:position :absolute
+    :box-sizing :border-box
+    :width image-failed-width
+    :height image-failed-height
+    :left (percent 50)
+    :top (percent 50)}]
+  [:.image-failed-container
+   {:position :absolute
+    :box-sizing :border-box
+    :text-align :center
+    :border-radius (px 500)
+    :padding [[(px 12) (px 20)]]
+    :font-family "Ubuntu, sans-serif"
+    :cursor :pointer
+    :background-color (rgba 0 0 0 0.5)
+    :color :white
+    :z-index 1
+    :left (percent -50)
+    :top (percent -50)
+    :width image-failed-width
+    :height image-failed-height}])

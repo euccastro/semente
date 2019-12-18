@@ -7,7 +7,11 @@
    semente.model.article
    [semente.style-constants :as style]
    [hiccup.page :refer [include-css]]
-   [hiccup.element :refer [image link-to]]))
+   [hiccup.element :refer [image link-to]]
+   [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
+
+;; XXX: sacar da db em base à utente autenticada
+(def autora "Mariquinha do Penedo")
 
 (defn article-editor
   []
@@ -26,9 +30,12 @@
                   "/css/semente.css"
                   "/css/prosemirror.css"
                   "/css/prosemirror-gapcursor.css"
+                  "/css/spinner.css"
                   "/css/editor.css")]
     ;; extraer
     [:body#nacional-background
+     [:script (str "window.csrfToken = \"" *anti-forgery-token* "\";"
+                   "window.autora = \"" autora "\"")]
      [:div#page
       [:div#app]]
      (l/js-app)]]))

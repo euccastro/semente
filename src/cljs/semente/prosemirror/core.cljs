@@ -9,7 +9,8 @@
    ["prosemirror-model" :refer (Schema)]
    ["prosemirror-schema-basic" :refer (schema)]
    ["prosemirror-schema-list" :refer (addListNodes)]
-   ["prosemirror-state" :refer (EditorState)]))
+   ["prosemirror-state" :refer (EditorState)]
+   [semente.prosemirror.image.core :as image]))
 
 (defn- change-node [nodes node-id changes]
   (j/call nodes
@@ -28,12 +29,17 @@
                 (j/call :remove "code_block")
                 (j/call :remove "horizontal_rule")
                 (change-node "blockquote" {:content "paragraph+"})
-                (change-node "image" {:inline false
-                                      :group :block
-                                      :marks ""}))
+                (j/call :update "image" image/image-node-spec))
      :marks (-> schema
                 (j/get-in [:spec :marks])
                 (j/call :remove "code"))})))
+
+
+(def map-keys
+  (clj->js
+   (into {"Ctrl->" false}
+         (for [i (range 10)]
+           [(str "Shift-Ctrl-" i) false]))))
 
 (defn initial-editor-state []
   (.create
@@ -41,8 +47,8 @@
    (let [is (initial-schema)]
      #js {"schema" is
           "plugins" (exampleSetup #js{"schema" is
-                                      "menuBar" false})})))
-
+                                      "menuBar" false
+                                      "mapKeys" map-keys})})))
 
 (comment
 

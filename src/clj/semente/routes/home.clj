@@ -8,6 +8,7 @@
 (defn home-page [request]
   (layout/render request "home.html"))
 
+
 (defn home-routes []
   [""
    {:middleware [middleware/wrap-csrf

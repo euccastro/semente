@@ -2,6 +2,8 @@
   (:require
    [applied-science.js-interop :as j]
    [re-frame.core :as rf]
+   ;; for side effects
+   semente.prosemirror.image.effect
    [semente.prosemirror.shared-state :refer (editor-view)]
    [semente.prosemirror.util :refer (current-editor-state
                                      dispatch-prosemirror-transaction)]))

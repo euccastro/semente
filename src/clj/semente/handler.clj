@@ -2,6 +2,7 @@
   (:require
     [semente.middleware :as middleware]
     [semente.layout :refer [error-page]]
+    [semente.routes.article-editor :refer [article-editor-routes]]
     [semente.routes.home :refer [home-routes]]
     [semente.routes.nacional :refer [nacional-routes]]
     [reitit.ring :as ring]
@@ -19,7 +20,8 @@
   (ring/ring-handler
     (ring/router
      [(home-routes)
-      (nacional-routes)])
+      (nacional-routes)
+      (article-editor-routes)])
     (ring/routes
       (ring/create-resource-handler
         {:path "/"})
