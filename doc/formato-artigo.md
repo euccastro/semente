@@ -94,7 +94,6 @@ formato que um parágrafo.
 
 Umha imagem tem as seguintes propriedades:
 
-- nome: nom se mostra ao público, é por facilidade para encontrá-la nós.
 - descriçom: aparece como `<alt>` no HTML da página, e portanto é importante para
   quem visita a página sem imagens (por exemplo, pessoas invidentes).
 - fonte e extensom: estes som elementos de uso interno no código; nem as
