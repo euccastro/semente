@@ -66,6 +66,9 @@
   :shadow-cljs
   {:nrepl {:port 7002
            :middleware [refactor-nrepl.middleware/wrap-refactor]}
+   :dev-http {8000 {:roots ["classpath:resources/public" "../semente-resources"]
+                    :handler user/handle-ring-req}}
+   :jvm-opts ["-Dconf=dev-config.edn" "-Xmx512m" "-Xms256m"]
    :builds
    {:app
     {:target :browser
@@ -108,7 +111,7 @@
    :dev           [:project/dev :profiles/dev]
    :test          [:project/dev :project/test :profiles/test]
 
-   :project/dev  {:jvm-opts ["-Dconf=dev-config.edn"]
+   :project/dev  {:jvm-opts ["-Dconf=dev-config.edn" "-Xmx512m" "-Xms256m"]
                   :dependencies [[binaryage/devtools "0.9.10"]
                                  [cider/piggieback "0.4.1"]
                                  [garden "1.3.9"]

@@ -34,6 +34,15 @@
 (defn create-user [username password]
   (db/create-user db/crux username (auth/hash-password password)))
 
+(def ^:private app
+  (memoize
+   (fn []
+     (start-app [])
+     (semente.handler/app))))
+
+(defn handle-ring-req [req]
+  ((app) req))
+
 (comment
   (start-app [])
   (restart)
